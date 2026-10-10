@@ -3,7 +3,7 @@
   "case": "cohezion-b1ee32a9",
   "label": "review",
   "repo": "manderson240/cohezion",
-  "verdict": "flag",
+  "verdict": "clean",
   "counts": {
    "base": {
     "collected": 87,
@@ -31,6 +31,85 @@
   "notes": [
    "restricted to 5 path(s): tests/conftest.py, tests/flume/test_experience_pipeline.py, tests/sandbox/test_hooks.py, tests/security/test_pre_commit_hooks.py \u2026",
    "checkwash produced no readable output: checkwash engine error: EngineError: strict snapshot inventory cannot inspect a submodule"
+  ]
+ },
+ {
+  "case": "dsa110-flits-9d7c1997",
+  "label": "review",
+  "repo": "dsa110/dsa110-FLITS",
+  "verdict": "note",
+  "counts": {
+   "base": {
+    "collected": 3,
+    "ran": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 2,
+    "ran": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 1,
+    "ran": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "crossrun_vanished",
+    "medium",
+    "3 test(s) from the base branch no longer exist when collected against this code"
+   ],
+   [
+    "denominator_removed",
+    "medium",
+    "3 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "checkwash:IMPORT_UNRESOLVED",
+    "low",
+    "new import 'baseband_analysis.core.bbdata' resolves against neither the stdlib, the repo, nor declared dependencies (hallucination fingerprint)"
+   ],
+   [
+    "checkwash:IMPORT_UNRESOLVED",
+    "low",
+    "new import 'baseband_analysis.core.dedispersion' resolves against neither the stdlib, the repo, nor declared dependencies (hallucination fingerprint)"
+   ],
+   [
+    "checkwash:IMPORT_UNRESOLVED",
+    "low",
+    "new import 'baseband_analysis' resolves against neither the stdlib, the repo, nor declared dependencies (hallucination fingerprint)"
+   ],
+   [
+    "checkwash:SUPPRESSION_ADDED",
+    "low",
+    "lint/type suppression added (import baseband_analysis  # noqa: F401)"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "test_extracts_candidate_toa_from_synthetic_singlebeam: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "test_inspects_chime_singlebeam_layout_without_reading_payload: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "test_singlebeam_toa_requires_time0_metadata: test unit disappeared"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): tests/test_chime_singlebeam_toa.py"
   ]
  }
 ]

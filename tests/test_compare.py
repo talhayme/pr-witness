@@ -158,3 +158,11 @@ def test_a_class_based_test_counts_as_touched_when_its_file_changed():
     assert _touched("migrations/test_writer/WriterTests::test_serialize", changed)   # runner run from tests/
     assert _touched("tests/test_x::test_plain", changed)
     assert not _touched("tests/test_y/TestOther::test_q", changed)
+
+
+def test_a_base_where_every_test_fails_is_no_evidence_not_clean():
+    base = run(a=(F, "ModuleNotFoundError: No module named 'pandas'"), b=(F, "ModuleNotFoundError: No module named 'pandas'"))
+    head = run(a=F, b=F)
+    f = compare(base, head, head)
+    assert "base_broken" in signals(f)
+    assert "pandas" in by_signal(f, "base_broken").summary

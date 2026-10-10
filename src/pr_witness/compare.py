@@ -123,6 +123,21 @@ def compare(base: RunResult, head: RunResult, cross: RunResult | None = None,
             "commit predates, a missing dependency, or the wrong --paths.",
         ))
 
+    # A base that collects but passes nothing is an environment that is not
+    # reproducing the suite (a missing import in conftest fails every test
+    # the same way). The comparison is then vacuous: the same failure on both
+    # sides is not a clean verdict, it is no evidence.
+    if base.tests and not base.passed and all(t.outcome.broken for t in base.tests.values()):
+        first = next(iter(base.tests.values()))
+        findings.append(Finding(
+            "base_broken",
+            Severity.MEDIUM,
+            f"every one of the base branch's {len(base.tests)} tests failed or errored, so nothing below is evidence: "
+            + (first.message.strip().splitlines()[-1][:160] if first.message else "no message"),
+            "Almost always the environment, not the change: a dependency the "
+            "project imports but does not declare, a service the tests expect.",
+        ))
+
     # ---- the cross-run ---------------------------------------------------
     if cross is not None:
         if cross.collection_error:

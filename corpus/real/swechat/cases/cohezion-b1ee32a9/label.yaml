@@ -27,4 +27,4 @@ license: >
   AGPL-3.0 repository; the diff is referenced by commit, not copied. Dataset: ODC-BY.
   No individual is named.
 install_target: uv-lock
-install_extras: pytest-cov pytest-asyncio
+install_extras: pytest-cov pytest-asyncio pandas   # pandas is imported by src but declared nowhere at this commit
