@@ -95,6 +95,8 @@ def witness(
     pr_body: str = "",
     timeout: int = 1800,
     keep_reports: Path | None = None,
+    paths: list[str] | None = None,
+    changed_only: bool = False,
 ) -> Evidence:
     repo = git_ops.repo_root(repo)
     head_sha = git_ops.resolve(head, cwd=repo)
@@ -103,6 +105,20 @@ def witness(
     name = runner_name or runners.detect(repo) or "pytest"
     runner = runners.RUNNERS[name]
     notes: list[str] = []
+
+    # Large suites take hours; the question is usually about the tests the
+    # change touched. --paths restricts every run to those files;
+    # --changed-only derives them from the diff. The cross-run uses the base
+    # branch's copies, so a test file the PR deleted still runs there.
+    if changed_only:
+        changed = git_ops.changed_files(base_sha, head_sha, cwd=repo)
+        test_globs = git_ops.DEFAULT_TEST_GLOBS
+        paths = sorted({f for f in changed if any(git_ops.matches_glob(f, g) for g in test_globs)}) + list(paths or [])
+        if not paths:
+            notes.append("--changed-only: the change touches no test file; running the whole suite")
+            paths = None
+    if paths:
+        notes.append(f"restricted to {len(paths)} path(s): " + ", ".join(paths[:4]) + (" …" if len(paths) > 4 else ""))
 
     if base_sha == head_sha:
         notes.append("base and head are the same commit; nothing to compare")
@@ -123,8 +139,11 @@ def witness(
         reports.mkdir(parents=True, exist_ok=True)
 
         def _run(rev_tree: Path, label: str) -> RunResult:
+            # Only paths that exist in this tree: a test file the PR added
+            # is absent from the base tree and vice versa.
+            present = [p for p in (paths or []) if (rev_tree / p).exists()] or None
             return runners.run(
-                runner, rev_tree, reports / f"{label}.xml",
+                runner, rev_tree, reports / f"{label}.xml", paths=present,
                 timeout=timeout, env=_env_for(rev_tree, repo),
             )
 

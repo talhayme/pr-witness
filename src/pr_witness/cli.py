@@ -33,6 +33,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--pr-body", type=Path,
                     help="file holding the pull request description; without it, "
                          "claims are read from the commit messages")
+    ap.add_argument("--paths", nargs="+", metavar="PATH",
+                    help="run only these test files/directories (relative to the repo) in every run")
+    ap.add_argument("--changed-only", action="store_true",
+                    help="run only the test files the change touches (plus --paths)")
     ap.add_argument("--timeout", type=int, default=1800)
     ap.add_argument("--keep-reports", type=Path,
                     help="write the three JUnit reports here instead of discarding them")
@@ -59,6 +63,7 @@ def main(argv: list[str] | None = None) -> int:
         skip_integrity=args.no_integrity,
         pr_body=args.pr_body.read_text(encoding='utf-8') if args.pr_body else '',
         timeout=args.timeout, keep_reports=args.keep_reports,
+        paths=args.paths, changed_only=args.changed_only,
     )
 
     decision = decide(ev, args.mode, approved=args.approved)

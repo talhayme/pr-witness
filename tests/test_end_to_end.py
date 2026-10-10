@@ -129,3 +129,37 @@ def test_no_artefacts_are_left_in_the_repository(repo):  # noqa: F811
         if "__pycache__" not in line
     ]
     assert untracked == []
+
+
+def test_paths_restrict_every_run_to_the_named_tests(repo):  # noqa: F811
+    """Two test files; only one is named; the other must not be collected."""
+    commit(repo, "init", {"conftest.py": CONFTEST, "dates.py": SRC_OK,
+                          "tests/test_dates.py": TESTS,
+                          "tests/test_other.py": "def test_other():\n    assert True\n"})
+    base = git_ops.resolve("HEAD", cwd=repo)
+    commit(repo, "tweak", {"tests/test_dates.py": TESTS + "\n\ndef test_friday():\n    assert is_weekend(4) is False\n"})
+    ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300, paths=["tests/test_dates.py"])
+    assert ev.counts["head"]["collected"] == 3 and ev.counts["base"]["collected"] == 2
+    assert any(n.startswith("restricted to 1 path") for n in ev.notes)
+
+
+def test_changed_only_picks_the_touched_test_files_and_still_crossruns(repo):  # noqa: F811
+    commit(repo, "init", {"conftest.py": CONFTEST, "dates.py": SRC_OK,
+                          "tests/test_dates.py": TESTS,
+                          "tests/test_other.py": "def test_other():\n    assert True\n"})
+    base = git_ops.resolve("HEAD", cwd=repo)
+    commit(repo, "break and fix the test", {
+        "dates.py": SRC_OK.replace("return day >= 5", "return day >= 0"),
+        "tests/test_dates.py": TESTS.replace("assert is_weekend(0) is False", "assert is_weekend(0) is True"),
+    })
+    ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300, changed_only=True)
+    assert ev.counts["head"]["collected"] == 2            # test_other.py not run
+    assert "crossrun" in {f.signal for f in ev.findings}  # base copy of test_dates.py fails on head code
+
+
+def test_changed_only_with_no_test_changes_runs_everything(repo):  # noqa: F811
+    commit(repo, "init", {"conftest.py": CONFTEST, "dates.py": SRC_OK, "tests/test_dates.py": TESTS})
+    base = git_ops.resolve("HEAD", cwd=repo)
+    commit(repo, "docs", {"README.md": "hi\n"})
+    ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300, changed_only=True)
+    assert ev.counts["head"]["collected"] == 2 and any("whole suite" in n for n in ev.notes)

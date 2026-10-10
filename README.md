@@ -91,6 +91,8 @@ pip install pr-witness
 pr-witness --base origin/main                   # text report
 pr-witness --base origin/main --format markdown --pr-body pr.md
 pr-witness --base origin/main --mode require-ack --approved
+pr-witness --base origin/main --changed-only      # only the test files the change touches
+pr-witness --base origin/main --paths tests/api   # or a subset you name; large suites in seconds
 ```
 
 ### Signed evidence

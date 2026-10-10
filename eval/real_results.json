@@ -1,0 +1,6 @@
+[
+ {
+  "case": "sympy__sympy-19495",
+  "error": "/Users/test/.local/bin/uv pip install -q --python /Users/test/.cache/pr-witness-real/work/sympy__sympy-19495/.venv/bin/python pytest checkwash -e . mpmath\n  \u00d7 No solution found when resolving dependencies:\n  \u2570\u2500\u25b6 Because the current Python version (3.10.11) does not satisfy\n      Python>=3.11 and all versions of checkwash depend on Python>=3.11, we\n      can conclude that all versions of checkwash cannot be used.\n      And because you require checkwash, we can conclude that your\n      requirements are unsatisfiable.\n"
+ }
+]
