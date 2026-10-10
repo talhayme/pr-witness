@@ -136,7 +136,11 @@ cases/<instance>/
 ```
 
 `eval/run_real.py <case…> --python 3.9` materialises and runs them;
-results go to `eval/real_results.json`.
+results go to `eval/real_results.json`. The patch and the project under
+test are untrusted code: `--sandbox` runs every stage inside Docker
+(`eval/sandbox/Dockerfile`) — install with the network on, the test runs
+with it off, nothing mounted but this tool's own cache. All six cases give
+the same verdicts in the sandbox as on the host.
 
 ## Licences and credit
 
