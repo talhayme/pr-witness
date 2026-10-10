@@ -27,15 +27,22 @@ must be left alone. The tool gets all 17 right —
 not an accuracy claim: it says the tool has not got worse, not how it performs
 on pull requests it has never seen.
 
-The first **real** cases are in the loop: [corpus/real/swebench](corpus/real/swebench/)
-holds seven test edits made by a frontier agent on SWE-bench Verified, out of
-1,500 published patches examined, labelled against the maintainers' own test
-patches. Six run end to end today (SymPy ×3, Sphinx, Django ×2); the tool's
-verdict matches the label on all six — one `clean`, five `review`, each
-`review` showing the old and the new assertion side by side. Before the
-`review` verdict existed, three of the first four honest specification
-changes came back as a flag; that run is what produced the verdict. The
-Matplotlib case waits on a source build.
+The first **real** cases are in the loop, from two sources:
+
+- [corpus/real/swebench](corpus/real/swebench/) — seven test edits by a
+  frontier agent on SWE-bench Verified (out of 1,500 patches examined),
+  labelled against the maintainers' own test patches. Six run end to end;
+  the verdict matches on all six (one `clean`, five `review`).
+- [corpus/real/swechat](corpus/real/swechat/) — commits from real Claude
+  Code sessions on real repositories (SALT-NLP/SWE-chat): 3,355 agent
+  test edits mined, seven run end to end so far, labelled by hand. Five of
+  seven match; the two misses are written up there, and one of them is the
+  cross-run's structural limit (a deleted test replaced by a different one).
+
+The real runs changed the tool more than the synthetic corpus ever did —
+the `review` verdict, `greened_by_test_edit` (a failing suite made green by
+editing the tests, which the cross-run could not see), `base_broken`, the
+bun runner — each from a specific commit, listed in the two READMEs.
 
 See [eval/results.md](eval/results.md) for the numbers and
 [corpus/README.md](corpus/README.md) for how the cases are built.
@@ -46,6 +53,9 @@ See [eval/results.md](eval/results.md) for the numbers and
 |---|---|
 | `crossrun` | A base-branch test the PR did **not** touch that now fails on the PR's code — a hidden regression (high) |
 | `expectation_changed` | A test the PR **rewrote** whose old assertion fails on the new code; the report shows the old and new assertion (medium → `review`) |
+| `greened_by_test_edit` | A test that was red on the base branch and is green now, whose old version still fails on the new code — the test edit made it pass, not the code (medium → `review`) |
+| `tests_removed_still_passing` | A test the PR deleted that still passes against the PR's code — behaviour kept, coverage gone (medium → `review`) |
+| `base_broken` / `base_not_green` | Every base test failing is no evidence, not clean; some failing is context |
 | `denominator` | Fewer tests actually running than before — the `4966/4966 ALL PASSED` trick |
 | `skip_inflation` | Collected count steady while the skipped count climbs |
 | `claim_false` | The description asserts something the run contradicts |

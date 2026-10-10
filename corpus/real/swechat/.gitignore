@@ -1,0 +1,6 @@
+*.parquet
+candidates*.json
+shortlist.*
+diffs/
+full/
+.duckdb-tmp/

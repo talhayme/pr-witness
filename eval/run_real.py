@@ -191,7 +191,7 @@ def main() -> int:
             print("   ERROR:", r["error"].strip().splitlines()[-1][:200], flush=True)
         else:
             c = r["counts"]
-            mark = "✓" if r["verdict"] == r["label"] else "✗"
+            mark = "✓" if {"note": "clean"}.get(r["verdict"], r["verdict"]) == r["label"] else "✗"
             print(f"   {mark} label={r['label']:7} tool={r['verdict']:6}  base {c['base']['passed']}/{c['base']['collected']}  head {c['head']['passed']}/{c['head']['collected']}  cross {c['crossrun']['failed']}F/{c['crossrun']['collected']}", flush=True)
             for sig, sev, summ in r["findings"]:
                 print(f"      [{sev}] {sig}: {summ[:300]}", flush=True)

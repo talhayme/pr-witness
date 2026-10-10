@@ -184,9 +184,11 @@ def reconcile_with_run(cw_findings: list[Finding], run_findings: list[Finding]) 
 
 
 def _unit_of(node_id: str) -> str:
-    """`tests/test_x.py::TestA::test_y[param]` → `test_y`."""
-    last = node_id.rsplit("::", 1)[-1]
-    return last.split("[", 1)[0]
+    """`tests/test_x.py::TestA::test_y[param]` → `test_y`; checkwash's `TestA.test_y` → `test_y`."""
+    last = node_id.rsplit("::", 1)[-1].split("[", 1)[0]
+    if "." in last and " " not in last:
+        last = last.rsplit(".", 1)[-1]
+    return last
 
 
 def _matches_documented(unit: str, documented: set[str]) -> bool:

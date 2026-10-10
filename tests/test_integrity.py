@@ -167,3 +167,10 @@ def test_reconcile_is_a_no_op_without_a_run_finding():
     cw = [Finding("checkwash:EXPECTED_VALUE_CHANGED", Severity.HIGH, "rewritten", tests=["t.py::test_x"])]
     integrity.reconcile_with_run(cw, [])
     assert cw[0].severity is Severity.HIGH
+
+
+def test_checkwash_class_dotted_units_match_run_node_ids():
+    run = [Finding("greened_by_test_edit", Severity.MEDIUM, "x", tests=["tests/test_routing/TestRoutingEdgeCases::test_invalid_return_value_raises"])]
+    cw = [Finding("checkwash:ASSERT_WEAKENED", Severity.HIGH, "w", tests=["tests/test_routing.py::TestRoutingEdgeCases.test_invalid_return_value_raises"])]
+    integrity.reconcile_with_run(cw, run)
+    assert cw[0].severity is Severity.MEDIUM
