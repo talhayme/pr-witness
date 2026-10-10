@@ -1,0 +1,26 @@
+# Copy to .github/workflows/pr-witness.yml
+name: pr-witness
+on: pull_request
+
+permissions:
+  contents: read
+  pull-requests: write   # for the comment; drop it and set comment: "false" otherwise
+
+jobs:
+  witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # both branches must be present for the worktrees
+
+      # Install whatever your tests need, exactly as your test job does.
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e . pytest
+
+      - uses: talhayme/pr-witness@v0.1
+        with:
+          test-command: pytest
+          mode: report          # report | require-ack | strict

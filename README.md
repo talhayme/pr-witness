@@ -14,9 +14,11 @@ regression the pull request hid, whatever the green checkmark says.
 
 ## Status
 
-Phase 0 complete: a labelled corpus and a measured baseline. The tool itself
-is not built yet — the measuring stick came first, deliberately, because it is
-the only way to find out whether the tool is worth building.
+Phases 0–4 complete: corpus, cross-run, diff integrity (via checkwash),
+claim checking and the GitHub Action. On the corpus: precision 0.91,
+recall 1.00 — see [eval/witness_results.md](eval/witness_results.md).
+Not yet: signed evidence (phase 5) and the Claude Code plugin (phase 6).
+Nothing is published to PyPI or the Marketplace yet.
 
 See [eval/results.md](eval/results.md) for the numbers and
 [corpus/README.md](corpus/README.md) for how the cases are built.
@@ -30,6 +32,62 @@ See [eval/results.md](eval/results.md) for the numbers and
 | `skip_inflation` | Collected count steady while the skipped count climbs |
 | `claim_false` | The description asserts something the run contradicts |
 | `claim_unverifiable` | A claim nothing in CI can confirm or deny |
+
+## As a GitHub Action
+
+```yaml
+# .github/workflows/pr-witness.yml
+name: pr-witness
+on: pull_request
+permissions:
+  contents: read
+  pull-requests: write      # for the comment
+
+jobs:
+  witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }     # both branches must be present
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e . pytest  # whatever your own test job installs
+      - uses: talhayme/pr-witness@v0.1
+        with:
+          test-command: pytest        # or vitest, jest, go
+          mode: report                # report | require-ack | strict
+```
+
+It posts one comment per pull request and edits it on every push, so the
+thread does not fill with stale reports. The same report goes to the job
+summary, and `evidence.json` is exposed as an output for anything downstream.
+
+| mode | behaviour |
+|---|---|
+| `report` | never fails the job. The default. |
+| `require-ack` | fails on a flag until a maintainer adds the `test-change-approved` label |
+| `strict` | fails on a flag; the label documents intent but does not change the facts |
+
+A *flag* is a disproved claim or a high finding. Medium findings and
+misleading claims are reported but never fail the job in any mode.
+
+Locally, the same thing:
+
+```bash
+pip install pr-witness
+pr-witness --base origin/main                   # text report
+pr-witness --base origin/main --format markdown --pr-body pr.md
+pr-witness --base origin/main --mode require-ack --approved
+```
+
+### How to clear a false alarm
+
+1. Read the finding's "↳" line — every one says when it is innocent.
+2. If the behaviour change is intentional, say so in the pull request and
+   add `test-change-approved`. In `require-ack` mode that is enough.
+3. If pr-witness is wrong, [open an issue](../../issues) with the diff; it
+   becomes a `clean` case in the corpus so the next release cannot regress.
 
 ## Relationship to checkwash
 

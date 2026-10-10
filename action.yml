@@ -1,0 +1,149 @@
+name: pr-witness
+description: >-
+  Runs the base branch's tests against a pull request's code and checks the
+  description's claims against what actually happened. Reports; does not
+  block unless asked to.
+author: Vitalii Bogachev
+
+branding:
+  icon: eye
+  color: gray-dark
+
+inputs:
+  test-command:
+    description: >-
+      Runner to use: pytest, vitest, jest or go. Detected from the repository
+      when omitted.
+    required: false
+    default: ""
+  mode:
+    description: >-
+      report (never fail), require-ack (fail on a flag until the
+      test-change-approved label is applied) or strict (fail on a flag
+      regardless of label).
+    required: false
+    default: report
+  base:
+    description: Base ref. Defaults to the pull request's base SHA.
+    required: false
+    default: ""
+  comment:
+    description: Post the report as a pull-request comment (one, updated per run).
+    required: false
+    default: "true"
+  python-version:
+    description: Python version used to run pr-witness itself.
+    required: false
+    default: "3.12"
+  timeout:
+    description: Seconds allowed for each of the three test runs.
+    required: false
+    default: "1800"
+
+outputs:
+  verdict:
+    description: clean, note or flag
+    value: ${{ steps.witness.outputs.verdict }}
+  report:
+    description: Path to the markdown report
+    value: ${{ steps.witness.outputs.report }}
+  evidence:
+    description: Path to the evidence JSON (for phase 5's attestation)
+    value: ${{ steps.witness.outputs.evidence }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python for pr-witness
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install pr-witness
+      shell: bash
+      run: python -m pip install --quiet "$GITHUB_ACTION_PATH"
+
+    - name: Resolve base and head
+      id: refs
+      shell: bash
+      env:
+        INPUT_BASE: ${{ inputs.base }}
+        PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      run: |
+        # A shallow checkout has neither side; both must exist locally for
+        # the worktrees. fetch-depth: 0 in the workflow avoids this fetch,
+        # but the action should not depend on the caller remembering.
+        base="${INPUT_BASE:-$PR_BASE_SHA}"
+        head="${PR_HEAD_SHA:-HEAD}"
+        if [ -z "$base" ]; then
+          echo "::error::no base: run on pull_request or pass inputs.base"
+          exit 1
+        fi
+        git fetch --quiet --no-tags origin "$base" "$head" 2>/dev/null || true
+        echo "base=$base" >> "$GITHUB_OUTPUT"
+        echo "head=$head" >> "$GITHUB_OUTPUT"
+
+    - name: Does the pull request carry the approval label?
+      id: label
+      shell: bash
+      env:
+        LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+      run: |
+        if echo "$LABELS_JSON" | grep -q '"test-change-approved"'; then
+          echo "approved=--approved" >> "$GITHUB_OUTPUT"
+        else
+          echo "approved=" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Save the pull request description
+      shell: bash
+      env:
+        PR_BODY: ${{ github.event.pull_request.body }}
+      run: printf '%s' "$PR_BODY" > "$RUNNER_TEMP/pr-body.md"
+
+    - name: Run pr-witness
+      id: witness
+      shell: bash
+      env:
+        RUNNER_FLAG: ${{ inputs.test-command && format('--runner {0}', inputs.test-command) || '' }}
+      run: |
+        set +e
+        pr-witness \
+          --base "${{ steps.refs.outputs.base }}" \
+          --head "${{ steps.refs.outputs.head }}" \
+          --mode "${{ inputs.mode }}" \
+          --timeout "${{ inputs.timeout }}" \
+          --pr-body "$RUNNER_TEMP/pr-body.md" \
+          --format markdown \
+          --output "$RUNNER_TEMP/pr-witness.md" \
+          --evidence "$RUNNER_TEMP/evidence.json" \
+          ${{ steps.label.outputs.approved }} \
+          $RUNNER_FLAG
+        code=$?
+        set -e
+        verdict=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["verdict"])' \
+          "$RUNNER_TEMP/evidence.json" 2>/dev/null || echo unknown)
+        echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
+        echo "evidence=$RUNNER_TEMP/evidence.json" >> "$GITHUB_OUTPUT"
+        echo "report=$RUNNER_TEMP/pr-witness.md" >> "$GITHUB_OUTPUT"
+        cat "$RUNNER_TEMP/pr-witness.md" >> "$GITHUB_STEP_SUMMARY"
+        echo "exit=$code" >> "$GITHUB_OUTPUT"
+
+    - name: Comment on the pull request
+      if: inputs.comment == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+      run: |
+        # One comment per pull request, edited on each run, so the thread
+        # does not fill with stale reports.
+        { echo "<!-- pr-witness -->"; cat "$RUNNER_TEMP/pr-witness.md"; } > "$RUNNER_TEMP/comment.md"
+        gh pr comment "${{ github.event.pull_request.number }}" \
+          --body-file "$RUNNER_TEMP/comment.md" --edit-last --create-if-none \
+          || echo "::warning::could not post the comment (needs pull-requests: write)"
+
+    - name: Apply the gate
+      shell: bash
+      run: exit ${{ steps.witness.outputs.exit }}
