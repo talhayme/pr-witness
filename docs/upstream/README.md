@@ -11,6 +11,7 @@ This directory holds those proposals and their status.
 | [01](01-broad-catch-js.md) | `try`/`catch` swallowing an assertion | **filed: [checkwash#363](https://github.com/taipei49314/checkwash/issues/363)** (10 Oct 2026) |
 | [02](02-ts-ignore.md) | `@ts-nocheck` on a test file | draft, held |
 | [03](03-eslint-disable.md) | `eslint-disable` of a test-quality rule | draft, held |
+| — | Proposal: shared corpus + findings contract | **filed: [checkwash#364](https://github.com/taipei49314/checkwash/issues/364)** (10 Oct 2026) |
 
 02 and 03 are deliberately held back. 01 is the strongest of the three — a
 clear parity gap, reproducible in one command — and makes a better first
