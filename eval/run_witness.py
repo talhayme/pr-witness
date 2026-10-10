@@ -66,12 +66,24 @@ def main() -> int:
                     encoding="utf-8",
                 )
 
+            body = case / "pr_body.md"
             try:
                 ev = witness(repo=repo, base="HEAD~1", head="HEAD",
                              runner_name="vitest" if language == "typescript" else "pytest",
+                             pr_body=body.read_text(encoding="utf-8") if body.exists() else "",
                              timeout=300)
                 signals = [f.signal for f in ev.findings if f.severity in FLAGGING]
                 info = [f.signal for f in ev.findings if f.severity not in FLAGGING]
+                # A disproved claim is a flag in its own right — some cheats
+                # leave the run entirely clean and lie only in the prose.
+                signals += [
+                    f"claim_false({c.shown})" for c in ev.claims
+                    if c.verdict.value == "false"
+                ]
+                info += [
+                    f"claim_misleading({c.shown})" for c in ev.claims
+                    if c.verdict.value == "misleading"
+                ]
             except Exception as exc:  # noqa: BLE001
                 print(f"  ERROR {case.name}: {exc}", file=sys.stderr)
                 signals, info = [], [f"error: {exc}"]

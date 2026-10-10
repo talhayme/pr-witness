@@ -37,6 +37,16 @@ def to_text(ev: Evidence) -> str:
     out += _counts_table(ev.counts)
     out.append("")
 
+    # Claims first: "the description says X, the run says Y" is the finding
+    # a human grasps fastest, and the one hardest to argue with.
+    if ev.claims:
+        out.append("  Claims")
+        for c in ev.claims:
+            out.append(f'   {c.verdict.mark} "{c.shown}"')
+            if c.because:
+                out.append(f"       — {c.because}")
+        out.append("")
+
     if not ev.findings:
         out.append("  nothing to report: the base branch's tests still pass, and")
         out.append("  no test stopped running.")
@@ -66,6 +76,16 @@ def to_markdown(ev: Evidence) -> str:
         for row in ("collected", "ran", "passed", "failed", "skipped"):
             cells = [str(ev.counts[c].get(row, "–")) for c in cols]
             out.append(f"| {row} | " + " | ".join(cells) + " |")
+        out.append("")
+
+    if ev.claims:
+        out.append("**Claims**")
+        out.append("")
+        for c in ev.claims:
+            icon = {"true": "✅", "false": "❌", "misleading": "⚠️",
+                    "unverifiable": "❔"}[c.verdict.value]
+            because = f" — {c.because}" if c.because else ""
+            out.append(f'{icon} "{c.shown}"{because}')
         out.append("")
 
     if not ev.findings:

@@ -1,121 +1,134 @@
-# Evaluation — pr-witness (phase 2)
-
-Run end to end: every case becomes a real two-commit git repository, and the
-tool does the real thing — three worktrees, three runner invocations, three
-JUnit reports, plus checkwash and the JS/TS gap detectors.
+# Evaluation — pr-witness (phase 3)
 
 ```bash
-python eval/run_witness.py
+python eval/run_witness.py     # findings + claim verdicts
+python eval/run_claims.py      # claim verdicts against the labels
 ```
 
-## Where phase 2 landed
+## Where phase 3 landed
 
-| | P | R | F1 | cases |
-|---|---|---|---|---|
-| checkwash 0.6.0 (its own gate) | 0.67 | 0.22 | 0.33 | 16 |
-| phase-0 baseline (raw counts) | 0.80 | 0.89 | 0.84 | 16 |
-| phase 1 (cross-run + counters) | 0.89 | 0.89 | 0.89 | 16 |
-| **phase 2 (+ diff integrity)** | **0.90** | **0.90** | **0.90** | 17 |
+| | P | R | F1 |
+|---|---|---|---|
+| checkwash 0.6.0 (its own gate) | 0.67 | 0.22 | 0.33 |
+| phase-0 baseline (raw counts) | 0.80 | 0.89 | 0.84 |
+| phase 1 (cross-run + counters) | 0.89 | 0.89 | 0.89 |
+| phase 2 (+ diff integrity) | 0.90 | 0.90 | 0.90 |
+| **phase 3 (+ claim checking)** | **0.91** | **1.00** | **0.95** |
 
-The headline number barely moved, and that is the honest summary: phase 2
-added a whole class of detection without improving the score, because the
-corpus had almost no cases only a diff can catch. So one was added —
-`ts-broad-catch`, where **all three runs report 3 collected, 3 passed**. No
-run-level signal can see it. That case is the entire argument for this phase.
+Recall 1.00: every dishonest case in the corpus is now caught. No honest
+change received a `claim_false`.
 
-## What the plan assumed, and what was true
+Claim verdicts agree with the hand-written labels on **18 of 19** claims
+(0.95). The 19th is discussed below.
 
-The plan was written against checkwash v0.5 and listed ten JS/TS patterns to
-implement. Measured against 0.6.0, seven were already covered:
+## The case that needed this phase
 
-| Pattern | checkwash 0.6.0 |
-|---|---|
-| `expect(...)` removed | ✅ `ASSERT_REMOVED` |
-| `.skip` / `xit` / `xdescribe` | ✅ `TEST_DISABLED` |
-| `.only` narrowing the run | ✅ `TEST_DISABLED` |
-| `toBeCloseTo` with reduced precision | ✅ `ASSERT_WEAKENED` |
-| `expect.anything()` for a value | ✅ `ASSERT_WEAKENED` |
-| `vi.mock` on the module under test | ✅ `TEST_PATCHES_SUBJECT` |
-| CI `continue-on-error` / `\|\| true` | ✅ `CI_WORKFLOW_TOUCHED` |
-| `try`/`catch` swallowing an assertion | ❌ implemented here |
-| `@ts-ignore` on an asserting line | ❌ implemented here |
-| `eslint-disable` of a test-quality rule | ❌ implemented here |
+`claim-inflated-count` was missed by phases 0, 1 and 2 alike. The run is
+entirely honest — 8 tests before, 9 after, all green, nothing skipped, the
+cross-run clean. The lie lives only in the prose:
 
-Writing the other seven would have been a week spent producing a worse copy
-of working code. Each remaining gap is written up in
-[`docs/upstream/`](../docs/upstream/) as a proposal to checkwash first, per
-the plan's rule — **none have been sent yet; they need your approval.**
+> Added 41 tests for the discount logic. 49/49 passing.
 
-## The precision scare, and what it taught
+```
+verdict: flag
+findings: none
+  false  "49/49 passing"   — the run reports 9 passed
+  false  "Added 41 tests"  — the run shows 1 new test, not 41
+```
 
-Integrating checkwash dropped precision from 0.90 to **0.75**, below the
-plan's floor. Cause: I mapped its `warn` findings to MEDIUM, making them
-flags. But checkwash blocks only on `high` — it raises `warn` for every
-disappeared test, so every honest rename and module split produced a
-handful. Mapping `warn` to LOW restored 0.82.
+No run-level or diff-level signal can see this. It is also, per the plan's
+source research, one of the commonest real-world shapes.
 
-The remaining gap was one real disagreement. checkwash blocks on **any**
-added skip marker, whatever its reason. pr-witness does not flag a skip whose
-reason names a tracking issue.
+## What "misleading" is for, and why it earns its place
 
-Rather than silently discarding its finding, the report keeps it, downgrades
-it to INFO, and states the disagreement:
+The hardest verdicts were not the lies. They were the sentences that are
+literally true and leave a false impression:
 
-> checkwash reports every added skip marker. pr-witness does not flag this
-> one: the run shows a skip reason that names an issue. If your policy is
-> that no skip is acceptable, trust checkwash here, not us.
+| Case | Claim | Run says | Verdict |
+|---|---|---|---|
+| `denominator-narrowed-testpaths` | "8 tests pass" | exactly 8 pass | **misleading** — the base branch ran 14 |
+| `crossrun-expected-rewritten` | "All tests pass" | all 6 pass | **misleading** — a base test fails on this code |
+| `ts-broad-catch` | "All tests pass" | 3/3 on every run | **misleading** — an assertion was neutralised |
+| `skip-inflation-flaky-excuse` | "8 passed" | 8 collected, 6 passed | **misleading** — the number is real, the line is wrong |
 
-That is the difference between integrating a tool and overruling it.
+A checker that called these `true` would be trivially gameable: narrow the
+suite, then quote the smaller number truthfully. One that called them
+`false` would be accusing authors of lying when they quoted their own
+terminal correctly. `misleading` is the honest third answer, and getting
+these four right took three separate fixes:
 
-## Two bugs the tests caught
+1. **Judge a green claim against the base denominator**, not against itself
+   (0.74 → 0.84).
+2. **A number from the wrong line of the summary** — `collected` quoted as
+   `passed` — is inaccuracy, not invention. But only when nothing actually
+   failed: a green number over a red run stays `false` (0.84 → 0.95).
+3. **Temper a green claim with diff evidence.** `ts-broad-catch` reports
+   3 collected / 3 passed on all three runs; only the `broad_catch` finding
+   knows the assertion was neutralised. This is the three layers finally
+   working together — the run says green, the diff says hollow, the claim
+   checker says misleading.
 
-**The eslint detector never worked.** Its regex excluded `/` from the rule
-list, so `vitest/expect-expect` was truncated to `vitest` and matched
-nothing. It would have shipped as dead code that looked fine in review.
+## What is deliberately not checked
 
-**A bare `/* eslint-disable */`** names no rules, which means all of them.
-The first fix skipped it entirely.
+`Fixes #318` is reported `unverifiable`, not guessed at. Whether a change
+fixes an issue is not something a test run can answer, and inventing a
+heuristic for it would produce confident nonsense in both directions.
 
-## What is still wrong
+"Added tests for `parse_date`" with no new test naming `parse_date` is
+`misleading`, never `false`: the absence of a name is weak evidence, since
+the behaviour may be covered indirectly.
 
-| case | outcome | why |
-|---|---|---|
-| `clean-feature-and-tests-removed` | false alarm | A feature removed with its tests. The cross-run cannot confirm the removed tests because they no longer compile — which is what honest removal looks like. Needs code-side analysis: were the tests' *targets* also removed? |
-| `claim-inflated-count` | missed | Counts are honest; the PR text claims 12 tests where there are 9. Invisible to every run-level and diff-level signal. **Phase 3.** |
+No LLM is involved. The plan allows one for extracting claims from free
+prose (§8, off by default) and it is not implemented yet; a model that
+hallucinated a claim the author never made would be worse than no claim
+checking at all.
+
+## The remaining false alarm
+
+`clean-feature-and-tests-removed`, unchanged since phase 1: a feature was
+removed with its tests, and the cross-run cannot confirm the removed tests
+because they no longer compile — which is exactly what honest removal looks
+like. Separating it from a hidden regression needs code-side analysis of
+whether the removed tests' *targets* also went away.
+
+Notably, its claims are all judged correctly ("3 tests remain" → true). The
+false alarm comes from the run-level signals, not from this phase.
 
 ## Caveat, unchanged
 
-17 synthetic cases. P=0.90 over 10 positives has a wide confidence interval.
-A regression gate for phase 3, not a published accuracy claim.
+17 synthetic cases, 19 labelled claims. R=1.00 over 10 positives means "no
+misses in this corpus", not "no misses". The honest reading is that the
+corpus no longer discriminates between phases — it needs harder cases more
+than the tool needs more detectors.
 
 ---
 
 # Evaluation — pr-witness (phase 1)
 
-Cases: 17  ·  TP 9  FP 1  TN 6  FN 1
+Cases: 17  ·  TP 10  FP 1  TN 6  FN 0
 
 | metric | value |
 |---|---|
-| precision | 0.90 |
-| recall | 0.90 |
-| F1 | 0.90 |
+| precision | 0.91 |
+| recall | 1.00 |
+| F1 | 0.95 |
 
 | case | truth | outcome | signals |
 |---|---|---|---|
-| `claim-fix-without-test` | cheat | TP | crossrun |
-| `claim-inflated-count` | cheat | FN | — |
+| `claim-fix-without-test` | cheat | TP | crossrun, claim_false(Added test) |
+| `claim-inflated-count` | cheat | TP | claim_false(49/49 passing), claim_false(Added 41 tests) |
 | `clean-feature-and-tests-removed` | clean | FP | crossrun_vanished, denominator_removed, (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED) |
 | `clean-feature-with-tests-added` | clean | TN | — |
 | `clean-flaky-skipped-with-issue` | clean | TN | (checkwash:TEST_DISABLED), (skip_documented) |
 | `clean-parametrised-same-coverage` | clean | TN | (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED) |
 | `clean-spec-change-expected-updated` | clean | TN | — |
 | `clean-tests-split-into-modules` | clean | TN | (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED) |
-| `crossrun-expected-rewritten` | cheat | TP | crossrun, (checkwash:ASSERT_WEAKENED), (checkwash:ASSERT_WEAKENED) |
-| `crossrun-guard-tests-deleted` | cheat | TP | crossrun, denominator_removed, (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED) |
-| `denominator-narrowed-testpaths` | cheat | TP | checkwash:CI_WORKFLOW_TOUCHED, crossrun, denominator_removed |
-| `denominator-renamed-out-of-collection` | cheat | TP | crossrun, denominator_removed, (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED) |
-| `skip-inflation-flaky-excuse` | cheat | TP | checkwash:TEST_DISABLED, crossrun, denominator, skip_inflation, (checkwash:TEST_DISABLED) |
-| `ts-broad-catch` | cheat | TP | broad_catch |
-| `ts-claim-all-pass-but-fails` | cheat | TP | crossrun |
+| `crossrun-expected-rewritten` | cheat | TP | crossrun, (checkwash:ASSERT_WEAKENED), (checkwash:ASSERT_WEAKENED), (claim_misleading(All tests pass)) |
+| `crossrun-guard-tests-deleted` | cheat | TP | crossrun, denominator_removed, claim_false(No breaking changes), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED) |
+| `denominator-narrowed-testpaths` | cheat | TP | checkwash:CI_WORKFLOW_TOUCHED, crossrun, denominator_removed, (claim_misleading(8 tests pass)) |
+| `denominator-renamed-out-of-collection` | cheat | TP | crossrun, denominator_removed, (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (claim_misleading(Tests green)) |
+| `skip-inflation-flaky-excuse` | cheat | TP | checkwash:TEST_DISABLED, crossrun, denominator, skip_inflation, (checkwash:TEST_DISABLED), (claim_misleading(8 passed)) |
+| `ts-broad-catch` | cheat | TP | broad_catch, (claim_misleading(All tests pass)) |
+| `ts-claim-all-pass-but-fails` | cheat | TP | crossrun, claim_false(5 tests pass) |
 | `ts-clean-test-helper-extracted` | clean | TN | — |
-| `ts-denominator-describe-only` | cheat | TP | crossrun, denominator, skip_inflation, (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED) |
+| `ts-denominator-describe-only` | cheat | TP | crossrun, denominator, skip_inflation, (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (checkwash:TEST_DISABLED), (claim_misleading(Suite is green)) |
