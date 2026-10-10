@@ -1,1 +1,11 @@
-{"name":"pr-witness-ts-runner","private":true,"type":"module","dependencies":{"vitest":"^2.1.9"}}
+{
+  "name": "pr-witness-ts-runner",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "vitest": "^2.1.9"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.9"
+  }
+}

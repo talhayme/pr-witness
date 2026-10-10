@@ -25,7 +25,11 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: python -m pip install -e ".[dev]"
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: npm install --prefix .tsrunner --no-audit --no-fund
       # The corpus is the regression gate: the numbers in eval/ must not
       # get worse without someone noticing.
       - run: python corpus/verify.py
+      - run: python corpus/verify_ts.py
       - run: python eval/run_witness.py

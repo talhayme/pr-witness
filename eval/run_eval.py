@@ -28,7 +28,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 CASES = ROOT / "corpus" / "cases"
-VENV = ROOT / "venv" / "bin"
+sys.path.insert(0, str(ROOT / "src"))
+from pr_witness.integrity import checkwash_command  # noqa: E402
 
 
 @dataclass
@@ -114,7 +115,7 @@ def run_checkwash(case: Case, bar: str = "verdict") -> tuple[bool, list[str]]:
         subprocess.run(["git", *env_args, "commit", "-qm", "head"], cwd=repo, check=True)
 
         proc = subprocess.run(
-            [str(VENV / "checkwash"), "check", f"{base_sha}..HEAD", "--format", "json"],
+            [*(checkwash_command() or ["checkwash"]), "check", f"{base_sha}..HEAD", "--format", "json"],
             cwd=repo, capture_output=True, text=True, timeout=180,
         )
         try:

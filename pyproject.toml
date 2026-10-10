@@ -20,3 +20,11 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+# The corpus under corpus/cases/ is made of test files on purpose — they are
+# the fixtures this tool is measured on, not this project's tests. Narrowing
+# testpaths is exactly what pr-witness flags in a pull request; here it is
+# the honest reason for doing so, and the eval scripts run those files
+# themselves.
+testpaths = ["tests"]

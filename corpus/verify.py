@@ -29,7 +29,11 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 CASES = HERE / "cases"
-PYTEST = Path(__file__).parent.parent / "venv" / "bin" / "pytest"
+# Prefer the interpreter running this script: that is the environment the
+# project was installed into, locally or in CI. The venv path is only a
+# convenience for a checkout that has one.
+_VENV_PYTEST = Path(__file__).parent.parent / "venv" / "bin" / "pytest"
+PYTEST_CMD = [str(_VENV_PYTEST)] if _VENV_PYTEST.exists() else [sys.executable, "-m", "pytest"]
 
 
 @dataclass
@@ -77,7 +81,7 @@ def parse_pytest(output: str) -> RunResult:
 
 def run_pytest(tree: Path) -> RunResult:
     proc = subprocess.run(
-        [str(PYTEST), "-p", "no:cacheprovider", "-q", "--no-header"],
+        [*PYTEST_CMD, "-p", "no:cacheprovider", "-q", "--no-header"],
         cwd=tree, capture_output=True, text=True, timeout=120,
     )
     return parse_pytest(proc.stdout + proc.stderr)
