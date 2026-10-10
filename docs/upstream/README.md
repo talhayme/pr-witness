@@ -9,8 +9,8 @@ This directory holds those proposals and their status.
 | # | Topic | Status |
 |---|---|---|
 | [01](01-broad-catch-js.md) | `try`/`catch` swallowing an assertion | **filed: [checkwash#363](https://github.com/taipei49314/checkwash/issues/363)** (10 Oct 2026) |
-| [02](02-ts-ignore.md) | `@ts-nocheck` on a test file | draft, held |
-| [03](03-eslint-disable.md) | `eslint-disable` of a test-quality rule | draft, held |
+| [02](02-ts-ignore.md) | `@ts-nocheck` on a test file | **filed: [checkwash#366](https://github.com/taipei49314/checkwash/issues/366)** (10 Oct 2026) |
+| [03](03-eslint-disable.md) | `eslint-disable` of a test-quality rule | **filed: [checkwash#367](https://github.com/taipei49314/checkwash/issues/367)** (10 Oct 2026) |
 | — | Proposal: shared corpus + findings contract | **filed: [checkwash#364](https://github.com/taipei49314/checkwash/issues/364)** (10 Oct 2026) |
 
 02 and 03 are deliberately held back. 01 is the strongest of the three — a
