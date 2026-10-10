@@ -1,3 +1,3 @@
 """pr-witness — check whether a pull request's tests still mean what they meant."""
 
-__version__ = "0.1.2"
+__version__ = "0.2.0"
