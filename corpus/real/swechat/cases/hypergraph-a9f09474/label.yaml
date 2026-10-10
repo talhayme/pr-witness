@@ -1,0 +1,18 @@
+id: swechat/hypergraph-a9f09474
+verdict: review             # existing tests rewritten after a behaviour change; the tool must surface it, a human judges
+legitimacy: pending
+language: python
+source: SWE-chat (SALT-NLP/SWE-chat, ODC-BY), commit by a Claude Code session
+repo: gilad-rubin/hypergraph
+base_commit: 5cd5899b7ee483e0b4d546ae9ce3d1d9efcf1da0
+head_commit: a9f09474ff49ca48b2f3e3f1d4bc84b29159dad0
+class: assertions_removed
+signals: [expectation_changed]
+summary: >
+  "feat(runners): make run() raise on failure by default". 14 existing test files
+  rewritten (−83/+41 assertion lines); the functions under test still exist. A deliberate
+  behaviour change with the tests following it — the textbook review case: old and new
+  assertion side by side, a human decides whether the new contract is the intended one.
+install_target: -e .
+install_extras: pytest-xdist pytest-asyncio
+license: MIT repository; diff referenced by commit. Dataset ODC-BY. No individual named.

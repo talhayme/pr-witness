@@ -111,6 +111,11 @@ RUNNERS: dict[str, Runner] = {
         "go",
         "go test ./... -v",
     ),
+    # bun's test runner writes JUnit itself; paths are passed as filters.
+    "bun": Runner(
+        "bun",
+        "bun test --reporter=junit --reporter-outfile={report}",
+    ),
     "django": Runner(
         "django",
         "python tests/runtests.py --settings=pr_witness_django_settings --parallel=1 --noinput -v1",
@@ -135,6 +140,8 @@ def detect(root: Path) -> str | None:
     pkg = root / "package.json"
     if pkg.exists():
         text = pkg.read_text(encoding="utf-8", errors="replace")
+        if '"bun test' in text or (root / "bun.lock").exists() or (root / "bun.lockb").exists():
+            return "bun"
         if "vitest" in text:
             return "vitest"
         if "jest" in text:

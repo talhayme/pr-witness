@@ -34,3 +34,11 @@ def test_detect_prefers_django_for_its_own_checkout(tmp_path):
     assert runners.detect(tmp_path) == "django"
     (tmp_path / "tests" / "runtests.py").unlink()
     assert runners.detect(tmp_path) == "pytest"
+
+
+def test_bun_runner_and_detection(tmp_path):
+    r = runners.RUNNERS["bun"]
+    argv = r.build(tmp_path / "r.xml", ["tests/unit/a.test.ts"])
+    assert argv[:2] == ["bun", "test"] and argv[-1] == "tests/unit/a.test.ts" and any(a.startswith("--reporter-outfile=") for a in argv)
+    (tmp_path / "package.json").write_text('{"scripts": {"test": "bun test tests/unit/"}, "devDependencies": {"vitest": "^4"}}')
+    assert runners.detect(tmp_path) == "bun"

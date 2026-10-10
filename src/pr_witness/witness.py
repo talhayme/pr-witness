@@ -223,6 +223,7 @@ def witness(
 
     checked = claims_mod.check(
         claims_mod.extract(claim_text), base_run, head_run, cross_run,
+        restricted=bool(paths),
     )
     # A green run proves nothing about assertions that were neutralised in
     # the diff, so the claim verdicts are tempered by what the diff showed.

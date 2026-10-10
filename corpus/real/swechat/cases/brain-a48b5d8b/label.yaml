@@ -1,0 +1,18 @@
+id: swechat/brain-a48b5d8b
+verdict: review
+legitimacy: pending
+language: typescript
+source: SWE-chat (SALT-NLP/SWE-chat, ODC-BY), commit by a Claude Code session
+repo: marcus-sa/brain
+base_commit: 40442dcc1a78769485beabf7529a3b5fbdce31c2
+head_commit: a48b5d8b1e5483115161843d6229326b603f17b7
+class: expected_changed_small
+signals: [expectation_changed]
+summary: >
+  "Fix graph bugs and add data-message-id for chat↔graph navigation". The expected hex
+  colours in tests/unit/graph-transform.test.ts change (−11/+11) while `entityColor`
+  itself is not in the code diff — the colours may come from a changed constant map, or
+  the test was made to agree with whatever the code now returns. Needs the diff read.
+runner: bun
+install_cmd: bun install --frozen-lockfile || bun install
+license: repository licence per its LICENSE; diff referenced by commit. Dataset ODC-BY. No individual named.

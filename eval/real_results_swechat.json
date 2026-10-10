@@ -1,0 +1,36 @@
+[
+ {
+  "case": "cohezion-b1ee32a9",
+  "label": "review",
+  "repo": "manderson240/cohezion",
+  "verdict": "flag",
+  "counts": {
+   "base": {
+    "collected": 87,
+    "ran": 87,
+    "passed": 0,
+    "failed": 87,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 87,
+    "ran": 87,
+    "passed": 0,
+    "failed": 87,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 87,
+    "ran": 87,
+    "passed": 0,
+    "failed": 87,
+    "skipped": 0
+   }
+  },
+  "findings": [],
+  "notes": [
+   "restricted to 5 path(s): tests/conftest.py, tests/flume/test_experience_pipeline.py, tests/sandbox/test_hooks.py, tests/security/test_pre_commit_hooks.py \u2026",
+   "checkwash produced no readable output: checkwash engine error: EngineError: strict snapshot inventory cannot inspect a submodule"
+  ]
+ }
+]

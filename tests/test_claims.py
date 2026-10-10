@@ -187,3 +187,13 @@ def test_an_unrelated_finding_does_not_taint_a_green_claim():
     claims = check(extract("All tests pass"), base, head, run(a=P, b=P))
     finding = Finding("denominator_removed", Severity.MEDIUM, "a test is gone")
     assert reconcile_with_findings(claims, [finding])[0].verdict is Verdict.TRUE
+
+
+def test_whole_suite_counts_are_unverifiable_when_the_run_was_restricted():
+    from pr_witness.claims import Verdict, check, extract
+    from pr_witness.results import Outcome, RunResult, TestCase
+    head = RunResult()
+    head.tests["t::a"] = TestCase("t::a", Outcome.PASSED)
+    claims = extract("Test suite: 3128 passed, 0 failed")
+    assert check(claims, RunResult(), head, None, restricted=True)[0].verdict is Verdict.UNVERIFIABLE
+    assert check(extract("Test suite: 3128 passed, 0 failed"), RunResult(), head, None)[0].verdict is Verdict.FALSE

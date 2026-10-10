@@ -16,7 +16,12 @@ import sys
 from pathlib import Path
 
 ASSERTION = re.compile(r"\b(assert\w*|expect|should|raises|toBe|toEqual|toStrictEqual|strictEqual|deepEqual)\b")
-SKIP = re.compile(r"\b(skip|xfail|only|todo|pytest\.mark\.skip|@unittest\.skip|it\.skip|describe\.skip|t\.Skip)\b")
+# Framework markers only. The bare words skip/todo/only are data in half the
+# test suites in the world (`status: 'todo'`), which is how a first version
+# of this counted 558 "skips added" that were mostly nothing.
+SKIP = re.compile(r"(pytest\.mark\.(skip|skipif|xfail)|pytest\.(skip|xfail)\(|@unittest\.(skip|skipIf|skipUnless|expectedFailure)"
+                  r"|\b(it|test|describe|suite)\.(skip|todo|only|fixme)\(|\b(xit|xtest|xdescribe|fit|fdescribe)\(|\bt\.Skip(f|Now)?\("
+                  r"|#\[ignore\]|@Ignore\b|@Disabled\b|\.skip\s*$)")
 EXPECTED = re.compile(r"(toBe|toEqual|assertEqual|assertEquals|assert\s+\w+\s*==|==\s*|expect\()")
 
 

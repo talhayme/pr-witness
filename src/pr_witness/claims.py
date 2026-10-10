@@ -256,15 +256,29 @@ def reconcile_with_findings(claims: list[Claim], findings) -> list[Claim]:
     return claims
 
 
-def check(claims: list[Claim], base, head, cross=None) -> list[Claim]:
+# Claims about the whole suite that a run restricted to some files cannot
+# judge. "3128 passed" against a run of five files is not false, it is
+# unmeasured — and the first real case said "false". Scoped claims (a named
+# test was added, no production file changed) are unaffected.
+_WHOLE_SUITE = {"count_passed", "all_pass", "count_collected", "no_breaking"}
+
+
+def check(claims: list[Claim], base, head, cross=None, restricted: bool = False) -> list[Claim]:
     """Give every claim a verdict, using what the runs actually reported.
 
     `base`, `head` and `cross` are RunResult objects. Nothing here guesses:
     a claim whose truth the runs cannot establish stays `unverifiable`, which
-    is a real answer and often the most useful one.
+    is a real answer and often the most useful one. `restricted` says the
+    runs covered only some test files (--paths / --changed-only).
     """
     for claim in claims:
         kind = claim.kind
+
+        if restricted and kind in _WHOLE_SUITE:
+            claim.verdict = Verdict.UNVERIFIABLE
+            claim.because = ("the run was restricted to the test files the change touched; "
+                             "a whole-suite count cannot be checked against it")
+            continue
 
         if kind == "count_passed":
             stated = int(claim.data["n"])
