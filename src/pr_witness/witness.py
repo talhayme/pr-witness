@@ -7,6 +7,7 @@ import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from pr_witness import __version__
 from pr_witness import claims as claims_mod
 from pr_witness import git_ops, integrity, runners
 from pr_witness.compare import Finding, Severity, compare, summarise
@@ -38,7 +39,7 @@ class Evidence:
         return "clean"
 
     def as_dict(self) -> dict:
-        return {
+        payload = {
             "schema": "pr-witness/evidence/v1",
             "base": self.base_sha,
             "head": self.head_sha,
@@ -48,7 +49,20 @@ class Evidence:
             "findings": [f.as_dict() for f in self.findings],
             "claims": [c.as_dict() for c in self.claims],
             "notes": self.notes,
+            "tool": {"name": "pr-witness", "version": __version__},
         }
+        # Inside Actions, record which run produced this. The signature
+        # proves the file was not altered; this says where to look for the
+        # logs that produced it.
+        if os.environ.get("GITHUB_RUN_ID"):
+            payload["ci"] = {
+                "provider": "github-actions",
+                "repository": os.environ.get("GITHUB_REPOSITORY", ""),
+                "run_id": os.environ["GITHUB_RUN_ID"],
+                "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", ""),
+                "workflow": os.environ.get("GITHUB_WORKFLOW", ""),
+            }
+        return payload
 
 
 def _env_for(tree: Path, repo: Path) -> dict[str, str]:

@@ -14,10 +14,10 @@ regression the pull request hid, whatever the green checkmark says.
 
 ## Status
 
-Phases 0–4 complete: corpus, cross-run, diff integrity (via checkwash),
-claim checking and the GitHub Action. On the corpus: precision 0.91,
+Phases 0–5 complete: corpus, cross-run, diff integrity (via checkwash),
+claim checking, the GitHub Action and signed evidence. On the corpus: precision 0.91,
 recall 1.00 — see [eval/witness_results.md](eval/witness_results.md).
-Not yet: signed evidence (phase 5) and the Claude Code plugin (phase 6).
+Not yet: the Claude Code plugin (phase 6).
 Nothing is published to PyPI or the Marketplace yet.
 
 See [eval/results.md](eval/results.md) for the numbers and
@@ -80,6 +80,26 @@ pr-witness --base origin/main                   # text report
 pr-witness --base origin/main --format markdown --pr-body pr.md
 pr-witness --base origin/main --mode require-ack --approved
 ```
+
+### Signed evidence
+
+With `sign: "true"` (the default) the action signs `evidence.json` with
+[GitHub Artifact Attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations),
+and the comment links to the attestation. That is what makes the report
+worth more than a comment an agent could have typed: it proves the file was
+produced by this workflow, in CI, and not altered since.
+
+```bash
+gh attestation verify evidence.json --repo you/your-repo \
+  --predicate-type https://github.com/talhayme/pr-witness/evidence/v1
+```
+
+The job needs `id-token: write`, `attestations: write` and
+`artifact-metadata: write`. **Signing works in public repositories on every
+GitHub plan; private repositories need Enterprise Cloud.** When it cannot run
+the report is still posted, marked "Unsigned" with the reason.
+
+The evidence format is [`schema/evidence.v1.json`](schema/evidence.v1.json).
 
 ### How to clear a false alarm
 

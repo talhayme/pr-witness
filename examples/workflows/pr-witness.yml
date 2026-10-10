@@ -4,7 +4,10 @@ on: pull_request
 
 permissions:
   contents: read
-  pull-requests: write   # for the comment; drop it and set comment: "false" otherwise
+  pull-requests: write        # the comment; drop it and set comment: "false" otherwise
+  id-token: write             # signing — public repos on any plan,
+  attestations: write         # private repos need Enterprise Cloud;
+  artifact-metadata: write    # drop all three and set sign: "false" otherwise
 
 jobs:
   witness:

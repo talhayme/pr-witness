@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/talhayme/pr-witness/schema/evidence.v1.json",
+  "title": "pr-witness evidence",
+  "description": "What pr-witness observed about one pull request: the three runs, the findings, the claims and their verdicts. This is the predicate that gets signed.",
+  "type": "object",
+  "required": ["schema", "base", "head", "runner", "verdict", "findings", "claims", "tool"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "pr-witness/evidence/v1" },
+    "base": { "$ref": "#/$defs/sha" },
+    "head": { "$ref": "#/$defs/sha" },
+    "runner": { "enum": ["pytest", "vitest", "jest", "go"] },
+    "verdict": { "enum": ["clean", "note", "flag"] },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": { "$ref": "#/$defs/counts" },
+        "head": { "$ref": "#/$defs/counts" },
+        "crossrun": { "$ref": "#/$defs/counts" }
+      }
+    },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "claims": { "type": "array", "items": { "$ref": "#/$defs/claim" } },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "tool": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "const": "pr-witness" },
+        "version": { "type": "string" }
+      }
+    },
+    "ci": {
+      "description": "Present when run inside GitHub Actions. Lets a reader tie the evidence to the run that produced it.",
+      "type": "object",
+      "properties": {
+        "provider": { "const": "github-actions" },
+        "repository": { "type": "string" },
+        "run_id": { "type": "string" },
+        "run_attempt": { "type": "string" },
+        "workflow": { "type": "string" }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "required": ["mode", "exit_code", "reason"],
+      "properties": {
+        "mode": { "enum": ["report", "require-ack", "strict"] },
+        "exit_code": { "type": "integer" },
+        "reason": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "counts": {
+      "type": "object",
+      "required": ["collected", "ran", "passed", "failed", "skipped"],
+      "additionalProperties": false,
+      "properties": {
+        "collected": { "type": "integer", "minimum": 0 },
+        "ran": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["signal", "severity", "summary", "innocent_explanation", "tests"],
+      "additionalProperties": false,
+      "properties": {
+        "signal": { "type": "string" },
+        "severity": { "enum": ["high", "medium", "low", "info"] },
+        "summary": { "type": "string" },
+        "innocent_explanation": { "type": "string" },
+        "tests": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "required": ["kind", "text", "quote", "verdict", "because"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "type": "string" },
+        "text": { "type": "string" },
+        "quote": { "type": "string" },
+        "verdict": { "enum": ["true", "false", "misleading", "unverifiable"] },
+        "because": { "type": "string" }
+      }
+    }
+  }
+}
