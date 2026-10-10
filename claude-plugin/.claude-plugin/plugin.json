@@ -1,0 +1,10 @@
+{
+  "name": "pr-witness",
+  "displayName": "pr-witness",
+  "version": "0.1.0",
+  "description": "A polite guard around test files, and a check of \"all tests pass\" against what actually ran. Advisory in the session; the signed CI report is the proof.",
+  "author": { "name": "Vitalii Bogachev", "url": "https://github.com/talhayme" },
+  "repository": "https://github.com/talhayme/pr-witness",
+  "license": "Apache-2.0",
+  "keywords": ["tests", "ci", "verification", "agents"]
+}

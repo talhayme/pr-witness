@@ -17,7 +17,6 @@ regression the pull request hid, whatever the green checkmark says.
 Phases 0–5 complete: corpus, cross-run, diff integrity (via checkwash),
 claim checking, the GitHub Action and signed evidence. On the corpus: precision 0.91,
 recall 1.00 — see [eval/witness_results.md](eval/witness_results.md).
-Not yet: the Claude Code plugin (phase 6).
 Nothing is published to PyPI or the Marketplace yet.
 
 See [eval/results.md](eval/results.md) for the numbers and
@@ -108,6 +107,34 @@ The evidence format is [`schema/evidence.v1.json`](schema/evidence.v1.json).
    add `test-change-approved`. In `require-ack` mode that is enough.
 3. If pr-witness is wrong, [open an issue](../../issues) with the diff; it
    becomes a `clean` case in the corpus so the next release cannot regress.
+
+## In Claude Code
+
+```bash
+claude plugin marketplace add talhayme/pr-witness
+claude plugin install pr-witness
+```
+
+Three small things, all advisory:
+
+- **A pause before a test file changes.** Editing, writing or `rm`/`mv`/`sed`-ing
+  a test file asks for confirmation, with the reasoning: *"if the behaviour is
+  meant to change, say so; if the test is in the way, fix the code — CI will
+  run the old test against the new code either way."* `PR_WITNESS_GUARD=deny`
+  for a hard no, `PR_WITNESS_GUARD=off` to silence it.
+- **A check when the agent says the tests pass.** When the final message makes
+  a checkable claim — "all tests pass", "12/12 green", "added tests for X" —
+  the hook runs `pr-witness` on the working tree against the base branch and
+  shows any claim the run contradicts, in the session. It never blocks the
+  stop: a hook that refused to let the agent finish until the numbers matched
+  would teach it to stop giving numbers.
+- **`/pr-witness:verify-before-done`** — a checklist: run the whole suite,
+  quote the runner's own summary line, report the denominator, list every
+  changed test with its reason.
+
+The plugin is a courtesy, not a control. The agent runs inside its own
+environment and can route around any hook. The proof is the signed report
+from CI, where the agent cannot reach.
 
 ## Relationship to checkwash
 
