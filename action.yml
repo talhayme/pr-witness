@@ -67,7 +67,7 @@ runs:
   using: composite
   steps:
     - name: Set up Python for pr-witness
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ inputs.python-version }}
 
@@ -145,7 +145,7 @@ runs:
     - name: Keep the evidence
       # The signature is only useful to someone who can get the signed file.
       # The first live run signed evidence.json and then threw it away.
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: pr-witness-evidence
         path: |
