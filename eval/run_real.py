@@ -7,6 +7,13 @@ the repository's era can run, install it, and run pr-witness restricted to
 the test files the change touches. The result is compared with the label.
 
     python eval/run_real.py [case-id …] [--python 3.10]
+    python eval/run_real.py --sandbox [case-id …]     # inside Docker, see below
+
+The project under test and the agent's patch are untrusted code. `--sandbox`
+runs every stage in the `pr-witness-sandbox` image (eval/sandbox/Dockerfile):
+clone + install with the network on, the test runs with it off, no host
+directory mounted but a cache of this tool's own, no capabilities, a memory
+and process ceiling. The host runs nothing but docker.
 """
 from __future__ import annotations
 
@@ -74,14 +81,21 @@ def venv_for(work: Path, lab: dict, python: str) -> Path:
 RUNNER = {"django/django": "django"}
 
 
-def run_case(case: Path, python: str) -> dict:
+def run_case(case: Path, python: str, stage: str = "all") -> dict:
     lab = label(case)
-    work = materialise(case, lab)
-    venv = venv_for(work, lab, python)
+    work = CACHE / "work" / case.name
+    if stage in ("all", "install"):
+        work = materialise(case, lab)
+        venv_for(work, lab, python)
+        if stage == "install":
+            return {"case": case.name, "stage": "installed"}
+    venv = work / ".venv"
     ev_path = work / "evidence.json"
     env = {**os.environ, "PATH": f"{venv / 'bin'}{os.pathsep}{os.environ['PATH']}", "VIRTUAL_ENV": str(venv)}
     env.pop("PYTHONPATH", None)
     witness_bin = ROOT / "venv" / "bin" / "pr-witness"
+    if not witness_bin.exists():
+        witness_bin = Path(shutil.which("pr-witness") or "pr-witness")
     p = subprocess.run([str(witness_bin), "--base", "HEAD~1", "--head", "HEAD", "--runner", RUNNER.get(lab["repo"], "pytest"),
                         "--changed-only", "--format", "json", "--evidence", str(ev_path), "--timeout", "1500"],
                        cwd=work, capture_output=True, text=True, timeout=3600, env=env)
@@ -93,19 +107,47 @@ def run_case(case: Path, python: str) -> dict:
             "notes": ev.get("notes", [])}
 
 
+SANDBOX_IMAGE = "pr-witness-sandbox"
+SANDBOX_CACHE = Path(os.environ.get("PR_WITNESS_SANDBOX_CACHE", Path.home() / ".cache" / "pr-witness-real-sandbox"))
+
+
+def run_sandboxed(case: Path, python: str) -> dict:
+    """Two container runs: install (network on), run (network off)."""
+    SANDBOX_CACHE.mkdir(parents=True, exist_ok=True)
+    common = ["docker", "run", "--rm", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+              "--memory", "6g", "--pids-limit", "1024",
+              "-v", f"{SANDBOX_CACHE}:/work/.cache", "-v", f"{ROOT / 'corpus'}:/opt/pr-witness/corpus:ro",
+              SANDBOX_IMAGE, case.name, "--python", python]
+    sh(*common[:3], "--network", "bridge", *common[3:], "--stage", "install", timeout=7200)
+    sh(*common[:3], "--network", "none", *common[3:], "--stage", "run", timeout=7200)
+    result = SANDBOX_CACHE / "work" / case.name / "result.json"
+    return json.loads(result.read_text(encoding="utf-8"))
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("cases", nargs="*")
     ap.add_argument("--python", default="3.10")
+    ap.add_argument("--stage", choices=["all", "install", "run"], default="all",
+                    help="internal: one stage, used inside the sandbox container")
+    ap.add_argument("--sandbox", action="store_true", help="run every stage inside Docker")
     args = ap.parse_args()
     names = args.cases or sorted(p.name for p in CASES.iterdir() if p.is_dir())
     out = []
     for n in names:
         print(f"== {n}", flush=True)
         try:
-            r = run_case(CASES / n, args.python)
+            if args.sandbox:
+                r = run_sandboxed(CASES / n, args.python)
+            else:
+                r = run_case(CASES / n, args.python, args.stage)
+                if args.stage == "run":
+                    (CACHE / "work" / n / "result.json").write_text(json.dumps(r), encoding="utf-8")
         except Exception as exc:  # noqa: BLE001
             r = {"case": n, "error": str(exc)[-600:]}
+        if r.get("stage") == "installed":
+            print("   installed", flush=True)
+            continue
         out.append(r)
         if "error" in r:
             print("   ERROR:", r["error"].strip().splitlines()[-1][:200], flush=True)
@@ -119,6 +161,8 @@ def main() -> int:
                 print(f"      · {n[:300]}", flush=True)
     # Merge with earlier runs so the file holds every case run so far, not
     # only this invocation's.
+    if args.stage != "all":
+        return 0
     results_path = ROOT / "eval" / "real_results.json"
     previous = json.loads(results_path.read_text(encoding="utf-8")) if results_path.exists() else []
     merged = {r["case"]: r for r in previous}

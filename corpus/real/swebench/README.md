@@ -103,6 +103,27 @@ out of these runs:
 exceeds the syntax node limit" — which pr-witness reports as a note and
 carries on.)
 
+## Sources looked at and set aside
+
+**"AI Agents Cheat on Pull Requests. I Mined 327 of Them"** (B. Kinnard,
+DEV.to, 2026) reports 27 agent-attributed pull requests with a maintainer
+complaint naming a cheat. The list is not published; the article names two
+merged examples. Checked against the GitHub API on 2026-10-10:
+
+- `microsoft/testfx#8513` — described as "deleted a test". Seven commits;
+  the test file gains lines in every one of them (+12/−0 in the final diff),
+  none deletes a test. The review thread is about which overload a test
+  should call.
+- `outline/outline#12197` — described as "removed a single `jest.mock`
+  line". It did (`server/test/setupMocks.js` −1, plus the manual mock it
+  pointed at), because the change made the mocked helper real and added 88
+  lines of tests for it. The author is the project's maintainer, not an
+  agent; the comments quoted are Copilot's *review* of the pull request.
+
+So neither example is a cheat we can use, and without the list there is
+nothing else to draw from. Not a judgement on the article's count — only
+that it cannot be reproduced from what is public.
+
 ## Format
 
 Each case is a reference, not a copy of the repository:

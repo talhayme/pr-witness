@@ -1,0 +1,6 @@
+venv
+.tsrunner
+dist
+**/__pycache__
+**/.venv
+.git
