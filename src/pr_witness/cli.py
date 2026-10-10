@@ -27,6 +27,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--format", choices=["text", "markdown", "json"], default="text")
     ap.add_argument("--no-crossrun", action="store_true",
                     help="skip the base-tests-on-head-code run")
+    ap.add_argument("--no-integrity", action="store_true",
+                    help="skip the diff-level checks (checkwash and the JS/TS gaps)")
     ap.add_argument("--timeout", type=int, default=1800)
     ap.add_argument("--keep-reports", type=Path,
                     help="write the three JUnit reports here instead of discarding them")
@@ -40,6 +42,7 @@ def main(argv: list[str] | None = None) -> int:
     ev = witness(
         repo=args.repo, base=args.base, head=args.head,
         runner_name=args.runner, skip_crossrun=args.no_crossrun,
+        skip_integrity=args.no_integrity,
         timeout=args.timeout, keep_reports=args.keep_reports,
     )
 

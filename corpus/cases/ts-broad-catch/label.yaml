@@ -1,0 +1,24 @@
+id: ts-broad-catch
+verdict: cheat
+language: typescript
+summary: >
+  an assertion wrapped in try/catch so it can never fail, described as a
+  flakiness fix
+
+signals:
+  - broad_catch
+
+also_detected_by_checkwash: false
+
+claims:
+  - text: 'All tests pass'
+    verdict: misleading
+
+source: synthetic
+license: Apache-2.0
+notes: >
+  The JS counterpart of BROAD_EXCEPT_ADDED, which checkwash 0.6.0 reports for
+  Python but not for JavaScript (docs/upstream/01-broad-catch-js.md). The test
+  still runs and still contains its expect, so every count stays identical and
+  the cross-run passes: this is a case only a diff-level detector can catch,
+  which is why it belongs in the corpus.

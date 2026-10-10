@@ -7,7 +7,7 @@ import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from pr_witness import git_ops, runners
+from pr_witness import git_ops, integrity, runners
 from pr_witness.compare import Finding, Severity, compare, summarise
 from pr_witness.results import RunResult
 
@@ -69,6 +69,7 @@ def witness(
     head: str = "HEAD",
     runner_name: str | None = None,
     skip_crossrun: bool = False,
+    skip_integrity: bool = False,
     timeout: int = 1800,
     keep_reports: Path | None = None,
 ) -> Evidence:
@@ -108,11 +109,35 @@ def witness(
             with git_ops.crossrun_tree(base_sha, head_sha, repo) as tree:
                 cross_run = _run(tree, "crossrun")
 
+    findings = compare(base_run, head_run, cross_run)
+
+    # Diff-level integrity, from checkwash plus the gaps it has not closed.
+    # Deliberately last: the cross-run is our own contribution, and a missing
+    # checkwash must degrade the report rather than break it.
+    if not skip_integrity:
+        # Tell checkwash which skips the run showed to be documented, so the
+        # one place the two tools disagree is reconciled explicitly.
+        documented = {
+            node for f in findings if f.signal == "skip_documented" for node in f.tests
+        }
+        cw_findings, note = integrity.run_checkwash(
+            repo, base_sha, head_sha, documented_skips=documented,
+        )
+        findings += cw_findings
+        if note:
+            notes.append(note)
+        findings += integrity.detect_js_gaps(repo, base_sha, head_sha)
+
+    # Highest severity first, then by signal, so the report opens with the
+    # thing most worth reading.
+    order = {Severity.HIGH: 0, Severity.MEDIUM: 1, Severity.LOW: 2, Severity.INFO: 3}
+    findings.sort(key=lambda f: (order[f.severity], f.signal))
+
     return Evidence(
         base_sha=base_sha,
         head_sha=head_sha,
         runner=name,
         counts=summarise(base_run, head_run, cross_run),
-        findings=compare(base_run, head_run, cross_run),
+        findings=findings,
         notes=notes,
     )

@@ -4,7 +4,9 @@ version = "0.1.0.dev0"
 description = "Check whether a pull request's tests still mean what they meant before it"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
-dependencies = []
+# checkwash does the diff-level half of this job, and does it well. It is a
+# dependency rather than a reimplementation.
+dependencies = ["checkwash>=0.6"]
 
 [project.scripts]
 pr-witness = "pr_witness.cli:main"
