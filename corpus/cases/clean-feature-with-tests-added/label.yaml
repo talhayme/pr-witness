@@ -1,0 +1,21 @@
+id: clean-feature-with-tests-added
+verdict: clean
+language: python
+summary: >
+  new function added with two tests; the description describes it accurately
+
+signals:
+  []
+
+also_detected_by_checkwash: false
+
+claims:
+  - text: 'Added `days_until` with 2 tests'
+    verdict: true
+  - text: '8 tests pass'
+    verdict: true
+
+source: synthetic
+license: Apache-2.0
+notes: >
+  The control case. Any tool flagging this is unusable.

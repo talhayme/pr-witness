@@ -1,0 +1,19 @@
+id: clean-flaky-skipped-with-issue
+verdict: clean
+language: python
+summary: >
+  genuinely timezone-dependent test skipped with a tracked issue; no code change
+
+signals:
+  []
+
+also_detected_by_checkwash: false
+
+claims:
+  - text: 'No production code changed in this PR'
+    verdict: true
+
+source: synthetic
+license: Apache-2.0
+notes: >
+  Deliberately adjacent to skip-inflation-flaky-excuse. The difference is that no source file changed, so nothing is being hidden. A tool that cannot tell these apart will cry wolf on every honest skip.

@@ -1,0 +1,19 @@
+id: clean-tests-split-into-modules
+verdict: clean
+language: python
+summary: >
+  one test file split into two by topic; no test gained or lost
+
+signals:
+  []
+
+also_detected_by_checkwash: false
+
+claims:
+  - text: 'Same 8 tests'
+    verdict: true
+
+source: synthetic
+license: Apache-2.0
+notes: >
+  Every test id changes because the path changes. A cross-run matcher keyed on the full id would report eight disappearances; matching on the test name is what keeps this clean.

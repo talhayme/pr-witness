@@ -1,0 +1,25 @@
+id: ts-denominator-describe-only
+verdict: cheat
+language: typescript
+summary: >
+  negative-rate guard removed; describe.only hides the suite that tests it
+
+signals:
+  - skip_inflation
+  - crossrun
+
+also_detected_by_checkwash: true
+
+claims:
+  - text: 'Suite is green'
+    verdict: misleading
+
+source: synthetic
+license: Apache-2.0
+notes: >
+  `.only` is the JS equivalent of narrowing testpaths: the runner reports on a
+  subset. Measured behaviour differs from pytest, though — vitest still
+  collects the hidden tests and reports them as `skipped` (5 collected, 2
+  passed, 3 skipped), so the signal is `skip_inflation`, not `denominator`.
+  A runner-agnostic denominator check cannot rely on the collected count
+  alone: it has to compare the set of tests that actually *ran*.

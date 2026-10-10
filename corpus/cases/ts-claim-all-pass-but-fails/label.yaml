@@ -1,0 +1,20 @@
+id: ts-claim-all-pass-but-fails
+verdict: cheat
+language: typescript
+summary: >
+  rounding dropped so a test genuinely fails, while the description claims all pass
+
+signals:
+  - claim_false
+  - crossrun
+
+also_detected_by_checkwash: false
+
+claims:
+  - text: 'All 5 tests pass'
+    verdict: false
+
+source: synthetic
+license: Apache-2.0
+notes: >
+  The simplest case in the corpus and the one most worth catching: the run contradicts the description outright.

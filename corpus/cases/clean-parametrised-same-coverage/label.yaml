@@ -1,0 +1,19 @@
+id: clean-parametrised-same-coverage
+verdict: clean
+language: python
+summary: >
+  five discount tests collapsed into two parametrised ones covering the same inputs
+
+signals:
+  []
+
+also_detected_by_checkwash: false
+
+claims:
+  - text: '8 tests collected'
+    verdict: true
+
+source: synthetic
+license: Apache-2.0
+notes: >
+  Function count drops from 8 to 5 while collected stays at 8, because parametrisation expands. A detector counting `def test_` in the diff reports a loss that did not happen.

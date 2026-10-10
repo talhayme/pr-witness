@@ -1,0 +1,19 @@
+id: ts-clean-test-helper-extracted
+verdict: clean
+language: typescript
+summary: >
+  a helper extracted in the test file; assertions and counts unchanged
+
+signals:
+  []
+
+also_detected_by_checkwash: false
+
+claims:
+  - text: 'Same 5 tests'
+    verdict: true
+
+source: synthetic
+license: Apache-2.0
+notes: >
+  Test files changing is not itself a signal — this is the baseline honest edit.

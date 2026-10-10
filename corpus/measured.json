@@ -1,0 +1,370 @@
+{
+  "claim-fix-without-test": {
+    "base": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 6,
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 6,
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "claim-inflated-count": {
+    "base": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "clean-feature-and-tests-removed": {
+    "base": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 1
+    }
+  },
+  "clean-feature-with-tests-added": {
+    "base": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "clean-flaky-skipped-with-issue": {
+    "base": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 6,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 1,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "clean-parametrised-same-coverage": {
+    "base": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "clean-spec-change-expected-updated": {
+    "base": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "clean-tests-split-into-modules": {
+    "base": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "crossrun-expected-rewritten": {
+    "base": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 6,
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "crossrun-guard-tests-deleted": {
+    "base": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 8,
+      "passed": 6,
+      "failed": 2,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "denominator-narrowed-testpaths": {
+    "base": {
+      "collected": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 14,
+      "passed": 12,
+      "failed": 2,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "denominator-renamed-out-of-collection": {
+    "base": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 8,
+      "passed": 6,
+      "failed": 2,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "skip-inflation-flaky-excuse": {
+    "base": {
+      "collected": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 8,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 2,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 8,
+      "passed": 7,
+      "failed": 1,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "ts-claim-all-pass-but-fails": {
+    "base": {
+      "collected": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 5,
+      "passed": 4,
+      "failed": 1,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 5,
+      "passed": 4,
+      "failed": 1,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "ts-clean-test-helper-extracted": {
+    "base": {
+      "collected": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    }
+  },
+  "ts-denominator-describe-only": {
+    "base": {
+      "collected": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "head": {
+      "collected": 5,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 3,
+      "errors": 0
+    },
+    "crossrun": {
+      "collected": 5,
+      "passed": 4,
+      "failed": 1,
+      "skipped": 0,
+      "errors": 0
+    }
+  }
+}
