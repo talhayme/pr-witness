@@ -1,8 +1,5 @@
 name: pr-witness
-description: >-
-  Runs the base branch's tests against a pull request's code and checks the
-  description's claims against what actually happened. Reports; does not
-  block unless asked to.
+description: Runs the base branch's tests against a PR's code and checks the PR's claims against the real run. Signed evidence.
 author: Vitalii Bogachev
 
 branding:
