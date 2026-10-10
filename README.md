@@ -71,7 +71,7 @@ jobs:
       - uses: actions/setup-python@v7
         with: { python-version: "3.12" }
       - run: pip install -e . pytest  # whatever your own test job installs
-      - uses: talhayme/pr-witness@v0.1
+      - uses: talhayme/pr-witness@v0.2
         with:
           test-command: pytest        # or vitest, jest, go, django (Django's own runtests.py)
           mode: report                # report | require-ack | strict
