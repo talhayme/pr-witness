@@ -1,0 +1,17 @@
+[project]
+name = "pr-witness"
+version = "0.1.0.dev0"
+description = "Check whether a pull request's tests still mean what they meant before it"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+dependencies = []
+
+[project.scripts]
+pr-witness = "pr_witness.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
