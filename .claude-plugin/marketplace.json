@@ -1,0 +1,15 @@
+{
+  "name": "pr-witness",
+  "description": "pr-witness for Claude Code: a pause before a test file changes, and a check of \"all tests pass\" against a real run.",
+  "owner": { "name": "Vitalii Bogachev", "url": "https://github.com/talhayme" },
+  "plugins": [
+    {
+      "name": "pr-witness",
+      "source": "./claude-plugin",
+      "displayName": "pr-witness",
+      "description": "Asks before a test file is edited or removed; when the agent says the tests pass, runs the base branch's tests against the working tree and shows any claim the run contradicts. Advisory — the signed CI report is the proof.",
+      "category": "testing",
+      "tags": ["tests", "ci", "verification", "agents"]
+    }
+  ]
+}
