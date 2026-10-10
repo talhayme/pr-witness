@@ -1,0 +1,26 @@
+diff --git a/lib/matplotlib/dates.py b/lib/matplotlib/dates.py
+index 0766156d64..aed9518a9a 100644
+--- a/lib/matplotlib/dates.py
++++ b/lib/matplotlib/dates.py
+@@ -592,7 +592,7 @@ def drange(dstart, dend, delta):
+ 
+ 
+ def _wrap_in_tex(text):
+-    p = r'([a-zA-Z]+)'
++    p = r'([a-zA-Z\s]+)'
+     ret_text = re.sub(p, r'}$\1$\\mathdefault{', text)
+ 
+     # Braces ensure dashes are not spaced like binary operators.
+diff --git a/lib/matplotlib/tests/test_dates.py b/lib/matplotlib/tests/test_dates.py
+index 96a3db1730..1d9a6f6ba6 100644
+--- a/lib/matplotlib/tests/test_dates.py
++++ b/lib/matplotlib/tests/test_dates.py
+@@ -325,7 +325,7 @@ def test_date_formatter_callable():
+     (datetime.timedelta(weeks=52 * 200),
+      [r'$\mathdefault{%d}$' % (year,) for year in range(1990, 2171, 20)]),
+     (datetime.timedelta(days=30),
+-     [r'Jan$\mathdefault{ %02d 1990}$' % (day,) for day in range(1, 32, 3)]),
++     [r'Jan $\mathdefault{%02d}$ $\mathdefault{1990}$' % (day,) for day in range(1, 32, 3)]),
+     (datetime.timedelta(hours=20),
+      [r'$\mathdefault{%02d:00:00}$' % (hour,) for hour in range(0, 21, 2)]),
+ ])

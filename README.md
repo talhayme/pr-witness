@@ -23,10 +23,14 @@ as a Claude Code plugin.
 the same person who wrote the detector. On it the tool scores precision 0.91 /
 recall 1.00 — see [eval/witness_results.md](eval/witness_results.md). That is
 a regression gate, not an accuracy claim: it says the tool has not got worse,
-not how it performs on pull requests it has never seen. Real cases — a
-reproduction of [anthropics/claude-code#46940](https://github.com/anthropics/claude-code/issues/46940)
-and the agent PRs maintainers flagged in Kinnard's audit — are the next
-addition to the corpus, and the numbers will be re-published when they land.
+not how it performs on pull requests it has never seen. Real cases are
+arriving: [corpus/real/swebench](corpus/real/swebench/) holds seven test
+edits made by a frontier agent on SWE-bench Verified, labelled against the
+maintainers' own test patches (six honest, one for review), out of 1,500
+published patches examined. The evaluation harness does not run them yet —
+it needs to run a subset of a large suite first — so the numbers above are
+still the synthetic ones, and will be re-published when the real cases are
+in the loop.
 
 See [eval/results.md](eval/results.md) for the numbers and
 [corpus/README.md](corpus/README.md) for how the cases are built.
