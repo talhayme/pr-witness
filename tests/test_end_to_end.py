@@ -6,6 +6,7 @@ goes through actual worktrees, an actual runner and actual JUnit XML.
 
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 
@@ -181,3 +182,26 @@ def test_changed_only_with_no_test_changes_runs_everything(repo):  # noqa: F811
     commit(repo, "docs", {"README.md": "hi\n"})
     ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300, changed_only=True)
     assert ev.counts["head"]["collected"] == 2 and any("whole suite" in n for n in ev.notes)
+
+
+def test_a_deleted_test_whose_function_still_exists_is_a_review(repo):  # noqa: F811
+    """The PR removes test_monday; is_weekend stays in dates.py."""
+    commit(repo, "init", {"conftest.py": CONFTEST, "dates.py": SRC_OK,
+                          "tests/test_dates.py": TESTS})
+    base = git_ops.resolve("HEAD", cwd=repo)
+    without = re.sub(r"def test_monday\(\):\n(?:    .*\n)+", "", TESTS)
+    assert "test_monday" not in without and "def test_" in without
+    commit(repo, "drop a test", {"tests/test_dates.py": without})
+    ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300)
+    f = next(x for x in ev.findings if x.signal == "tests_removed_still_passing")
+    assert f.tests == ["tests/test_dates::test_monday"] and ev.verdict == "review"
+
+
+def test_a_test_deleted_with_its_function_is_not_a_review(repo):  # noqa: F811
+    commit(repo, "init", {"conftest.py": CONFTEST, "dates.py": SRC_OK + "\n\ndef helper(x):\n    return x\n",
+                          "tests/test_dates.py": TESTS + "\n\nfrom dates import helper\n\n\ndef test_helper():\n    assert helper(1) == 1\n"})
+    base = git_ops.resolve("HEAD", cwd=repo)
+    commit(repo, "remove helper and its test", {"dates.py": SRC_OK, "tests/test_dates.py": TESTS})
+    ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300)
+    assert "tests_removed_still_passing" not in signals(ev)
+    assert ev.verdict != "review"

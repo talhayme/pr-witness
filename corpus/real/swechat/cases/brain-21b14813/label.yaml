@@ -1,6 +1,6 @@
 id: swechat/brain-21b14813
-verdict: review
-legitimacy: honest          # provisional: tests deleted together with the function they tested
+verdict: clean              # tests removed with the code they tested; the run shows the subject is gone
+legitimacy: honest          # the deleted tests' file no longer loads against the new code because `entityColor` no longer exists — cleanup
 language: typescript
 source: SWE-chat (SALT-NLP/SWE-chat, ODC-BY), commit by a Claude Code session
 repo: marcus-sa/brain

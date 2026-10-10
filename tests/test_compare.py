@@ -166,3 +166,63 @@ def test_a_base_where_every_test_fails_is_no_evidence_not_clean():
     f = compare(base, head, head)
     assert "base_broken" in signals(f)
     assert "pandas" in by_signal(f, "base_broken").summary
+
+
+def test_a_base_with_some_failures_is_reported_as_context():
+    base = run(a=P, b=(F, "AssertionError"))
+    head = run(a=P, b=P)
+    f = compare(base, head, run(a=P, b=F))
+    assert "base_not_green" in signals(f) and by_signal(f, "base_not_green").severity is Severity.INFO
+    assert "base_broken" not in signals(f)
+
+
+# --- deleted tests ------------------------------------------------------------
+
+def test_a_deleted_test_that_still_passes_on_the_new_code_is_surfaced():
+    base = run(keep=P, gone=P)
+    head = run(keep=P)
+    cross = run(keep=P, gone=P)                       # the old test still passes: behaviour kept, coverage gone
+    f = compare(base, head, cross, changed_test_files={"tests/test_x.py"})
+    assert by_signal(f, "tests_removed_still_passing").tests == ["tests/test_x::gone"]
+
+
+def test_a_test_folded_into_a_parametrised_sibling_is_not_a_deletion():
+    base = run(test_discount_half=P, test_discount_zero=P)
+    head = RunResult()
+    for node in ("tests/test_x::test_discount[50]", "tests/test_x::test_discount[0]"):
+        head.tests[node] = TestCase(node, P)
+    cross = run(test_discount_half=P, test_discount_zero=P)
+    f = compare(base, head, cross, changed_test_files={"tests/test_x.py"})
+    assert "tests_removed_still_passing" not in signals(f)
+
+
+def test_a_rewritten_test_that_fails_because_its_subject_is_gone_is_cleanup_not_review():
+    base = run(a=P, uses_removed_fn=P)
+    head = run(a=P)
+    cross = run(a=P, uses_removed_fn=(F, "TypeError: classifyAttachmentType is not a function"))
+    f = compare(base, head, cross, changed_test_files={"tests/test_x.py"})
+    assert "tests_removed_subject_gone" in signals(f) and "expectation_changed" not in signals(f)
+
+
+# --- red on base, green now ---------------------------------------------------
+
+def test_a_red_test_made_green_by_editing_the_test_is_surfaced():
+    base = run(a=P, red=(F, "AssertionError: 'commit' not in stages"))
+    head = run(a=P, red=P)
+    cross = run(a=P, red=(F, "AssertionError: 'commit' not in stages"))   # old test still fails on the new code
+    f = compare(base, head, cross, changed_test_files={"tests/test_x.py"})
+    assert by_signal(f, "greened_by_test_edit").tests == ["tests/test_x::red"]
+
+
+def test_a_red_test_fixed_by_the_code_is_not_surfaced():
+    base = run(a=P, red=F)
+    head = run(a=P, red=P)
+    cross = run(a=P, red=P)                                                # old test passes on the new code: the code fixed it
+    f = compare(base, head, cross, changed_test_files={"tests/test_x.py"})
+    assert "greened_by_test_edit" not in signals(f)
+
+
+def test_a_skip_for_an_external_cause_counts_as_documented():
+    from pr_witness.compare import _skip_is_documented
+    assert _skip_is_documented("pre-commit hooks not installed (run: uv run pre-commit install)")
+    assert not _skip_is_documented("flaky")

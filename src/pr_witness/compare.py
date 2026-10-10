@@ -14,6 +14,8 @@ cannot: did a behaviour that used to hold stop holding?
 
 from __future__ import annotations
 
+import re
+
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -57,18 +59,62 @@ class Finding:
 # legitimate flaky-test skip from an excuse, and this is the cheapest
 # separator that does not need a model.
 _ISSUE_MARKERS = ("#", "http://", "https://", "issue", "ticket", "jira", "bug ")
+# An external cause: something the test needs that this machine does not
+# have. "pre-commit hooks not installed", "requires CANFAR runtime", "no
+# network". Still a skip a reviewer should see in the count — but not an
+# excuse, and the first real cases were full of them.
+_EXTERNAL_MARKERS = ("not installed", "not present", "not available", "unavailable", "missing", "requires",
+                     "needs ", "no network", "offline", "not found", "not configured", "not set", "only on ",
+                     "unsupported on", "skipped on", "ci only", "not supported")
 
 
 def _skip_is_documented(message: str) -> bool:
     text = (message or "").strip().lower()
     if len(text) < 8:
         return False
-    return any(marker in text for marker in _ISSUE_MARKERS)
+    return any(marker in text for marker in _ISSUE_MARKERS) or any(marker in text for marker in _EXTERNAL_MARKERS)
 
 
 def _test_file_of(node_id: str) -> str:
     """`tests/test_dates::test_monday` → `tests/test_dates`; `cart.test.ts::x` → `cart.test.ts`."""
     return node_id.split("::", 1)[0]
+
+
+def _fn_name(node_id: str) -> str:
+    """`tests/test_x/TestA::test_m[1]` → `test_m`; `file.test.ts::suite::does x` → `does x`."""
+    return node_id.rsplit("::", 1)[-1].split("[", 1)[0]
+
+
+# A failure that says "the thing this test used no longer exists" — an
+# import or a name, not an assertion. The old test did not start asserting
+# something different; its subject was removed. Cleanup, until the diff says
+# otherwise.
+_GONE = re.compile(r"ImportError|ModuleNotFoundError|cannot import name|is not a function|is not defined"
+                   r"|has no attribute|NameError|ReferenceError|Cannot find module|is not a constructor"
+                   r"|AttributeError: module", re.I)
+
+
+def _subject_gone(message: str) -> bool:
+    return bool(message) and bool(_GONE.search(message))
+
+
+def _merged_into(node_id: str, head_tests) -> bool:
+    """Was this test folded into a parametrised or renamed sibling in the same file?
+
+    `test_discount_half` → `test_discount[50-0.5]`: the new name is a prefix
+    of the old one (or the reverse), in the same file. The run cannot tell a
+    consolidation from a deletion otherwise; this is the cheapest honest
+    tie-breaker, and it is named here so it can be argued with.
+    """
+    file_part = _test_file_of(node_id)
+    name = _fn_name(node_id)
+    for other in head_tests:
+        if _test_file_of(other) != file_part:
+            continue
+        o = _fn_name(other)
+        if o != name and len(o) >= 6 and (name.startswith(o) or o.startswith(name)):
+            return True
+    return False
 
 
 def _touched(node_id: str, changed_test_files: set[str]) -> bool:
@@ -138,6 +184,22 @@ def compare(base: RunResult, head: RunResult, cross: RunResult | None = None,
             "project imports but does not declare, a service the tests expect.",
         ))
 
+    # A base that is not green is context every reader needs: the cross-run
+    # can only speak for tests that passed on the base branch, and a change
+    # that turns 51 red tests green deserves a different kind of look than
+    # one that touches a green suite.
+    base_failing = sorted(n for n, tc in base.tests.items() if tc.outcome.broken)
+    if base_failing and base.passed:
+        findings.append(Finding(
+            "base_not_green",
+            Severity.INFO,
+            f"{len(base_failing)} of {len(base.tests)} base-branch tests already fail on the base branch; "
+            "the cross-run says nothing about them",
+            "Common: tests written ahead of the implementation, or an environment "
+            "the suite expects. Worth knowing when the pull request makes them pass.",
+            base_failing[:50],
+        ))
+
     # ---- the cross-run ---------------------------------------------------
     if cross is not None:
         if cross.collection_error:
@@ -167,6 +229,18 @@ def compare(base: RunResult, head: RunResult, cross: RunResult | None = None,
                     "test was simply forgotten; then update it and say so.",
                     untouched,
                 ))
+            gone_subject = [t for t in rewritten if _subject_gone(cross.tests[t].message)]
+            rewritten = [t for t in rewritten if t not in gone_subject]
+            if gone_subject:
+                findings.append(Finding(
+                    "tests_removed_subject_gone",
+                    Severity.LOW,
+                    f"{len(gone_subject)} test(s) the pull request rewrote or removed fail against this code "
+                    "because what they used no longer exists (an import or a name, not an assertion)",
+                    "What cleanup looks like: the code went, its tests went. Worth a glance "
+                    "that nothing else depended on it.",
+                    gone_subject,
+                ))
             if rewritten:
                 detail = ""
                 shown = [assertion_diffs[t] for t in rewritten if t in assertion_diffs]
@@ -186,6 +260,27 @@ def compare(base: RunResult, head: RunResult, cross: RunResult | None = None,
                 if detail:
                     findings[-1].diff = detail
 
+            # The cross-run's blind spot, closed: a test that was red on the
+            # base branch and is green now. If its *old* version still fails
+            # against the new code, the code change did not fix it — the
+            # test edit did. Loosened assertion, swapped expected value, or a
+            # fair rewrite after a behaviour change: the run cannot say
+            # which, so it shows the test and a human reads the diff.
+            greened = sorted(
+                t for t in base.failed & head.passed
+                if t in cross.failed and _touched(t, changed_test_files)
+            )
+            if greened:
+                findings.append(Finding(
+                    "greened_by_test_edit",
+                    Severity.MEDIUM,
+                    f"{len(greened)} test(s) failed on the base branch and pass now, but their old version "
+                    "still fails against this code: the test edit made them pass, not the code change",
+                    "Fair when the test encoded the old behaviour and the change was intended; "
+                    "also exactly how a failing suite is made green without fixing anything.",
+                    greened,
+                ))
+
             # A base test that no longer even runs on the new code. Softer
             # than a failure, but it is how a removed guard disappears.
             vanished = sorted(base.ran - cross.tests.keys())
@@ -198,6 +293,25 @@ def compare(base: RunResult, head: RunResult, cross: RunResult | None = None,
                     "Normal if those tests covered code this pull request "
                     "removed.",
                     vanished,
+                ))
+            # A test the PR deleted that still passes against the PR's code:
+            # the behaviour is there and nothing verifies it any more. Not
+            # cleanup — cleanup makes the old test fail or vanish, because
+            # what it called is gone. A test that merely moved (same name
+            # under another id) is not deleted.
+            head_names = {_fn_name(n) for n in head.tests}
+            deleted = [n for n in sorted(base.ran) if n not in head.tests and _touched(n, changed_test_files)
+                       and _fn_name(n) not in head_names and not _merged_into(n, head.tests)]
+            still_passing = [n for n in deleted if n in cross.passed]
+            if still_passing:
+                findings.append(Finding(
+                    "tests_removed_still_passing",
+                    Severity.MEDIUM,
+                    f"{len(still_passing)} test(s) the pull request deleted still pass against its code: "
+                    "the behaviour they verified is still there, and nothing verifies it now",
+                    "Legitimate when the behaviour is covered elsewhere or the test was "
+                    "wrong; either way the coverage is gone and a reviewer should know.",
+                    still_passing,
                 ))
 
     # ---- the denominator -------------------------------------------------

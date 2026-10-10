@@ -153,31 +153,33 @@ def run_checkwash(
 
 
 def reconcile_with_run(cw_findings: list[Finding], run_findings: list[Finding]) -> None:
-    """Fold a static "expected value rewritten" onto the run's own evidence.
+    """Fold a static finding onto the run's own evidence about the same test.
 
-    When the cross-run already shows a rewritten test whose old assertion
-    fails on the new code (`expectation_changed`), checkwash's
-    EXPECTED_VALUE_CHANGED on the same test is the same fact seen
-    statically — corroboration, not a second, louder reason. Left at
-    `high` it would turn every honest specification change into a flag,
-    which is what the real cases showed. It is capped at the level of the
-    run finding so the verdict stays `review`, and the report says so.
-    Nothing is dropped.
+    When the cross-run has already shown what happened to a test — its old
+    assertion fails on the new code (`expectation_changed`), or it was
+    deleted and still passes (`tests_removed_still_passing`) — checkwash's
+    EXPECTED_VALUE_CHANGED / ASSERT_REMOVED / TEST_DISABLED on that same test
+    is the same fact seen statically: corroboration, not a second, louder
+    reason. Left at `high` it turned every honest specification change and
+    every deliberate test removal into a flag. It is capped at the level of
+    the run finding so the verdict stays `review`, and the report says so.
+    Nothing is dropped; a static finding the run does not corroborate keeps
+    checkwash's own rating.
     """
-    rewritten = {
-        _unit_of(t) for f in run_findings if f.signal == "expectation_changed" for t in f.tests
+    shown = {
+        _unit_of(t) for f in run_findings
+        if f.signal in ("expectation_changed", "tests_removed_still_passing", "greened_by_test_edit") for t in f.tests
     }
-    if not rewritten:
+    if not shown:
         return
+    static = {"checkwash:EXPECTED_VALUE_CHANGED", "checkwash:ASSERT_REMOVED", "checkwash:TEST_DISABLED", "checkwash:ASSERT_WEAKENED"}
     for f in cw_findings:
-        if f.signal == "checkwash:EXPECTED_VALUE_CHANGED" and f.severity is Severity.HIGH \
-                and any(_unit_of(t) in rewritten for t in f.tests):
+        if f.signal in static and f.severity is Severity.HIGH and any(_unit_of(t) in shown for t in f.tests):
             f.severity = Severity.MEDIUM
             f.innocent_explanation = (
-                "checkwash rates a rewritten expected value as high. pr-witness holds "
-                "it at review here: the run already shows this test's old assertion "
-                "failing on the new code, and the old and new assertion are in the "
-                "report. Same fact, seen twice — a reviewer decides, not a second flag."
+                "checkwash rates this high. pr-witness holds it at review here: the run "
+                "already shows what happened to this test, and the report carries it. "
+                "Same fact, seen twice — a reviewer decides, not a second flag."
             )
 
 

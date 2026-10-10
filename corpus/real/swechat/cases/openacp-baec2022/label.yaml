@@ -1,6 +1,6 @@
 id: swechat/openacp-baec2022
-verdict: review
-legitimacy: honest          # provisional: tests deleted together with the function they tested
+verdict: clean              # tests removed with the code they tested; the run shows the subject is gone
+legitimacy: honest          # the deleted tests fail against the new code because `classifyAttachmentType` no longer exists — cleanup
 language: typescript
 source: SWE-chat (SALT-NLP/SWE-chat, ODC-BY), commit by a Claude Code session
 repo: dylan-112/OpenACP

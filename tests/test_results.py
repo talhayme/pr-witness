@@ -96,3 +96,13 @@ def test_missing_report_is_an_error_not_an_empty_pass(tmp_path):
 def test_unreadable_report_is_an_error(tmp_path):
     r = parse_junit(write(tmp_path, "bad.xml", "<testsuites>truncated"))
     assert r.collection_error
+
+
+def test_bun_junit_ids_carry_the_file_path(tmp_path):
+    from pr_witness.results import parse_junit
+    xml = """<?xml version="1.0"?><testsuites><testsuite name="tests/unit/graph.test.ts" file="tests/unit/graph.test.ts">
+      <testsuite name="entityColor" file="tests/unit/graph.test.ts"><testcase name="returns a colour" classname="entityColor" file="tests/unit/graph.test.ts"/></testsuite>
+      <testcase name="top level" classname="" file="tests/unit/graph.test.ts"/></testsuite></testsuites>"""
+    p = tmp_path / "r.xml"; p.write_text(xml)
+    ids = set(parse_junit(p).tests)
+    assert ids == {"tests/unit/graph.test.ts::entityColor::returns a colour", "tests/unit/graph.test.ts::top level"}

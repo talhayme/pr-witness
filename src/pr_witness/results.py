@@ -116,7 +116,7 @@ def _node_id(classname: str, name: str) -> str:
     if not cls:
         return nm
     # pytest dots a module path; vitest already gives a filename.
-    if "/" not in cls and "\\" not in cls and not cls.endswith((".ts", ".js", ".tsx", ".jsx")):
+    if "/" not in cls and "\\" not in cls and "::" not in cls and not cls.endswith((".ts", ".js", ".tsx", ".jsx")):
         cls = cls.replace(".", "/")
     return f"{cls}::{nm}"
 
@@ -143,7 +143,14 @@ def parse_junit(path: Path | str) -> RunResult:
     suites = root.iter("testsuite") if root.tag == "testsuites" else [root]
     for suite in suites:
         for case in suite.iter("testcase"):
-            node = _node_id(case.get("classname", ""), case.get("name", ""))
+            classname = case.get("classname", "")
+            # bun puts the describe block in classname and the path in `file`;
+            # without the path a test cannot be matched to the file the PR
+            # touched, and every rewritten test looks untouched.
+            file_attr = case.get("file", "") or suite.get("file", "")
+            if file_attr and file_attr not in classname:
+                classname = f"{file_attr}::{classname}" if classname else file_attr
+            node = _node_id(classname, case.get("name", ""))
             outcome, message = Outcome.PASSED, ""
 
             # A testcase carries at most one of these children. Order matters:

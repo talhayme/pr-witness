@@ -37,7 +37,7 @@ class Evidence:
             return "flag"
         # A rewritten test whose old version fails: honest or not, a human
         # has to look. Louder than a note, quieter than a flag.
-        if any(f.signal == "expectation_changed" for f in self.findings):
+        if any(f.signal in ("expectation_changed", "tests_removed_still_passing", "greened_by_test_edit") for f in self.findings):
             return "review"
         if any(f.severity is Severity.MEDIUM for f in self.findings):
             return "note"

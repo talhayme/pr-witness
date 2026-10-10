@@ -1,33 +1,311 @@
 [
  {
+  "case": "ado-git-repo-insights-a63fd97f",
+  "label": "review",
+  "repo": "oddessentials/ado-git-repo-insights",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 109,
+    "ran": 109,
+    "passed": 109,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 117,
+    "ran": 117,
+    "passed": 117,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 109,
+    "ran": 109,
+    "passed": 105,
+    "failed": 4,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "denominator_removed",
+    "medium",
+    "2 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "expectation_changed",
+    "medium",
+    "4 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ],
+   [
+    "checkwash:BROAD_EXCEPT_ADDED",
+    "low",
+    "broad exception handler added (exceptException:)"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestAggregateGenerator.test_generates_manifest: expected value rewritten 2 -> 3 with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestPerformanceGate.test_schema_version_is_3: expected value rewritten 2 -> 3 with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestTeamRepoSlicing.test_schema_version_is_3: expected value rewritten 2 -> 3 with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "test_manifest_schema_validation: expected value rewritten 2 -> 3 with no change in assertion strength"
+   ]
+  ],
+  "notes": [
+   "restricted to 3 path(s): tests/unit/test_schema_migration.py, tests/unit/test_aggregators.py, tests/unit/test_synthetic_dataset.py"
+  ]
+ },
+ {
+  "case": "brain-21b14813",
+  "label": "review",
+  "repo": "marcus-sa/brain",
+  "verdict": "note",
+  "counts": {
+   "base": {
+    "collected": 11,
+    "ran": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 10,
+    "ran": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 0,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "denominator_removed",
+    "medium",
+    "3 test(s) that ran on the base branch are gone (no cross-run to confirm whether the behaviour survived)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "maps objective nodes: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_SUBSTITUTED",
+    "low",
+    "maps objective nodes: an assertion was replaced by an unrelated one of the same strength (entityColor(\"project\") -> result.nodes[0]); the original assertion is gone and the strength lattice cannot see it"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "maps behavior nodes with violet color: test unit disappeared"
+   ],
+   [
+    "crossrun_uncollectable",
+    "low",
+    "the base branch's tests could not be collected against this code: no report written at /tmp/pr-witness-reports-v5c9a_f9/crossrun.xml"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): tests/unit/graph-transform.test.ts"
+  ]
+ },
+ {
+  "case": "brain-a48b5d8b",
+  "label": "review",
+  "repo": "marcus-sa/brain",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 8,
+    "ran": 8,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 8,
+    "ran": 8,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 8,
+    "ran": 8,
+    "passed": 4,
+    "failed": 4,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "denominator_removed",
+    "medium",
+    "1 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "expectation_changed",
+    "medium",
+    "4 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "computes connection counts correctly: expected value rewritten 2.0 -> 12.0 with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "computes connection counts correctly: expected value rewritten 2.0 -> 22.0 with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "handles edges referencing same entity in both source and target: expected value rewritten 3.0 -> 23.0 with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "returns hex color for each entity kind: expected value rewritten 'var(--entity-project)' -> '#3b82f6' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "returns hex color for each entity kind: expected value rewritten 'var(--entity-project)' -> '#3b82f6' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "returns hex color for each entity kind: expected value rewritten 'var(--entity-task)' -> '#22c55e' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "returns hex color for each entity kind: expected value rewritten 'var(--entity-feature)' -> '#14b8a6' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "returns hex color for each entity kind: expected value rewritten 'var(--entity-person)' -> '#f97316' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "returns hex color for each entity kind: expected value rewritten 'var(--entity-decision)' -> '#eab308' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "returns hex color for each entity kind: expected value rewritten 'var(--entity-question)' -> '#a855f7' with no change in assertion strength"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): tests/unit/graph-transform.test.ts"
+  ]
+ },
+ {
   "case": "cohezion-b1ee32a9",
   "label": "review",
   "repo": "manderson240/cohezion",
-  "verdict": "clean",
+  "verdict": "flag",
   "counts": {
    "base": {
     "collected": 87,
     "ran": 87,
-    "passed": 0,
-    "failed": 87,
+    "passed": 58,
+    "failed": 29,
     "skipped": 0
    },
    "head": {
     "collected": 87,
-    "ran": 87,
-    "passed": 0,
-    "failed": 87,
-    "skipped": 0
+    "ran": 81,
+    "passed": 80,
+    "failed": 1,
+    "skipped": 6
    },
    "crossrun": {
     "collected": 87,
     "ran": 87,
-    "passed": 0,
-    "failed": 87,
+    "passed": 58,
+    "failed": 29,
     "skipped": 0
    }
   },
-  "findings": [],
+  "findings": [
+   [
+    "denominator",
+    "high",
+    "6 test(s) are still collected but no longer run"
+   ],
+   [
+    "skip_inflation",
+    "high",
+    "6 test(s) newly skipped without a reason that names an issue or an external cause"
+   ],
+   [
+    "base_not_green",
+    "info",
+    "29 of 87 base-branch tests already fail on the base branch; the cross-run says nothing about them"
+   ]
+  ],
   "notes": [
    "restricted to 5 path(s): tests/conftest.py, tests/flume/test_experience_pipeline.py, tests/sandbox/test_hooks.py, tests/security/test_pre_commit_hooks.py \u2026",
    "checkwash produced no readable output: checkwash engine error: EngineError: strict snapshot inventory cannot inspect a submodule"
@@ -110,6 +388,524 @@
   ],
   "notes": [
    "restricted to 1 path(s): tests/test_chime_singlebeam_toa.py"
+  ]
+ },
+ {
+  "case": "hypergraph-a9f09474",
+  "label": "review",
+  "repo": "gilad-rubin/hypergraph",
+  "verdict": "flag",
+  "counts": {
+   "base": {
+    "collected": 442,
+    "ran": 442,
+    "passed": 391,
+    "failed": 51,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 460,
+    "ran": 460,
+    "passed": 460,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 442,
+    "ran": 442,
+    "passed": 391,
+    "failed": 51,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "checkwash:ASSERT_REMOVED",
+    "high",
+    "TestRoutingEdgeCases.test_return_end_not_in_targets_raises: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "high",
+    "TestRoutingEdgeCases.test_return_end_not_in_targets_raises: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "high",
+    "TestHandlerFailure.test_handler_exception_wrapped_in_runtime_error: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "high",
+    "TestMutableDefaults.test_non_copyable_default_raises_error: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "high",
+    "TestRoutingEdgeCases.test_invalid_return_value_raises: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "high",
+    "TestRoutingEdgeCases.test_multi_target_returns_string_raises: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "high",
+    "TestRoutingEdgeCases.test_single_target_returns_list_raises: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "high",
+    "TestNonCopyableBoundValues.test_non_copyable_default_raises_clear_error: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:BROAD_EXCEPT_ADDED",
+    "high",
+    "broad exception handler added (exceptException:)"
+   ],
+   [
+    "greened_by_test_edit",
+    "medium",
+    "51 test(s) failed on the base branch and pass now, but their old version still fails against this code: the test edit made them pass, not the code change"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestMapOverRaisePartialValues.test_sync_raise_outer_run_fails: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestAsyncExceptionHandling.test_async_exception_in_nested_graph: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestAsyncExceptionHandling.test_async_node_exception: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestAsyncExceptionHandling.test_async_parallel_with_one_failure: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInChain.test_exception_at_end_of_chain: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInChain.test_exception_at_start_of_chain: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInChain.test_exception_in_middle_of_chain: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInCycle.test_exception_in_convergence_cycle: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInCycle.test_exception_in_cycle_iteration: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInDiamondTopology.test_exception_at_diamond_join_point: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInDiamondTopology.test_exception_at_diamond_start: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInDiamondTopology.test_exception_in_one_parallel_branch: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInMapOver.test_exception_in_first_map_iteration: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInMapOver.test_exception_in_one_map_iteration: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInNestedGraphNode.test_exception_after_successful_nested_graph: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInNestedGraphNode.test_exception_in_deeply_nested_graph: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionInNestedGraphNode.test_exception_inside_nested_graph: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionTypes.test_runtime_error_propagates: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionTypes.test_type_error_propagates: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestExceptionTypes.test_value_error_propagates: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestHandlerFailure.test_handler_exception_wrapped_in_runtime_error: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestHandlerFailure.test_handler_exception_wrapped_in_runtime_error: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestAsyncMapOverErrorHandling.test_raise_mode_is_default: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestSyncMapOverErrorHandling.test_raise_mode_is_default: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestMutableDefaults.test_non_copyable_default_raises_error: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestMutableDefaults.test_non_copyable_default_raises_error: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestMutableDefaults.test_non_copyable_default_raises_error: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestAsyncRunnerRun.test_node_exception_propagates: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestMaxConcurrency.test_error_in_nested_map_with_concurrency: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestMaxConcurrency.test_error_in_nested_map_with_concurrency: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestRoutingEdgeCases.test_invalid_return_value_raises: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestRoutingEdgeCases.test_invalid_return_value_raises: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestRoutingEdgeCases.test_multi_target_returns_string_raises: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestRoutingEdgeCases.test_multi_target_returns_string_raises: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestRoutingEdgeCases.test_single_target_returns_list_raises: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestRoutingEdgeCases.test_single_target_returns_list_raises: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestSyncRunnerRun.test_cycle_raises_on_infinite_loop: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestSyncRunnerRun.test_cycle_respects_max_iterations: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestSyncRunnerRun.test_cycle_respects_max_iterations: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestSyncRunnerRun.test_node_exception_propagates: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestNonCopyableBoundValues.test_non_copyable_default_raises_clear_error: assertion removed (strength PATTERN)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestNonCopyableBoundValues.test_non_copyable_default_raises_clear_error: assertion removed (strength TYPE_SHAPE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "TestNonCopyableBoundValues.test_non_copyable_default_raises_clear_error: assertion removed (strength NON_NULL)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionSafety.test_exception_not_cached: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestAsyncExceptionHandling.test_async_exception_in_nested_graph: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestAsyncExceptionHandling.test_async_node_exception: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestAsyncExceptionHandling.test_async_parallel_with_one_failure: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInChain.test_exception_at_end_of_chain: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInChain.test_exception_at_start_of_chain: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInChain.test_exception_in_middle_of_chain: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInCycle.test_exception_in_convergence_cycle: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInCycle.test_exception_in_cycle_iteration: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInDiamondTopology.test_exception_at_diamond_join_point: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInDiamondTopology.test_exception_at_diamond_start: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInDiamondTopology.test_exception_in_one_parallel_branch: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInMapOver.test_exception_in_first_map_iteration: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInMapOver.test_exception_in_one_map_iteration: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInNestedGraphNode.test_exception_after_successful_nested_graph: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInNestedGraphNode.test_exception_in_deeply_nested_graph: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionInNestedGraphNode.test_exception_inside_nested_graph: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionPreservesPartialResults.test_independent_branches_with_one_failure: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionTypes.test_runtime_error_propagates: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionTypes.test_type_error_propagates: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestExceptionTypes.test_value_error_propagates: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestAsyncRunnerRun.test_node_exception_propagates: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestMaxConcurrency.test_error_in_nested_map_with_concurrency: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestSyncRunnerRun.test_cycle_raises_on_infinite_loop: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestSyncRunnerRun.test_node_exception_propagates: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "checkwash:ASSERT_WEAKENED",
+    "low",
+    "TestSyncRunnerRun.test_node_exception_sets_failed_status: assertion strength EXACT_VALUE(90) -> PATTERN(60)"
+   ],
+   [
+    "base_not_green",
+    "info",
+    "51 of 442 base-branch tests already fail on the base branch; the cross-run says nothing about them"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "info",
+    "TestMapOverRaisePartialValues.test_sync_raise_outer_run_fails: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "info",
+    "TestMapOverSingleItem.test_sync_single_fail_raise: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "info",
+    "TestAsyncMapOverErrorHandling.test_raise_mode_is_default: assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "info",
+    "TestSyncMapOverErrorHandling.test_raise_mode_is_default: assertion removed (strength EXACT_VALUE)"
+   ]
+  ],
+  "notes": [
+   "restricted to 15 path(s): tests/events/test_async_events.py, tests/events/test_sync_events.py, tests/test_cache_edge_cases.py, tests/test_error_handling_edge_cases.py \u2026"
+  ]
+ },
+ {
+  "case": "openacp-baec2022",
+  "label": "review",
+  "repo": "dylan-112/OpenACP",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 13,
+    "ran": 13,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 9,
+    "ran": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 13,
+    "ran": 13,
+    "passed": 9,
+    "failed": 4,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "denominator_removed",
+    "medium",
+    "4 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "expectation_changed",
+    "medium",
+    "4 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "classifies audio/* as audio: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "classifies image/* as image: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "classifies other types as file: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "defaults to file for null/undefined contentType: test unit disappeared"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): src/adapters/discord/media.test.ts"
   ]
  }
 ]
