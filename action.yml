@@ -67,7 +67,7 @@ runs:
   using: composite
   steps:
     - name: Set up Python for pr-witness
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ inputs.python-version }}
 
@@ -142,6 +142,17 @@ runs:
         cat "$RUNNER_TEMP/pr-witness.md" >> "$GITHUB_STEP_SUMMARY"
         echo "exit=$code" >> "$GITHUB_OUTPUT"
 
+    - name: Keep the evidence
+      # The signature is only useful to someone who can get the signed file.
+      # The first live run signed evidence.json and then threw it away.
+      uses: actions/upload-artifact@v7
+      with:
+        name: pr-witness-evidence
+        path: |
+          ${{ runner.temp }}/evidence.json
+          ${{ runner.temp }}/pr-witness.md
+        retention-days: 90
+
     - name: Sign the evidence
       id: attest
       if: inputs.sign == 'true'
@@ -170,7 +181,7 @@ runs:
           cat "$RUNNER_TEMP/pr-witness.md"
           echo
           if [ -n "$ATTESTATION_URL" ]; then
-            echo "🔏 Signed by CI — [attestation]($ATTESTATION_URL). Verify: \`gh attestation verify evidence.json --repo $GH_REPO --predicate-type https://github.com/talhayme/pr-witness/evidence/v1\`"
+            echo "🔏 Signed by CI — [attestation]($ATTESTATION_URL). To verify, download the \`pr-witness-evidence\` artifact from this run and: \`gh attestation verify evidence.json --repo $GH_REPO --predicate-type https://github.com/talhayme/pr-witness/evidence/v1\`"
           else
             echo "Unsigned: attestation unavailable (private repository without Enterprise Cloud, or missing \`id-token\`/\`attestations\` permissions)."
           fi
