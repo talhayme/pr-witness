@@ -1,12 +1,28 @@
 [project]
 name = "pr-witness"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "Check whether a pull request's tests still mean what they meant before it"
+readme = "README.md"
 requires-python = ">=3.10"
+authors = [{ name = "Vitalii Bogachev" }]
+keywords = ["testing", "ci", "github-actions", "ai-agents", "code-review", "pytest", "vitest"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Software Development :: Quality Assurance",
+]
 license = { text = "Apache-2.0" }
 # checkwash does the diff-level half of this job, and does it well. It is a
 # dependency rather than a reimplementation.
 dependencies = ["checkwash>=0.6"]
+
+[project.urls]
+Homepage = "https://github.com/talhayme/pr-witness"
+Repository = "https://github.com/talhayme/pr-witness"
+Issues = "https://github.com/talhayme/pr-witness/issues"
 
 [project.optional-dependencies]
 dev = ["pytest", "jsonschema", "pyyaml"]
