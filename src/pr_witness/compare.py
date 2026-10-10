@@ -37,15 +37,19 @@ class Finding:
     # route is an accusation.
     innocent_explanation: str = ""
     tests: list[str] = field(default_factory=list)
+    diff: str = ""      # old vs new assertion, when the finding is about a rewrite
 
     def as_dict(self) -> dict:
-        return {
+        d = {
             "signal": self.signal,
             "severity": self.severity.value,
             "summary": self.summary,
             "innocent_explanation": self.innocent_explanation,
             "tests": sorted(self.tests),
         }
+        if self.diff:
+            d["diff"] = self.diff
+        return d
 
 
 # A skip whose reason names a tracking issue or an external cause is the
@@ -62,13 +66,39 @@ def _skip_is_documented(message: str) -> bool:
     return any(marker in text for marker in _ISSUE_MARKERS)
 
 
-def compare(base: RunResult, head: RunResult, cross: RunResult | None = None) -> list[Finding]:
+def _test_file_of(node_id: str) -> str:
+    """`tests/test_dates::test_monday` → `tests/test_dates`; `cart.test.ts::x` → `cart.test.ts`."""
+    return node_id.split("::", 1)[0]
+
+
+def _touched(node_id: str, changed_test_files: set[str]) -> bool:
+    """Did the pull request edit, rename or delete the file this test lives in?"""
+    f = _test_file_of(node_id)
+    for path in changed_test_files:
+        stem = path[:-3] if path.endswith(".py") else path
+        if f == path or f == stem or path.endswith("/" + f) or stem.endswith("/" + f):
+            return True
+    return False
+
+
+def compare(base: RunResult, head: RunResult, cross: RunResult | None = None,
+            changed_test_files: set[str] | None = None,
+            assertion_diffs: dict[str, str] | None = None) -> list[Finding]:
     """Produce every finding the three runs support.
 
     Findings are evidence, not verdicts. The caller decides what to do with
     them; by default pr-witness reports and blocks nothing.
+
+    `changed_test_files` is the set of test files the pull request touched.
+    It decides the one distinction the run itself cannot make: a base test
+    failing on the new code is a hidden regression if the PR never touched
+    that test, and an *expectation change* if the PR rewrote it. The first
+    is a flag; the second is for a human to review — honest and dishonest
+    rewrites look identical to the run (see corpus/real/swebench).
     """
     findings: list[Finding] = []
+    changed_test_files = changed_test_files or set()
+    assertion_diffs = assertion_diffs or {}
 
     # ---- a base that did not run proves nothing -----------------------------
     # With no base results every comparison below is vacuous: no base test
@@ -99,20 +129,38 @@ def compare(base: RunResult, head: RunResult, cross: RunResult | None = None) ->
         else:
             # A test that passed on base and fails on head. This is the one
             # finding the whole tool exists for.
-            regressed = sorted(
-                t for t in base.passed & cross.failed
-            )
-            if regressed:
+            regressed = sorted(t for t in base.passed & cross.failed)
+            untouched = [t for t in regressed if not _touched(t, changed_test_files)]
+            rewritten = [t for t in regressed if _touched(t, changed_test_files)]
+            if untouched:
                 findings.append(Finding(
                     "crossrun",
                     Severity.HIGH,
-                    f"{len(regressed)} test(s) that passed on the base branch "
-                    "fail when run against this pull request's code",
-                    "Legitimate if the pull request changes this behaviour on "
-                    "purpose. If so, the updated tests should say so — and a "
-                    "maintainer can mark the change approved.",
-                    regressed,
+                    f"{len(untouched)} test(s) the pull request did not touch pass on "
+                    "the base branch and fail against this code — a regression the "
+                    "pull request's own tests do not show",
+                    "Legitimate only if the behaviour change is intended and the "
+                    "test was simply forgotten; then update it and say so.",
+                    untouched,
                 ))
+            if rewritten:
+                detail = ""
+                shown = [assertion_diffs[t] for t in rewritten if t in assertion_diffs]
+                if shown:
+                    detail = "\n".join(shown[:3])
+                findings.append(Finding(
+                    "expectation_changed",
+                    Severity.MEDIUM,
+                    f"{len(rewritten)} test(s) the pull request rewrote assert something "
+                    "different now: the base version fails against this code",
+                    "Exactly what a change of specification looks like — and exactly "
+                    "what a test edited to match a bug looks like. The run cannot "
+                    "tell them apart; the old and new assertion are shown so a "
+                    "reviewer can.",
+                    rewritten,
+                ))
+                if detail:
+                    findings[-1].diff = detail
 
             # A base test that no longer even runs on the new code. Softer
             # than a failure, but it is how a removed guard disappears.

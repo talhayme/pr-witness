@@ -74,9 +74,27 @@ def test_a_hidden_regression_is_caught_by_the_crossrun(repo):  # noqa: F811
     ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300)
     # CI would be perfectly green here.
     assert ev.counts["head"]["failed"] == 0
-    # The base branch's own test says otherwise.
-    assert "crossrun" in signals(ev)
+    # The base branch's own test says otherwise — and because the PR rewrote
+    # that very test, the run cannot know whether the rewrite was honest.
+    # That is a review, with the old and new assertion shown, not a flag.
+    assert "expectation_changed" in signals(ev)
     assert ev.counts["crossrun"]["failed"] == 1
+    assert ev.verdict == "review"
+    f = next(x for x in ev.findings if x.signal == "expectation_changed")
+    assert "is_weekend(0) is False" in f.diff and "is_weekend(0) is True" in f.diff
+
+
+def test_a_regression_in_a_test_the_pr_did_not_touch_is_a_flag(repo):  # noqa: F811
+    """The code breaks; the PR leaves the test alone and adds an unrelated one."""
+    commit(repo, "init", {"conftest.py": CONFTEST, "dates.py": SRC_OK,
+                          "tests/test_dates.py": TESTS})
+    base = git_ops.resolve("HEAD", cwd=repo)
+    commit(repo, "break the code", {
+        "dates.py": SRC_OK.replace("return day >= 5", "return day >= 0"),
+        "tests/test_extra.py": "def test_extra():\n    assert True\n",
+    })
+    ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300)
+    assert "crossrun" in signals(ev) and "expectation_changed" not in signals(ev)
     assert ev.verdict == "flag"
 
 
@@ -153,8 +171,8 @@ def test_changed_only_picks_the_touched_test_files_and_still_crossruns(repo):  #
         "tests/test_dates.py": TESTS.replace("assert is_weekend(0) is False", "assert is_weekend(0) is True"),
     })
     ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300, changed_only=True)
-    assert ev.counts["head"]["collected"] == 2            # test_other.py not run
-    assert "crossrun" in {f.signal for f in ev.findings}  # base copy of test_dates.py fails on head code
+    assert ev.counts["head"]["collected"] == 2                       # test_other.py not run
+    assert "expectation_changed" in {f.signal for f in ev.findings}  # base copy of the rewritten test fails on head code
 
 
 def test_changed_only_with_no_test_changes_runs_everything(repo):  # noqa: F811

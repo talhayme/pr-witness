@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from pr_witness import git_ops, integrity
-from pr_witness.compare import Severity
+from pr_witness.compare import Finding, Severity
 
 from .test_git_ops import commit, repo  # noqa: F401
 
@@ -151,3 +151,19 @@ def test_a_documented_skip_downgrades_checkwashs_finding_without_hiding_it(repo)
     assert f.severity is Severity.INFO
     # Still present, and the disagreement is explained rather than hidden.
     assert "checkwash" in f.innocent_explanation
+
+
+def test_a_static_rewrite_on_a_test_the_run_already_shows_rewritten_stays_at_review():
+    run = [Finding("expectation_changed", Severity.MEDIUM, "1 rewritten", tests=["tests/test_a.py::test_x"])]
+    cw = [Finding("checkwash:EXPECTED_VALUE_CHANGED", Severity.HIGH, "rewritten", tests=["tests/test_a.py::test_x"]),
+          Finding("checkwash:EXPECTED_VALUE_CHANGED", Severity.HIGH, "rewritten", tests=["tests/test_a.py::test_other"])]
+    integrity.reconcile_with_run(cw, run)
+    assert cw[0].severity is Severity.MEDIUM and "review" in cw[0].innocent_explanation
+    # a rewrite the run did not corroborate keeps checkwash's own rating
+    assert cw[1].severity is Severity.HIGH
+
+
+def test_reconcile_is_a_no_op_without_a_run_finding():
+    cw = [Finding("checkwash:EXPECTED_VALUE_CHANGED", Severity.HIGH, "rewritten", tests=["t.py::test_x"])]
+    integrity.reconcile_with_run(cw, [])
+    assert cw[0].severity is Severity.HIGH

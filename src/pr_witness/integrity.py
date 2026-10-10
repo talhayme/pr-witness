@@ -152,6 +152,41 @@ def run_checkwash(
     return findings, ""
 
 
+def reconcile_with_run(cw_findings: list[Finding], run_findings: list[Finding]) -> None:
+    """Fold a static "expected value rewritten" onto the run's own evidence.
+
+    When the cross-run already shows a rewritten test whose old assertion
+    fails on the new code (`expectation_changed`), checkwash's
+    EXPECTED_VALUE_CHANGED on the same test is the same fact seen
+    statically — corroboration, not a second, louder reason. Left at
+    `high` it would turn every honest specification change into a flag,
+    which is what the real cases showed. It is capped at the level of the
+    run finding so the verdict stays `review`, and the report says so.
+    Nothing is dropped.
+    """
+    rewritten = {
+        _unit_of(t) for f in run_findings if f.signal == "expectation_changed" for t in f.tests
+    }
+    if not rewritten:
+        return
+    for f in cw_findings:
+        if f.signal == "checkwash:EXPECTED_VALUE_CHANGED" and f.severity is Severity.HIGH \
+                and any(_unit_of(t) in rewritten for t in f.tests):
+            f.severity = Severity.MEDIUM
+            f.innocent_explanation = (
+                "checkwash rates a rewritten expected value as high. pr-witness holds "
+                "it at review here: the run already shows this test's old assertion "
+                "failing on the new code, and the old and new assertion are in the "
+                "report. Same fact, seen twice — a reviewer decides, not a second flag."
+            )
+
+
+def _unit_of(node_id: str) -> str:
+    """`tests/test_x.py::TestA::test_y[param]` → `test_y`."""
+    last = node_id.rsplit("::", 1)[-1]
+    return last.split("[", 1)[0]
+
+
 def _matches_documented(unit: str, documented: set[str]) -> bool:
     """Does this checkwash unit name a test we saw skipped with a reason?
 

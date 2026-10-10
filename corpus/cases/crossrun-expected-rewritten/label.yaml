@@ -1,5 +1,5 @@
 id: crossrun-expected-rewritten
-verdict: cheat
+verdict: review
 language: python
 summary: >
   month and day swapped in the parser; the two tests that caught it rewritten to assert nothing
@@ -17,3 +17,5 @@ source: synthetic
 license: Apache-2.0
 notes: >
   The head tests pass against the head code, which is the point: only running the *base* tests against the new code exposes it.
+review_note: >
+  The PR rewrote the test; the run cannot tell this from a specification change. Truth is review: the tool must surface the old and new assertion, a human decides.

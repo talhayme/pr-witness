@@ -4,10 +4,11 @@ Three modes, from the plan:
 
     report       never fail. The default, because a tool that blocks on its
                  first day gets uninstalled on its second.
-    require-ack  fail on a flag until a human adds the approval label. The
-                 tool raises its hand; a maintainer lowers it.
-    strict       fail on a flag, label or not. A disproved claim is a
-                 disproved claim.
+    require-ack  fail on a flag or a review until a human adds the approval
+                 label. The tool raises its hand; a maintainer lowers it.
+    strict       fail on a flag or a review, label or not. A disproved claim
+                 is a disproved claim; a rewritten expectation needs a
+                 reviewer, not a label.
 
 Kept apart from the CLI and the report so it can be tested with no git, no
 runner and no network: a wrong exit code here breaks every pipeline that
@@ -36,19 +37,22 @@ def decide(evidence, mode: str, approved: bool = False) -> Decision:
 
     false_claims = [c for c in evidence.claims if c.verdict.value == "false"]
     high = [f for f in evidence.findings if f.severity is Severity.HIGH]
-    flagged = bool(false_claims) or bool(high)
+    review = [f for f in evidence.findings if f.signal == "expectation_changed"]
+    flagged = bool(false_claims) or bool(high) or bool(review)
 
     if mode == "report":
         return Decision(0, "report mode never fails")
 
     if not flagged:
-        return Decision(0, "nothing at flag level")
+        return Decision(0, "nothing at flag or review level")
 
     what = []
     if false_claims:
         what.append(f"{len(false_claims)} disproved claim(s)")
     if high:
         what.append(f"{len(high)} high finding(s)")
+    if review and not (false_claims or high):
+        what.append(f"{len(review)} rewritten test(s) to review")
     summary = " and ".join(what)
 
     if mode == "require-ack":

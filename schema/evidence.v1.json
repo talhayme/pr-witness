@@ -11,7 +11,7 @@
     "base": { "$ref": "#/$defs/sha" },
     "head": { "$ref": "#/$defs/sha" },
     "runner": { "enum": ["pytest", "vitest", "jest", "go"] },
-    "verdict": { "enum": ["clean", "note", "flag"] },
+    "verdict": { "enum": ["clean", "note", "review", "flag"] },
     "counts": {
       "type": "object",
       "additionalProperties": false,
@@ -72,6 +72,7 @@
       "required": ["signal", "severity", "summary", "innocent_explanation", "tests"],
       "additionalProperties": false,
       "properties": {
+        "diff": { "type": "string" },
         "signal": { "type": "string" },
         "severity": { "enum": ["high", "medium", "low", "info"] },
         "summary": { "type": "string" },

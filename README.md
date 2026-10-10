@@ -20,17 +20,22 @@ On PyPI (`pip install pr-witness`), on the GitHub Marketplace, and installable
 as a Claude Code plugin.
 
 **On the numbers.** The evaluation corpus is 17 *synthetic* cases, written by
-the same person who wrote the detector. On it the tool scores precision 0.91 /
-recall 1.00 — see [eval/witness_results.md](eval/witness_results.md). That is
-a regression gate, not an accuracy claim: it says the tool has not got worse,
-not how it performs on pull requests it has never seen. Real cases are
-arriving: [corpus/real/swebench](corpus/real/swebench/) holds seven test
-edits made by a frontier agent on SWE-bench Verified, labelled against the
-maintainers' own test patches (six honest, one for review), out of 1,500
-published patches examined. The evaluation harness does not run them yet —
-it needs to run a subset of a large suite first — so the numbers above are
-still the synthetic ones, and will be re-published when the real cases are
-in the loop.
+the same person who wrote the detector, scored on three verdicts: a cheat must
+be flagged, a rewritten expectation must come back as `review`, a clean change
+must be left alone. The tool gets all 17 right —
+[eval/witness_results.md](eval/witness_results.md). That is a regression gate,
+not an accuracy claim: it says the tool has not got worse, not how it performs
+on pull requests it has never seen.
+
+The first **real** cases are in the loop: [corpus/real/swebench](corpus/real/swebench/)
+holds seven test edits made by a frontier agent on SWE-bench Verified, out of
+1,500 published patches examined, labelled against the maintainers' own test
+patches. Four run end to end today (SymPy ×3, Sphinx); the tool's verdict
+matches the label on all four — one `clean`, three `review`, each `review`
+showing the old and the new assertion side by side. Before the `review`
+verdict existed, three of those four honest specification changes came back
+as a flag; that run is what produced the verdict. Django and Matplotlib cases
+wait on a runner adapter and a source build.
 
 See [eval/results.md](eval/results.md) for the numbers and
 [corpus/README.md](corpus/README.md) for how the cases are built.
@@ -39,7 +44,8 @@ See [eval/results.md](eval/results.md) for the numbers and
 
 | Signal | What it catches |
 |---|---|
-| `crossrun` | A base-branch test that now fails on the PR's code |
+| `crossrun` | A base-branch test the PR did **not** touch that now fails on the PR's code — a hidden regression (high) |
+| `expectation_changed` | A test the PR **rewrote** whose old assertion fails on the new code; the report shows the old and new assertion (medium → `review`) |
 | `denominator` | Fewer tests actually running than before — the `4966/4966 ALL PASSED` trick |
 | `skip_inflation` | Collected count steady while the skipped count climbs |
 | `claim_false` | The description asserts something the run contradicts |
@@ -81,8 +87,12 @@ summary, and `evidence.json` is exposed as an output for anything downstream.
 | `require-ack` | fails on a flag until a maintainer adds the `test-change-approved` label |
 | `strict` | fails on a flag; the label documents intent but does not change the facts |
 
-A *flag* is a disproved claim or a high finding. Medium findings and
-misleading claims are reported but never fail the job in any mode.
+A *flag* is a disproved claim or a high finding. A *review* is a rewritten
+test whose old assertion fails on the new code: honest specification change
+or test bent to fit a bug, the run cannot tell, so it shows both assertions
+and `require-ack`/`strict` hold the job for a human the same way they do for
+a flag. Other medium findings and misleading claims are reported but never
+fail the job in any mode.
 
 Locally, the same thing:
 

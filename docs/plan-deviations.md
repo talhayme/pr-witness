@@ -39,3 +39,10 @@ discrepancy written down. This is that list.
 |---|---|
 | `uses: <user>/pr-witness@<SHA>` | Composite action syntax verified: every `run` step needs `shell:`; steps may `uses:` other actions with `with:`, `if:`, `env:`, `continue-on-error:`. `gh pr comment --edit-last --create-if-none` exists and is what keeps the thread to one comment. |
 | "require-ack — статус «нейтральный»" | A composite action cannot set a neutral check status; that needs the Checks API and a GitHub App. `require-ack` fails the job until the label is present, which is the closest honest equivalent. |
+
+## After release — real cases
+
+| Plan said | Checked |
+|---|---|
+| Two verdicts, `cheat` / `clean`; "кросс-прогон ловит подмену ожидания" | The first four real cases (SymPy, Sphinx agent patches labelled against the maintainers' test patches) showed that a base test failing on the new code is the *same* observation for an honest specification change and for a test bent to fit a bug — the cross-run flagged 3 of 4 honest changes. What the run can distinguish is a failing base test the PR did not touch (`crossrun`, flag) from one the PR rewrote (`expectation_changed`, a new `review` verdict showing the old and new assertion). The corpus is labelled with three truths and the eval scores three verdicts. |
+| checkwash findings taken at checkwash's severity | `EXPECTED_VALUE_CHANGED` at `high` turned sphinx-10449's `review` back into a `flag` for the fact the run had already shown. It is held at the review level when — and only when — the cross-run has identified the same test as a rewritten expectation. |

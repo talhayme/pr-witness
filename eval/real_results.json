@@ -1,5 +1,49 @@
 [
  {
+  "case": "sphinx-doc__sphinx-10449",
+  "label": "review",
+  "repo": "sphinx-doc/sphinx",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 31,
+    "ran": 31,
+    "passed": 31,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 31,
+    "ran": 31,
+    "passed": 31,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 31,
+    "ran": 31,
+    "passed": 30,
+    "failed": 1,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "medium",
+    "test_autodoc_typehints_description_with_documented_init: expected value rewritten 'class target.typehints._ClassWithDocumentedInit(x)\\n\\n   Class docstring.\\n\\n   Parameters:\\n      **x** (*int*) --\\n\\n   Return type:\\n      None\\n\\n   __init__(x)\\n\\n      Init docstring.\\n\\n      Parameters:\\n         **x** (*int*) -- Some integer\\n\\n      Return type:\\n         None\\n' -> 'class target.typehints._ClassWithDocumentedInit(x)\\n\\n   Class docstring.\\n\\n   Parameters:\\n      **x** (*int*) --\\n\\n   __init__(x)\\n\\n      Init docstring.\\n\\n      Parameters:\\n         **x** (*int*) -- Some integer\\n\\n      Return type:\\n         None\\n' with no change in assertion strength"
+   ],
+   [
+    "expectation_changed",
+    "medium",
+    "1 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): tests/test_ext_autodoc_configs.py"
+  ]
+ },
+ {
   "case": "sympy__sympy-12419",
   "label": "clean",
   "repo": "sympy/sympy",
@@ -35,9 +79,9 @@
  },
  {
   "case": "sympy__sympy-12481",
-  "label": "clean",
+  "label": "review",
   "repo": "sympy/sympy",
-  "verdict": "flag",
+  "verdict": "review",
   "counts": {
    "base": {
     "collected": 9,
@@ -63,9 +107,9 @@
   },
   "findings": [
    [
-    "crossrun",
-    "high",
-    "1 test(s) that passed on the base branch fail when run against this pull request's code"
+    "expectation_changed",
+    "medium",
+    "1 test(s) the pull request rewrote assert something different now: the base version fails against this code"
    ],
    [
     "checkwash:ASSERT_REMOVED",
@@ -75,6 +119,50 @@
   ],
   "notes": [
    "restricted to 1 path(s): sympy/combinatorics/tests/test_permutations.py"
+  ]
+ },
+ {
+  "case": "sympy__sympy-19495",
+  "label": "review",
+  "repo": "sympy/sympy",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 10,
+    "ran": 10,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 10,
+    "ran": 10,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 10,
+    "ran": 10,
+    "passed": 8,
+    "failed": 1,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "expectation_changed",
+    "medium",
+    "1 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "test_subs_CondSet: expected call rewritten to a different call ['S'] -> ['Interval', 'oo'] with no change in assertion strength"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): sympy/sets/tests/test_conditionset.py"
   ]
  }
 ]

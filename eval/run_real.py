@@ -108,12 +108,19 @@ def main() -> int:
             print("   ERROR:", r["error"].strip().splitlines()[-1][:200], flush=True)
         else:
             c = r["counts"]
-            print(f"   label={r['label']:7} tool={r['verdict']:6}  base {c['base']['passed']}/{c['base']['collected']}  head {c['head']['passed']}/{c['head']['collected']}  cross {c['crossrun']['failed']}F/{c['crossrun']['collected']}", flush=True)
+            mark = "✓" if r["verdict"] == r["label"] else "✗"
+            print(f"   {mark} label={r['label']:7} tool={r['verdict']:6}  base {c['base']['passed']}/{c['base']['collected']}  head {c['head']['passed']}/{c['head']['collected']}  cross {c['crossrun']['failed']}F/{c['crossrun']['collected']}", flush=True)
             for sig, sev, summ in r["findings"]:
                 print(f"      [{sev}] {sig}: {summ[:300]}", flush=True)
             for n in r["notes"]:
                 print(f"      · {n[:300]}", flush=True)
-    (ROOT / "eval" / "real_results.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    # Merge with earlier runs so the file holds every case run so far, not
+    # only this invocation's.
+    results_path = ROOT / "eval" / "real_results.json"
+    previous = json.loads(results_path.read_text(encoding="utf-8")) if results_path.exists() else []
+    merged = {r["case"]: r for r in previous}
+    merged.update({r["case"]: r for r in out})
+    results_path.write_text(json.dumps([merged[k] for k in sorted(merged)], indent=1), encoding="utf-8")
     return 0
 
 

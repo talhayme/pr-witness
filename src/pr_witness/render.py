@@ -58,6 +58,8 @@ def to_text(ev: Evidence) -> str:
             out.append(f"       … and {len(f.tests) - 10} more")
         if f.innocent_explanation:
             out.append(f"       ↳ {f.innocent_explanation}")
+        if f.diff:
+            out.extend("         " + line for line in f.diff.splitlines()[:24])
         out.append("")
 
     for note in ev.notes:
@@ -105,6 +107,11 @@ def to_markdown(ev: Evidence) -> str:
         if f.innocent_explanation:
             out.append("")
             out.append(f"  > {f.innocent_explanation}")
+        if f.diff:
+            out.append("")
+            out.append("  ```diff")
+            out.extend("  " + line for line in f.diff.splitlines()[:24])
+            out.append("  ```")
         out.append("")
 
     out.append("---")

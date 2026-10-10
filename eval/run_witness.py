@@ -45,63 +45,59 @@ def main() -> int:
     only = sys.argv[1] if len(sys.argv) > 1 else None
     tsrunner = ROOT / ".tsrunner" / "node_modules"
 
+    # Three truths, three verdicts. cheat must be flagged; review must be
+    # surfaced as review (the run cannot tell an honest rewrite from a
+    # dishonest one, so the tool's job is to show it, not to judge it);
+    # clean must be left alone.
+    from collections import Counter
+    matrix = Counter(); rows = []
     tp = fp = tn = fn = 0
-    rows = []
 
-    for case in sorted(p for p in CASES.iterdir() if p.is_dir()):
-        if only and only not in case.name:
-            continue
-        label = (case / "label.yaml").read_text(encoding="utf-8")
-        is_cheat = "verdict: cheat" in label
-        language = re.search(r"^language: (\S+)", label, re.M).group(1)
-
+    cases = [p for p in sorted(CASES.iterdir()) if p.is_dir() and not (only and only not in p.name)]
+    for case_path in cases:
+        label_text = (case_path / "label.yaml").read_text(encoding="utf-8")
+        truth = re.search(r"^verdict: (\w+)", label_text, re.M).group(1)
+        language = re.search(r"^language: (\S+)", label_text, re.M).group(1)
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "repo"
             repo.mkdir()
-            make_repo(case, repo)
+            make_repo(case_path, repo)
             if language == "typescript" and tsrunner.exists():
                 (repo / "node_modules").symlink_to(tsrunner)
                 (repo / "package.json").write_text(
                     json.dumps({"name": "case", "private": True, "type": "module"}),
                     encoding="utf-8",
                 )
-
-            body = case / "pr_body.md"
+            body = case_path / "pr_body.md"
             try:
                 ev = witness(repo=repo, base="HEAD~1", head="HEAD",
                              runner_name="vitest" if language == "typescript" else "pytest",
                              pr_body=body.read_text(encoding="utf-8") if body.exists() else "",
                              timeout=300)
-                signals = [f.signal for f in ev.findings if f.severity in FLAGGING]
-                info = [f.signal for f in ev.findings if f.severity not in FLAGGING]
-                # A disproved claim is a flag in its own right — some cheats
-                # leave the run entirely clean and lie only in the prose.
-                signals += [
-                    f"claim_false({c.shown})" for c in ev.claims
-                    if c.verdict.value == "false"
-                ]
-                info += [
-                    f"claim_misleading({c.shown})" for c in ev.claims
-                    if c.verdict.value == "misleading"
-                ]
+                tool = {"flag": "flag", "review": "review"}.get(ev.verdict, "clean")
+                detail = ", ".join(f.signal for f in ev.findings if f.severity in FLAGGING or f.signal == "expectation_changed")
+                detail += "".join(f", claim_false({c.shown})" for c in ev.claims if c.verdict.value == "false")
             except Exception as exc:  # noqa: BLE001
-                print(f"  ERROR {case.name}: {exc}", file=sys.stderr)
-                signals, info = [], [f"error: {exc}"]
+                tool, detail = "error", f"error: {exc}"
+        matrix[(truth, tool)] += 1
+        expected = {"cheat": "flag"}.get(truth, truth)
+        ok = (tool == expected)
+        # the two-class numbers, for continuity with earlier phases:
+        # anything not clean is "positive"; surfaced = flag or review.
+        pos, surfaced = truth != "clean", tool != "clean"
+        if pos and surfaced: tp += 1
+        elif pos: fn += 1
+        elif surfaced: fp += 1
+        else: tn += 1
+        sym = "✓" if ok else ("✗ missed" if pos and not surfaced else "✗ false alarm" if not pos and surfaced else "~ wrong level")
+        rows.append((case_path.name, truth, tool, detail or "—"))
+        print(f"  {sym:14} {case_path.name:38} truth={truth:7} tool={tool:7} {detail or '—'}")
 
-        flagged = bool(signals)
-        if is_cheat and flagged:
-            outcome, sym = "TP", "✓"; tp += 1
-        elif is_cheat:
-            outcome, sym = "FN", "✗ missed"; fn += 1
-        elif flagged:
-            outcome, sym = "FP", "✗ false alarm"; fp += 1
-        else:
-            outcome, sym = "TN", "✓"; tn += 1
-
-        detail = ", ".join(signals + [f"({i})" for i in info]) or "—"
-        rows.append((case.name, "cheat" if is_cheat else "clean", outcome, detail))
-        print(f"  {sym:14} {case.name:38} {detail}")
-
+    print("\n  truth \\ tool      flag  review  clean")
+    for truth in ("cheat", "review", "clean"):
+        print(f"  {truth:14}" + "".join(f"{matrix[(truth, v)]:>7}" for v in ("flag", "review", "clean")))
+    exact = matrix[("cheat", "flag")] + matrix[("review", "review")] + matrix[("clean", "clean")]
+    print(f"  exact verdict: {exact}/{len(cases)}")
     precision = tp / (tp + fp) if tp + fp else 0.0
     recall = tp / (tp + fn) if tp + fn else 0.0
     f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
@@ -112,11 +108,15 @@ def main() -> int:
 
     out = ROOT / "eval" / "witness_results.md"
     lines = [
-        "# Evaluation — pr-witness (phase 1)", "",
+        "# Evaluation — pr-witness", "",
+        "Three verdicts: cheat → flag, review → review, clean → clean. Two-class numbers (surfaced vs not) kept for continuity.", "",
+        "| truth \\ tool | flag | review | clean |", "|---|---|---|---|",
+        *[f"| {t} | " + " | ".join(str(matrix[(t, v)]) for v in ("flag", "review", "clean")) + " |" for t in ("cheat", "review", "clean")],
+        f"Exact verdict: {exact}/{len(cases)}", "",
         f"Cases: {tp+fp+tn+fn}  ·  TP {tp}  FP {fp}  TN {tn}  FN {fn}", "",
         "| metric | value |", "|---|---|",
         f"| precision | {precision:.2f} |", f"| recall | {recall:.2f} |", f"| F1 | {f1:.2f} |",
-        "", "| case | truth | outcome | signals |", "|---|---|---|---|",
+        "", "| case | truth | tool | signals |", "|---|---|---|---|",
     ]
     lines += [f"| `{c}` | {t} | {o} | {d} |" for c, t, o, d in rows]
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")

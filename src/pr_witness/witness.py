@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -34,6 +35,10 @@ class Evidence:
             return "flag"
         if any(f.severity is Severity.HIGH for f in self.findings):
             return "flag"
+        # A rewritten test whose old version fails: honest or not, a human
+        # has to look. Louder than a note, quieter than a flag.
+        if any(f.signal == "expectation_changed" for f in self.findings):
+            return "review"
         if any(f.severity is Severity.MEDIUM for f in self.findings):
             return "note"
         return "clean"
@@ -83,6 +88,35 @@ def _env_for(tree: Path, repo: Path) -> dict[str, str]:
         except OSError:
             pass
     return env
+
+
+def _assertion_diffs(repo: Path, base: str, head: str, base_run, cross_run, changed_tests: set[str]) -> dict[str, str]:
+    """For each base test the PR rewrote and that now fails, the hunk that changed it.
+
+    Shown next to the finding so a reviewer sees the one line that matters —
+    the old assertion and the new one — without opening the diff.
+    """
+    if cross_run is None or not changed_tests:
+        return {}
+    out: dict[str, str] = {}
+    regressed = base_run.passed & cross_run.failed
+    for node in regressed:
+        fn = node.rsplit("::", 1)[-1].split("[", 1)[0]
+        for path in changed_tests:
+            try:
+                diff = git_ops.git("diff", "--unified=2", f"{base}..{head}", "--", path, cwd=repo, check=False)
+            except Exception:  # noqa: BLE001
+                continue
+            if not diff:
+                continue
+            # keep only hunks mentioning the test function
+            hunks = re.split(r"(?m)^(?=@@ )", diff)
+            keep = [h for h in hunks if fn in h and h.startswith("@@")]
+            if keep:
+                body = "\n".join(l for h in keep for l in h.splitlines() if l.startswith(("@@", "+", "-")) and not l.startswith(("+++", "---")))
+                out[node] = f"{node}\n{body[:1200]}"
+                break
+    return out
 
 
 def witness(
@@ -159,7 +193,10 @@ def witness(
             with git_ops.crossrun_tree(base_sha, head_sha, repo) as tree:
                 cross_run = _run(tree, "crossrun")
 
-    findings = compare(base_run, head_run, cross_run)
+    changed = git_ops.changed_files(base_sha, head_sha, cwd=repo)
+    changed_tests = {f for f in changed if any(git_ops.matches_glob(f, g) for g in git_ops.DEFAULT_TEST_GLOBS)}
+    findings = compare(base_run, head_run, cross_run, changed_test_files=changed_tests,
+                       assertion_diffs=_assertion_diffs(repo, base_sha, head_sha, base_run, cross_run, changed_tests))
 
     # Diff-level integrity, from checkwash plus the gaps it has not closed.
     # Deliberately last: the cross-run is our own contribution, and a missing
@@ -173,6 +210,7 @@ def witness(
         cw_findings, note = integrity.run_checkwash(
             repo, base_sha, head_sha, documented_skips=documented,
         )
+        integrity.reconcile_with_run(cw_findings, findings)
         findings += cw_findings
         if note:
             notes.append(note)
