@@ -62,10 +62,12 @@ def venv_for(work: Path, lab: dict, python: str) -> Path:
     venv = work / ".venv"
     sh(UV, "venv", "-q", "--python", python, str(venv))
     pip = [UV, "pip", "install", "-q", "--python", str(venv / "bin" / "python")]
+    # Only the project and its runner go into the case's venv. pr-witness
+    # itself (and checkwash) run from this checkout's own environment and
+    # reach the case's pytest through PATH — the repository's era may need
+    # a Python that our dependencies no longer support.
     extras = {"sympy/sympy": ["mpmath"], "sphinx-doc/sphinx": [], "django/django": [], "matplotlib/matplotlib": []}.get(lab["repo"], [])
-    sh(*pip, "pytest", "checkwash", "-e", ".", *extras, cwd=work, timeout=3600)
-    # the pr-witness under test, from this checkout
-    sh(*pip, "-e", str(ROOT), cwd=work, timeout=1800)
+    sh(*pip, "pytest", "-e", ".", *extras, cwd=work, timeout=3600)
     return venv
 
 
@@ -74,9 +76,12 @@ def run_case(case: Path, python: str) -> dict:
     work = materialise(case, lab)
     venv = venv_for(work, lab, python)
     ev_path = work / "evidence.json"
-    p = subprocess.run([str(venv / "bin" / "pr-witness"), "--base", "HEAD~1", "--head", "HEAD", "--runner", "pytest",
+    env = {**os.environ, "PATH": f"{venv / 'bin'}{os.pathsep}{os.environ['PATH']}", "VIRTUAL_ENV": str(venv)}
+    env.pop("PYTHONPATH", None)
+    witness_bin = ROOT / "venv" / "bin" / "pr-witness"
+    p = subprocess.run([str(witness_bin), "--base", "HEAD~1", "--head", "HEAD", "--runner", "pytest",
                         "--changed-only", "--format", "json", "--evidence", str(ev_path), "--timeout", "1500"],
-                       cwd=work, capture_output=True, text=True, timeout=3600)
+                       cwd=work, capture_output=True, text=True, timeout=3600, env=env)
     if not ev_path.exists():
         return {"case": case.name, "label": lab.get("verdict"), "error": (p.stderr or p.stdout)[-600:]}
     ev = json.loads(ev_path.read_text())
@@ -105,7 +110,9 @@ def main() -> int:
             c = r["counts"]
             print(f"   label={r['label']:7} tool={r['verdict']:6}  base {c['base']['passed']}/{c['base']['collected']}  head {c['head']['passed']}/{c['head']['collected']}  cross {c['crossrun']['failed']}F/{c['crossrun']['collected']}", flush=True)
             for sig, sev, summ in r["findings"]:
-                print(f"      [{sev}] {sig}: {summ[:100]}", flush=True)
+                print(f"      [{sev}] {sig}: {summ[:300]}", flush=True)
+            for n in r["notes"]:
+                print(f"      · {n[:300]}", flush=True)
     (ROOT / "eval" / "real_results.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     return 0
 

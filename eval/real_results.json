@@ -1,6 +1,80 @@
 [
  {
-  "case": "sympy__sympy-19495",
-  "error": "/Users/test/.local/bin/uv pip install -q --python /Users/test/.cache/pr-witness-real/work/sympy__sympy-19495/.venv/bin/python pytest checkwash -e . mpmath\n  \u00d7 No solution found when resolving dependencies:\n  \u2570\u2500\u25b6 Because the current Python version (3.10.11) does not satisfy\n      Python>=3.11 and all versions of checkwash depend on Python>=3.11, we\n      can conclude that all versions of checkwash cannot be used.\n      And because you require checkwash, we can conclude that your\n      requirements are unsatisfiable.\n"
+  "case": "sympy__sympy-12419",
+  "label": "clean",
+  "repo": "sympy/sympy",
+  "verdict": "clean",
+  "counts": {
+   "base": {
+    "collected": 152,
+    "ran": 152,
+    "passed": 147,
+    "failed": 5,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 152,
+    "ran": 152,
+    "passed": 147,
+    "failed": 5,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 152,
+    "ran": 152,
+    "passed": 147,
+    "failed": 5,
+    "skipped": 0
+   }
+  },
+  "findings": [],
+  "notes": [
+   "restricted to 1 path(s): sympy/matrices/tests/test_matrices.py",
+   "checkwash produced no readable output: checkwash engine error: EngineError: stand-in source exceeds the syntax node limit"
+  ]
+ },
+ {
+  "case": "sympy__sympy-12481",
+  "label": "clean",
+  "repo": "sympy/sympy",
+  "verdict": "flag",
+  "counts": {
+   "base": {
+    "collected": 9,
+    "ran": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 9,
+    "ran": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 9,
+    "ran": 9,
+    "passed": 8,
+    "failed": 1,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "crossrun",
+    "high",
+    "1 test(s) that passed on the base branch fail when run against this pull request's code"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "test_args: assertion removed (strength UNKNOWN)"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): sympy/combinatorics/tests/test_permutations.py"
+  ]
  }
 ]

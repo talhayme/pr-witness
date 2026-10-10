@@ -70,6 +70,20 @@ def compare(base: RunResult, head: RunResult, cross: RunResult | None = None) ->
     """
     findings: list[Finding] = []
 
+    # ---- a base that did not run proves nothing -----------------------------
+    # With no base results every comparison below is vacuous: no base test
+    # can be seen to fail, no denominator can shrink. A clean verdict on an
+    # empty base would be the tool lying by omission.
+    if base.collection_error or (base.collected == 0 and not base.collection_error):
+        findings.append(Finding(
+            "base_uncollectable",
+            Severity.MEDIUM,
+            "the base branch's tests could not be collected, so nothing below is evidence: "
+            + (base.collection_error.splitlines()[0] if base.collection_error else "0 tests collected"),
+            "Usually the environment, not the change: a Python version the base "
+            "commit predates, a missing dependency, or the wrong --paths.",
+        ))
+
     # ---- the cross-run ---------------------------------------------------
     if cross is not None:
         if cross.collection_error:

@@ -139,3 +139,11 @@ def test_head_that_cannot_be_collected_is_high():
     head = RunResult()
     head.collection_error = "SyntaxError"
     assert by_signal(compare(base, head, None), "head_uncollectable").severity is Severity.HIGH
+
+
+def test_an_empty_base_is_a_finding_not_a_clean_verdict():
+    """Nothing can regress against a base that did not run."""
+    base = RunResult(); base.collection_error = "ImportError: cannot import name 'Hashable'"
+    findings = compare(base, run(a=P), run(a=P))
+    assert "base_uncollectable" in signals(findings)
+    assert by_signal(findings, "base_uncollectable").severity is Severity.MEDIUM
