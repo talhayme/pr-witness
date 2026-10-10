@@ -147,3 +147,14 @@ def test_an_empty_base_is_a_finding_not_a_clean_verdict():
     findings = compare(base, run(a=P), run(a=P))
     assert "base_uncollectable" in signals(findings)
     assert by_signal(findings, "base_uncollectable").severity is Severity.MEDIUM
+
+
+# --- which file a test lives in -------------------------------------------
+
+def test_a_class_based_test_counts_as_touched_when_its_file_changed():
+    from pr_witness.compare import _touched
+    changed = {"tests/test_x.py", "tests/migrations/test_writer.py"}
+    assert _touched("tests/test_x/TestDates::test_monday", changed)
+    assert _touched("migrations/test_writer/WriterTests::test_serialize", changed)   # runner run from tests/
+    assert _touched("tests/test_x::test_plain", changed)
+    assert not _touched("tests/test_y/TestOther::test_q", changed)

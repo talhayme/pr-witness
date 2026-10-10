@@ -30,12 +30,12 @@ on pull requests it has never seen.
 The first **real** cases are in the loop: [corpus/real/swebench](corpus/real/swebench/)
 holds seven test edits made by a frontier agent on SWE-bench Verified, out of
 1,500 published patches examined, labelled against the maintainers' own test
-patches. Four run end to end today (SymPy ×3, Sphinx); the tool's verdict
-matches the label on all four — one `clean`, three `review`, each `review`
-showing the old and the new assertion side by side. Before the `review`
-verdict existed, three of those four honest specification changes came back
-as a flag; that run is what produced the verdict. Django and Matplotlib cases
-wait on a runner adapter and a source build.
+patches. Six run end to end today (SymPy ×3, Sphinx, Django ×2); the tool's
+verdict matches the label on all six — one `clean`, five `review`, each
+`review` showing the old and the new assertion side by side. Before the
+`review` verdict existed, three of the first four honest specification
+changes came back as a flag; that run is what produced the verdict. The
+Matplotlib case waits on a source build.
 
 See [eval/results.md](eval/results.md) for the numbers and
 [corpus/README.md](corpus/README.md) for how the cases are built.
@@ -73,7 +73,7 @@ jobs:
       - run: pip install -e . pytest  # whatever your own test job installs
       - uses: talhayme/pr-witness@v0.1
         with:
-          test-command: pytest        # or vitest, jest, go
+          test-command: pytest        # or vitest, jest, go, django (Django's own runtests.py)
           mode: report                # report | require-ack | strict
 ```
 

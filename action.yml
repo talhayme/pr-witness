@@ -9,7 +9,7 @@ branding:
 inputs:
   test-command:
     description: >-
-      Runner to use: pytest, vitest, jest or go. Detected from the repository
+      Runner to use: pytest, vitest, jest, go or django. Detected from the repository
       when omitted.
     required: false
     default: ""

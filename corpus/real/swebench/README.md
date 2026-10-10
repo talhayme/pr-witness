@@ -59,13 +59,15 @@ under-represented: five of seventeen synthetic cases were clean test edits,
 and those were refactors (renames, splits, parametrisation), where the
 cross-run stays green.
 
-## Real numbers (four cases run end to end)
+## Real numbers (six of seven cases run end to end)
 
 `python eval/run_real.py` materialises a case — partial clone, base
 commit, the agent's patch committed on top, a venv on a Python of the
-repository's era — and runs `pr-witness --changed-only`. Four of the seven
-run today (sympy ×3 on Python 3.9, sphinx on 3.10); Django needs its own
-test runner, Matplotlib needs a source build.
+repository's era — and runs `pr-witness --changed-only`. Six of the seven
+run today (sympy ×3 and django ×2 on Python 3.9, sphinx on 3.10); Django
+goes through its own `tests/runtests.py` via the `django` runner, which
+takes test labels and gets JUnit from unittest-xml-reporting through a
+settings module written beside the report. Matplotlib needs a source build.
 
 | case | label | base | head | cross-run | tool says |
 |---|---|---|---|---|---|
@@ -73,11 +75,13 @@ test runner, Matplotlib needs a source build.
 | sympy-12481 | review (honest) | 9/9 | 9/9 | 1 fail, in the rewritten test | **review** ✓ |
 | sympy-19495 | review (honest) | 9/10 | 9/10 | 1 fail, in the rewritten test | **review** ✓ |
 | sphinx-10449 | review (honest) | 31/31 | 31/31 | 1 fail, in the rewritten test | **review** ✓ |
+| django-11815 | review (honest) | 46/46 | 46/46 | 1 fail, in the rewritten test | **review** ✓ |
+| django-14608 | review (honest) | 327/344 | 327/344 | 1 fail, in the rewritten test | **review** ✓ |
 
-Before the `review` verdict existed these three came back as `flag` — the
-first run on real cases was 1/4, and that result is what produced the
-verdict (the synthetic corpus hid it, see above). Two further changes came
-out of the same four runs:
+Before the `review` verdict existed the first three of these came back as
+`flag` — the first run on real cases was 1/4, and that result is what produced the
+verdict (the synthetic corpus hid it, see above). Three further changes came
+out of these runs:
 
 - a base that cannot be collected (sympy's 2017 commit on Python 3.10) used
   to yield a `clean` verdict on an empty comparison — it is now a
@@ -87,7 +91,13 @@ out of the same four runs:
   fact the run had already shown. When the cross-run has already identified
   the test as a rewritten expectation, that checkwash finding is held at
   the review level and the report says why; a checkwash rewrite finding the
-  run does *not* corroborate keeps its rating.
+  run does *not* corroborate keeps its rating;
+- a test inside a class (`tests/test_x/TestA::test_m`), or reported by a
+  runner started from a subdirectory (`migrations/test_writer/WriterTests`
+  for `tests/migrations/test_writer.py`), was not recognised as living in a
+  file the pull request touched — so a rewritten class-based test would
+  have been a `flag`, not a `review`. Django's suite is all classes; it
+  surfaced this.
 
 (checkwash also declines sympy's 4,000-line test module — "stand-in source
 exceeds the syntax node limit" — which pr-witness reports as a note and

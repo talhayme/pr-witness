@@ -23,7 +23,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--base", default="origin/main",
                     help="base revision (default: origin/main)")
     ap.add_argument("--head", default="HEAD")
-    ap.add_argument("--runner", choices=["pytest", "vitest", "jest", "go"],
+    ap.add_argument("--runner", choices=["pytest", "vitest", "jest", "go", "django"],
                     help="override runner detection")
     ap.add_argument("--format", choices=["text", "markdown", "json"], default="text")
     ap.add_argument("--no-crossrun", action="store_true",

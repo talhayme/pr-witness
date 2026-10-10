@@ -66,9 +66,12 @@ def venv_for(work: Path, lab: dict, python: str) -> Path:
     # itself (and checkwash) run from this checkout's own environment and
     # reach the case's pytest through PATH — the repository's era may need
     # a Python that our dependencies no longer support.
-    extras = {"sympy/sympy": ["mpmath"], "sphinx-doc/sphinx": [], "django/django": [], "matplotlib/matplotlib": []}.get(lab["repo"], [])
+    extras = {"sympy/sympy": ["mpmath"], "sphinx-doc/sphinx": [], "django/django": ["unittest-xml-reporting"], "matplotlib/matplotlib": []}.get(lab["repo"], [])
     sh(*pip, "pytest", "-e", ".", *extras, cwd=work, timeout=3600)
     return venv
+
+
+RUNNER = {"django/django": "django"}
 
 
 def run_case(case: Path, python: str) -> dict:
@@ -79,7 +82,7 @@ def run_case(case: Path, python: str) -> dict:
     env = {**os.environ, "PATH": f"{venv / 'bin'}{os.pathsep}{os.environ['PATH']}", "VIRTUAL_ENV": str(venv)}
     env.pop("PYTHONPATH", None)
     witness_bin = ROOT / "venv" / "bin" / "pr-witness"
-    p = subprocess.run([str(witness_bin), "--base", "HEAD~1", "--head", "HEAD", "--runner", "pytest",
+    p = subprocess.run([str(witness_bin), "--base", "HEAD~1", "--head", "HEAD", "--runner", RUNNER.get(lab["repo"], "pytest"),
                         "--changed-only", "--format", "json", "--evidence", str(ev_path), "--timeout", "1500"],
                        cwd=work, capture_output=True, text=True, timeout=3600, env=env)
     if not ev_path.exists():

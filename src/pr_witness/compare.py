@@ -72,12 +72,21 @@ def _test_file_of(node_id: str) -> str:
 
 
 def _touched(node_id: str, changed_test_files: set[str]) -> bool:
-    """Did the pull request edit, rename or delete the file this test lives in?"""
+    """Did the pull request edit, rename or delete the file this test lives in?
+
+    The file half of a node id may carry a class (`tests/test_x/TestA`) and,
+    for a runner invoked from a subdirectory, may lack a leading directory
+    (`migrations/test_writer/WriterTests` for `tests/migrations/test_writer.py`).
+    So every prefix of it is tried against the changed path and its stem.
+    """
     f = _test_file_of(node_id)
+    parts = f.split("/")
+    candidates = ["/".join(parts[:i]) for i in range(len(parts), 0, -1)]
     for path in changed_test_files:
         stem = path[:-3] if path.endswith(".py") else path
-        if f == path or f == stem or path.endswith("/" + f) or stem.endswith("/" + f):
-            return True
+        for cand in candidates:
+            if cand in (path, stem) or path.endswith("/" + cand) or stem.endswith("/" + cand):
+                return True
     return False
 
 
