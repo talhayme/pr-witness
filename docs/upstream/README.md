@@ -13,13 +13,16 @@ This directory holds those proposals and their status.
 | [03](03-eslint-disable.md) | `eslint-disable` of a test-quality rule | **filed: [checkwash#367](https://github.com/taipei49314/checkwash/issues/367)** (10 Oct 2026) |
 | — | Proposal: shared corpus + findings contract | **filed: [checkwash#364](https://github.com/taipei49314/checkwash/issues/364)** (10 Oct 2026) |
 
-02 and 03 are deliberately held back. 01 is the strongest of the three — a
-clear parity gap, reproducible in one command — and makes a better first
-contact than three at once. If it lands well, the others follow; if the
-answer is "out of scope", three simultaneous declines would have been worse
-than one.
+All four were filed on 10 October 2026, on the repository owner's
+instruction. The original plan was to send 01 first and hold 02 and 03
+until it was answered; in hindsight that plan was the better one — four
+issues in one day is a lot to put in front of a single maintainer, however
+well each is argued — and no further reports go to checkwash until at
+least one of these has a reply.
 
-Nothing is filed without the repository owner's approval.
+Nothing is filed without the repository owner's approval. The reports were
+researched and drafted with Claude Code and checked by the owner before
+sending; every measurement in them is reproducible from this repository.
 
 Target: https://github.com/taipei49314/checkwash (Apache-2.0, active —
 25 open issues, last push 10 Oct 2026).

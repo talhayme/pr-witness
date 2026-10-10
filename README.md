@@ -14,10 +14,19 @@ regression the pull request hid, whatever the green checkmark says.
 
 ## Status
 
-Phases 0–5 complete: corpus, cross-run, diff integrity (via checkwash),
-claim checking, the GitHub Action and signed evidence. On the corpus: precision 0.91,
-recall 1.00 — see [eval/witness_results.md](eval/witness_results.md).
-Nothing is published to PyPI or the Marketplace yet.
+Phases 0–6 complete: corpus, cross-run, diff integrity (via checkwash),
+claim checking, the GitHub Action, signed evidence and the Claude Code plugin.
+On PyPI (`pip install pr-witness`), on the GitHub Marketplace, and installable
+as a Claude Code plugin.
+
+**On the numbers.** The evaluation corpus is 17 *synthetic* cases, written by
+the same person who wrote the detector. On it the tool scores precision 0.91 /
+recall 1.00 — see [eval/witness_results.md](eval/witness_results.md). That is
+a regression gate, not an accuracy claim: it says the tool has not got worse,
+not how it performs on pull requests it has never seen. Real cases — a
+reproduction of [anthropics/claude-code#46940](https://github.com/anthropics/claude-code/issues/46940)
+and the agent PRs maintainers flagged in Kinnard's audit — are the next
+addition to the corpus, and the numbers will be re-published when they land.
 
 See [eval/results.md](eval/results.md) for the numbers and
 [corpus/README.md](corpus/README.md) for how the cases are built.
