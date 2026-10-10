@@ -1,42 +1,79 @@
-# `// @ts-ignore` added on an asserting line is not reported
+[missed cheat] JS/TS: `@ts-nocheck` added to a test file passes with zero findings, removing type checking from every test in it
 
-**Status:** draft, not sent.
+## The cheat
 
-## What happens
+One line at the top of a test file turns off type checking for everything
+below it. The type checker is part of what stops a test from silently going
+stale: without it, a test keeps compiling after the thing it tests changes
+shape — which is the moment it should have failed and told someone.
+
+Checked against checkwash 0.6.0.
+
+## Reproduction
+
+`cart.ts` unchanged; one line added to the test file.
+
+**before**
 
 ```ts
-it("adds tax", () => {
-  // @ts-ignore
-  expect(withTax("bad", 0.2)).toBe(120);
+// cart.test.ts
+import { expect, it } from "vitest";
+import { withTax } from "./cart";
+
+it("rejects a bad amount", () => {
+  expect(() => withTax(-1, 0.1)).toThrow();
 });
 ```
-→ no findings against checkwash 0.6.0.
 
-Also applies to `@ts-expect-error` and `@ts-nocheck` at the top of a test
-file, which suppresses type checking for everything below it.
+**after**
 
-## Why it matters
+```ts
+// @ts-nocheck
+import { expect, it } from "vitest";
+import { withTax } from "./cart";
 
-The type checker is part of the verification layer. Silencing it on an
-asserting line lets a test keep compiling after the thing it tests changed
-shape — which is exactly the moment the test should have stopped compiling
-and told someone.
+it("rejects a bad amount", () => {
+  expect(() => withTax(-1, 0.1)).toThrow();
+});
+```
 
-`@ts-nocheck` is the strongest form: one line at the top of a file removes
-type checking from every test in it.
+**result**
 
-## Why this one is arguable
+```
+$ checkwash check BASE..HEAD --format json
+verdict: pass | findings: 0
+```
 
-Unlike the `try`/`catch` gap, this is a policy question rather than a parity
-one. `@ts-ignore` is widely used for legitimate reasons — third-party type
-bugs, a deliberate "this must reject invalid input" test.
+## Severity, and where I would not report it
 
-A reasonable compromise, and what pr-witness implements locally:
+`@ts-ignore` on a single line is genuinely common and often legitimate — a
+third-party type bug, or a test that deliberately passes an invalid value to
+check it is rejected. Reporting every one would be noise.
 
-- **high** only for `@ts-nocheck` in a test file, which is never narrow
-- **medium** for a suppression added on or immediately above a line
-  containing an assertion
-- **not reported** elsewhere in the file
+`@ts-nocheck` on a test file is different in kind: it is never narrow, and
+there is no single line it is defending. A graded shape that seems defensible:
 
-If checkwash would rather not carry this, that is an entirely defensible
-answer and pr-witness will keep it.
+- `@ts-nocheck` added to a test file — the clear case
+- `@ts-ignore` / `@ts-expect-error` added on, or immediately above, a line
+  containing an assertion — arguable, lower severity
+- anywhere else in the file — not reported
+
+This one is more of a policy question than #1 (the `try`/`catch` parity gap),
+and "we would rather not carry this" is a perfectly good answer. I am
+carrying it locally either way; I would just rather know which side the line
+falls on.
+
+## Unrelated, noticed in the same run
+
+Both revisions emit:
+
+```
+checkwash: analysis incomplete: before cart.test.ts:5:3: expect(...).toThrow:
+expect assertion candidate is recorded with no strength: its predicate is not
+represented in the assertion scan, so a rewrite is not judged
+```
+
+So `toThrow` appears to carry no strength and a rewrite of it would not be
+judged. Not what this issue is about, and I have not tested it properly —
+mentioning it only so it is not buried. Happy to open it separately if it is
+news.
