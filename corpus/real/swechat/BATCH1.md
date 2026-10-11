@@ -126,8 +126,8 @@ had never seen it is 7/12.
 
 **Its failures on honest commits are loud ones.** Four of twelve were
 flagged, and all four are honest. Nothing here was labelled `flag`, so the
-tool's `flag` was wrong every time it was used. `review` was right five
-times out of five.
+tool's `flag` was wrong every time it was used. `review` was right four
+times out of four.
 
 **It says nothing yet about catching dishonesty.** No commit in this batch
 reads as a cheat, so recall on real data is still unmeasured. The size
