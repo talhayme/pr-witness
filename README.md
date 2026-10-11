@@ -55,6 +55,7 @@ See [eval/results.md](eval/results.md) for the numbers and
 | `expectation_changed` | A test the PR **rewrote** whose old assertion fails on the new code; the report shows the old and new assertion (medium → `review`) |
 | `greened_by_test_edit` | A test that was red on the base branch and is green now, whose old version still fails on the new code — the test edit made it pass, not the code (medium → `review`) |
 | `tests_removed_still_passing` | A test the PR deleted that still passes against the PR's code — behaviour kept, coverage gone (medium → `review`) |
+| `coverage_replaced` | Replacement: a function the changed tests used to call still exists and no test calls it for real any more — the one test edit the runs cannot see, found by reading the source (Python; medium → `review`) |
 | `base_broken` / `base_not_green` | Every base test failing is no evidence, not clean; some failing is context |
 | `denominator` | Fewer tests actually running than before — the `4966/4966 ALL PASSED` trick |
 | `skip_inflation` | Collected count steady while the skipped count climbs |

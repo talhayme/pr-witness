@@ -54,6 +54,17 @@ class Finding:
         return d
 
 
+# Findings that make the verdict `review`: a human has to read the diff, and
+# the run cannot decide for them. One list, used by the verdict, the gate and
+# the checkwash reconciliation — the gate once had its own copy and went on
+# holding only the first of these.
+REVIEW_SIGNALS = frozenset({
+    "expectation_changed",
+    "greened_by_test_edit",
+    "tests_removed_still_passing",
+    "coverage_replaced",
+})
+
 # A skip whose reason names a tracking issue or an external cause is the
 # documented kind. Phase 0 found that counts alone cannot separate a
 # legitimate flaky-test skip from an excuse, and this is the cheapest

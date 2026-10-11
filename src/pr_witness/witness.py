@@ -10,8 +10,8 @@ from pathlib import Path
 
 from pr_witness import __version__
 from pr_witness import claims as claims_mod
-from pr_witness import git_ops, integrity, runners
-from pr_witness.compare import Finding, Severity, compare, summarise
+from pr_witness import coverage, git_ops, integrity, runners
+from pr_witness.compare import REVIEW_SIGNALS, Finding, Severity, compare, summarise
 from pr_witness.results import RunResult
 
 
@@ -37,7 +37,7 @@ class Evidence:
             return "flag"
         # A rewritten test whose old version fails: honest or not, a human
         # has to look. Louder than a note, quieter than a flag.
-        if any(f.signal in ("expectation_changed", "tests_removed_still_passing", "greened_by_test_edit") for f in self.findings):
+        if any(f.signal in REVIEW_SIGNALS for f in self.findings):
             return "review"
         if any(f.severity is Severity.MEDIUM for f in self.findings):
             return "note"
@@ -215,6 +215,7 @@ def witness(
         if note:
             notes.append(note)
         findings += integrity.detect_js_gaps(repo, base_sha, head_sha)
+        findings += coverage.detect_coverage_replaced(repo, base_sha, head_sha, changed)
 
     # Highest severity first, then by signal, so the report opens with the
     # thing most worth reading.

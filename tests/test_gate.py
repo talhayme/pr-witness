@@ -55,3 +55,15 @@ def test_strict_does_not_honour_the_label():
 def test_unknown_mode_is_refused_loudly():
     with pytest.raises(ValueError):
         decide(evidence(), "lenient")
+
+
+@pytest.mark.parametrize("signal", sorted(__import__("pr_witness.compare", fromlist=["x"]).REVIEW_SIGNALS))
+def test_every_review_signal_holds_the_job_and_matches_the_verdict(signal):
+    """0.3.0 said `review` for three of these and let the job through:
+    the gate kept its own one-item list. The verdict and the gate now read
+    the same one."""
+    ev = evidence([Finding(signal, Severity.MEDIUM, "to review")])
+    assert ev.verdict == "review"
+    assert decide(ev, "require-ack").exit_code == 1
+    assert decide(ev, "require-ack", approved=True).exit_code == 0
+    assert decide(ev, "strict").exit_code == 1

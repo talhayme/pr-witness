@@ -152,6 +152,11 @@ def run_checkwash(
     return findings, ""
 
 
+# Run findings that tell one test's story; coverage_replaced is about
+# functions, not tests, so it corroborates nothing here.
+RUN_STORIES = ("expectation_changed", "tests_removed_still_passing", "greened_by_test_edit")
+
+
 def reconcile_with_run(cw_findings: list[Finding], run_findings: list[Finding]) -> None:
     """Fold a static finding onto the run's own evidence about the same test.
 
@@ -168,7 +173,7 @@ def reconcile_with_run(cw_findings: list[Finding], run_findings: list[Finding]) 
     """
     shown = {
         _unit_of(t) for f in run_findings
-        if f.signal in ("expectation_changed", "tests_removed_still_passing", "greened_by_test_edit") for t in f.tests
+        if f.signal in RUN_STORIES for t in f.tests
     }
     if not shown:
         return
