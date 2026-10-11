@@ -313,7 +313,87 @@
  },
  {
   "case": "dsa110-flits-9d7c1997",
-  "error": "docker run --rm --network bridge --cap-drop ALL --security-opt no-new-privileges --memory 2500m --memory-swap 2500m --pids-limit 1024 -v /Users/test/.cache/pr-witness-real-sandbox:/work/.cache -v /Users/test/Desktop/PR helpers/pr-witness/corpus:/opt/pr-witness/corpus:ro pr-witness-sandbox dsa110-flits-9d7c1997 --python 3.12 --source swechat --stage install\nrequest returned 500 Internal Server Error for API route and version http://%2FUsers%2Ftest%2F.docker%2Frun%2Fdocker.sock/_ping, check if the server supports the requested API version\n"
+  "label": "review",
+  "repo": "dsa110/dsa110-FLITS",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 3,
+    "ran": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 2,
+    "ran": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 1,
+    "ran": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "coverage_replaced",
+    "medium",
+    "1 function(s) the changed tests used to call still exist, and no test calls them for real any more: `extract_singlebeam_toa` (now only where an error is expected)"
+   ],
+   [
+    "crossrun_vanished",
+    "medium",
+    "3 test(s) from the base branch no longer exist when collected against this code"
+   ],
+   [
+    "denominator_removed",
+    "medium",
+    "3 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "checkwash:IMPORT_UNRESOLVED",
+    "low",
+    "new import 'baseband_analysis.core.bbdata' resolves against neither the stdlib, the repo, nor declared dependencies (hallucination fingerprint)"
+   ],
+   [
+    "checkwash:IMPORT_UNRESOLVED",
+    "low",
+    "new import 'baseband_analysis.core.dedispersion' resolves against neither the stdlib, the repo, nor declared dependencies (hallucination fingerprint)"
+   ],
+   [
+    "checkwash:IMPORT_UNRESOLVED",
+    "low",
+    "new import 'baseband_analysis' resolves against neither the stdlib, the repo, nor declared dependencies (hallucination fingerprint)"
+   ],
+   [
+    "checkwash:SUPPRESSION_ADDED",
+    "low",
+    "lint/type suppression added (import baseband_analysis  # noqa: F401)"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "test_extracts_candidate_toa_from_synthetic_singlebeam: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "test_inspects_chime_singlebeam_layout_without_reading_payload: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "test_singlebeam_toa_requires_time0_metadata: test unit disappeared"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): tests/test_chime_singlebeam_toa.py"
+  ]
  },
  {
   "case": "hypergraph-a9f09474",

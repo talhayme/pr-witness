@@ -35,9 +35,10 @@ The first **real** cases are in the loop, from two sources:
   the verdict matches on all six (one `clean`, five `review`).
 - [corpus/real/swechat](corpus/real/swechat/) — commits from real Claude
   Code sessions on real repositories (SALT-NLP/SWE-chat): 3,355 agent
-  test edits mined, seven run end to end so far, labelled by hand. Five of
-  seven match; the two misses are written up there, and one of them is the
-  cross-run's structural limit (a deleted test replaced by a different one).
+  test edits mined, seven run end to end so far, labelled by hand. Six of
+  seven match. The miss is written up there; so is the case that was a miss
+  until it got its own finding — a deleted test replaced by a different
+  one, which no run can see and `coverage_replaced` reads from the source.
 
 The real runs changed the tool more than the synthetic corpus ever did —
 the `review` verdict, `greened_by_test_edit` (a failing suite made green by

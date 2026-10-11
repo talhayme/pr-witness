@@ -44,27 +44,39 @@ the tool is not asked to judge.
 | brain-a48b5d8b | expected hex colours in `graph-transform.test.ts` changed | review | **review** — `expectation_changed` ×4 ✓ |
 | brain-21b14813 | `entityColor` tests deleted with the function | clean | **note** — the base file no longer loads against the new code ✓ |
 | openacp-baec2022 | `classifyAttachmentType` tests deleted with the function | clean | **note** — `tests_removed_subject_gone` ✓ |
-| dsa110-flits-9d7c1997 | three end-to-end extractor tests deleted; replaced by pure-math test + "fails without CANFAR runtime" | review | **note** ✗ — see below |
+| dsa110-flits-9d7c1997 | three end-to-end extractor tests deleted; replaced by pure-math test + "fails without CANFAR runtime" | review | **review** — `coverage_replaced`: `extract_singlebeam_toa` still exists, called only where an error is expected ✓ (was **note** ✗ until 0.3.1, see below) |
 
-Five of seven. The two misses are different kinds:
+Six of seven. It was five until the seventh case got its own finding;
+both stories are worth keeping.
 
-**hypergraph** is a static finding the run cannot speak to. checkwash rates
-a new `except Exception:` in a test file high; pr-witness passes checkwash's
-highs through unless the cross-run has shown the same test's story. Here it
-had — 51 red tests greened by the rewrite — but the broad catch is in a
-file, not a test. Whether a test-file broad catch deserves a flag on its own
-is checkwash's call, and this case is the argument for making it a review.
+**hypergraph**, the remaining miss, is a static finding the run cannot
+speak to. checkwash rates a new `except Exception:` in a test file high;
+pr-witness passes checkwash's highs through unless the cross-run has shown
+the same test's story. Here it had — 51 red tests greened by the rewrite —
+but the broad catch is in a file, not a test. Whether a test-file broad
+catch deserves a flag on its own is checkwash's call, and this case is the
+argument for making it a review.
 
-**dsa110** is the cross-run's structural limit. The deleted tests imported
+**dsa110** was the cross-run's structural limit. The deleted tests imported
 a function the commit also removed, so the base test file no longer loads
 against the new code: from the run's point of view this is identical to
-cleanup. What the run cannot see is that *another* function the deleted
-tests exercised (`extract_singlebeam_toa`) still exists and is now untested
-— the replacement test asserts only that it fails without an unavailable
+cleanup. What no run can see is that *another* function the deleted tests
+exercised (`extract_singlebeam_toa`) still exists and is now untested — the
+replacement test asserts only that it fails without an unavailable
 dependency. Replacement — delete the real test, add a different one — is
-the one class of test edit the cross-run does not catch. The shortlist's
-symbol check (`shortlist.py`) does catch it statically; that is the
-candidate for the tool's next finding.
+the one class of test edit the runs do not catch, so it is caught by
+reading instead: `coverage_replaced` (`src/pr_witness/coverage.py`) asks of
+each touched Python test file which repository functions its old version
+called for real, which still exist, and whether any test still calls them.
+Strict on the old side, generous on the new, so it errs towards silence.
+
+`python eval/static_real.py` runs that detector on every real case from
+two-commit snapshots, installing and executing nothing. It fires on this
+case and on none of the other nine Python cases — including hypergraph's
+fourteen rewritten test files and the SWE-bench Django and SymPy edits.
+Ten cases is not a false-positive rate; it is the absence of an obvious one.
+Its known blind side is stated in the finding: a call made indirectly,
+through another function, is invisible to a reading by name. Python only.
 
 ## What the real runs changed in the tool
 
@@ -78,6 +90,8 @@ Every one of these came out of a case above, not from the plan:
 - **`tests_removed_still_passing`** (medium → review): a deleted test that
   still passes against the new code — behaviour kept, coverage gone. A test
   folded into a same-file parametrised sibling is not a deletion.
+- **`coverage_replaced`** (medium → review): replacement, above. The only
+  finding here that does not come from a run.
 - **`tests_removed_subject_gone`** (low): a rewritten or removed test that
   fails because what it used no longer exists — cleanup, not a changed
   expectation.
@@ -91,6 +105,10 @@ Every one of these came out of a case above, not from the plan:
   "requires …") count as documented.
 - **bun** runner; bun's JUnit puts the describe block in `classname` and the
   path in `file` — without the path every rewritten test looked untouched.
+- The gate kept its own one-item list of review signals: in 0.3.0
+  `greened_by_test_edit` and `tests_removed_still_passing` gave the verdict
+  `review` and let a `require-ack` job through. One shared list now, with a
+  test per signal.
 - checkwash `ASSERT_WEAKENED`/`ASSERT_REMOVED`/`TEST_DISABLED` on a test
   whose story the run already tells are held at review level; checkwash's
   `TestClass.test_name` units now match the run's node ids.
