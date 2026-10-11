@@ -36,7 +36,7 @@ UV = shutil.which("uv") or str(Path.home() / ".local" / "bin" / "uv")
 def sh(*args, cwd=None, check=True, timeout=1800, env=None):
     p = subprocess.run(args, cwd=cwd, capture_output=True, text=True, timeout=timeout, env=env)
     if check and p.returncode:
-        raise RuntimeError(f"{' '.join(map(str, args))}\n{p.stderr[-800:]}")
+        raise RuntimeError(f"{' '.join(map(str, args))}\n{p.stdout[-600:]}\n{p.stderr[-800:]}")
     return p
 
 
@@ -183,6 +183,12 @@ def main() -> int:
                     (CACHE / "work" / n / "result.json").write_text(json.dumps(r), encoding="utf-8")
         except Exception as exc:  # noqa: BLE001
             r = {"case": n, "error": str(exc)[-600:]}
+            if args.stage == "install":
+                # Inside the sandbox: a failed install must fail the container,
+                # or the host goes on to run tests against nothing and reports
+                # "pytest not found" as if it were a finding.
+                print("INSTALL FAILED:", r["error"], flush=True)
+                return 1
         if r.get("stage") == "installed":
             print("   installed", flush=True)
             continue

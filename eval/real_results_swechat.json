@@ -69,6 +69,213 @@
   ]
  },
  {
+  "case": "agent-tail-45d4bad4",
+  "label": "review",
+  "repo": "pc035860/agent-tail",
+  "verdict": "flag",
+  "counts": {
+   "base": {
+    "collected": 30,
+    "ran": 30,
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 35,
+    "ran": 35,
+    "passed": 35,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 30,
+    "ran": 30,
+    "passed": 27,
+    "failed": 3,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "checkwash:GUARDRAIL_TOUCHED",
+    "high",
+    "guardrail file changed (CLAUDE.md) \u2014 agent constraints are part of the oracle"
+   ],
+   [
+    "denominator_removed",
+    "medium",
+    "1 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "expectation_changed",
+    "medium",
+    "3 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ]
+  ],
+  "notes": [
+   "restricted to 2 path(s): tests/list/session-lister.test.ts, tests/pick/fzf-helpers.test.ts"
+  ]
+ },
+ {
+  "case": "agentcenter-nuxt-01a35d18",
+  "label": "clean",
+  "repo": "ainaive/agentcenter-nuxt",
+  "verdict": "note",
+  "counts": {
+   "base": {
+    "collected": 1,
+    "ran": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 1,
+    "ran": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 1,
+    "ran": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "base_broken",
+    "medium",
+    "every one of the base branch's 1 tests failed or errored, so nothing below is evidence: Cannot find module '/@fs/work/.cache/work/agentcenter-nuxt-01a35d18/node_modules/@nuxt/test-utils/dist/runtime/entry.mjs'"
+   ],
+   [
+    "denominator_removed",
+    "medium",
+    "1 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "renders the LayoutGrid icon and chevron: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "renders the title, subtitle, and CTA strings: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "info",
+    "renders an <a> linking to the locale-prefixed panorama route: test unit disappeared"
+   ]
+  ],
+  "notes": [
+   "restricted to 2 path(s): app/components/extension/McpPanoramaBanner.nuxt.test.ts, app/components/extension/McpPanoramaFeature.nuxt.test.ts"
+  ]
+ },
+ {
+  "case": "authsome-63bd4c90",
+  "label": "review",
+  "repo": "manojbajaj95/authsome",
+  "verdict": "note",
+  "counts": {
+   "base": {
+    "collected": 76,
+    "ran": 76,
+    "passed": 76,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 75,
+    "ran": 75,
+    "passed": 75,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 2,
+    "ran": 2,
+    "passed": 0,
+    "failed": 2,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "crossrun_vanished",
+    "medium",
+    "76 test(s) from the base branch no longer exist when collected against this code"
+   ],
+   [
+    "denominator_removed",
+    "medium",
+    "6 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "test_local_bootstrap_registers_without_claim: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "test_local_resolution_creates_implicit_principal_and_vault: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "info",
+    "test_hosted_registration_requires_claim: test unit disappeared"
+   ]
+  ],
+  "notes": [
+   "restricted to 10 path(s): tests/auth/test_service_provider_clients.py, tests/auth/test_service_provider_definitions.py, tests/server/test_audit_events.py, tests/server/test_auth_sessions.py \u2026"
+  ]
+ },
+ {
+  "case": "bids-utils-4b18c777",
+  "label": "clean",
+  "repo": "bids-standard/bids-utils",
+  "verdict": "clean",
+  "counts": {
+   "base": {
+    "collected": 4,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 4
+   },
+   "head": {
+    "collected": 13,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 13
+   },
+   "crossrun": {
+    "collected": 4,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 4
+   }
+  },
+  "findings": [
+   [
+    "skip_documented",
+    "info",
+    "9 test(s) newly skipped with a documented reason"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): tests/integration/test_bids_examples.py",
+   "checkwash produced no readable output: checkwash engine error: EngineError: strict snapshot inventory cannot inspect a submodule"
+  ]
+ },
+ {
   "case": "brain-21b14813",
   "label": "review",
   "repo": "marcus-sa/brain",
@@ -262,6 +469,60 @@
   ]
  },
  {
+  "case": "chaoswopr-93dbea4e",
+  "label": "clean",
+  "repo": "swapnilraj/chaoswopr",
+  "verdict": "flag",
+  "counts": {
+   "base": {
+    "collected": 5,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 5
+   },
+   "head": {
+    "collected": 6,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 6
+   },
+   "crossrun": {
+    "collected": 5,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 5
+   }
+  },
+  "findings": [
+   [
+    "skip_inflation",
+    "high",
+    "1 test(s) newly skipped without a reason that names an issue or an external cause"
+   ],
+   [
+    "checkwash:BROAD_EXCEPT_ADDED",
+    "low",
+    "broad exception handler added (exceptExceptionase:)"
+   ],
+   [
+    "checkwash:BROAD_EXCEPT_ADDED",
+    "low",
+    "broad exception handler added (exceptException:)"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestRealNetworkFaults.test_inject_packet_loss_real: disabling marker added (pytest.skip)"
+   ]
+  ],
+  "notes": [
+   "restricted to 3 path(s): tests/integration_real/conftest.py, tests/integration_real/test_chaos_real.py, tests/integration_real/test_net_admin.py"
+  ]
+ },
+ {
   "case": "cohezion-b1ee32a9",
   "label": "review",
   "repo": "manderson240/cohezion",
@@ -309,6 +570,45 @@
   "notes": [
    "restricted to 5 path(s): tests/conftest.py, tests/flume/test_experience_pipeline.py, tests/sandbox/test_hooks.py, tests/security/test_pre_commit_hooks.py \u2026",
    "checkwash produced no readable output: checkwash engine error: EngineError: strict snapshot inventory cannot inspect a submodule"
+  ]
+ },
+ {
+  "case": "context-evaluator-84b5be2a",
+  "label": "review",
+  "repo": "PackmindHub/context-evaluator",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 57,
+    "ran": 57,
+    "passed": 57,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 57,
+    "ran": 57,
+    "passed": 57,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 57,
+    "ran": 57,
+    "passed": 55,
+    "failed": 2,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "expectation_changed",
+    "medium",
+    "2 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): src/shared/remediation/prompt-generator.test.ts"
   ]
  },
  {
@@ -393,6 +693,75 @@
   ],
   "notes": [
    "restricted to 1 path(s): tests/test_chime_singlebeam_toa.py"
+  ]
+ },
+ {
+  "case": "hevy-planner-bd3527ae",
+  "label": "review",
+  "repo": "panesofglass/hevy-planner",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 18,
+    "ran": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 17,
+    "ran": 17,
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 18,
+    "ran": 18,
+    "passed": 17,
+    "failed": 1,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "denominator_removed",
+    "medium",
+    "1 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "expectation_changed",
+    "medium",
+    "1 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ],
+   [
+    "tests_removed_still_passing",
+    "medium",
+    "2 test(s) the pull request deleted still pass against its code: the behaviour they verified is still there, and nothing verifies it now"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "marks all phases completed when currentPhaseId is PHASE_COMPLETED (#28): assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "marks all phases completed when currentPhaseId is PHASE_COMPLETED (#28): assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:ASSERT_REMOVED",
+    "low",
+    "returns null nextPhaseId for last phase advancement (#28): assertion removed (strength EXACT_VALUE)"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "marks all phases completed when currentPhaseId is __completed__ (#28): test unit disappeared"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): test/domain/phases.test.ts"
   ]
  },
  {
@@ -850,6 +1219,306 @@
   ]
  },
  {
+  "case": "langlearn-tts-b4bc4e63",
+  "label": "review",
+  "repo": "punt-labs/langlearn-tts",
+  "verdict": "flag",
+  "counts": {
+   "base": {
+    "collected": 31,
+    "ran": 31,
+    "passed": 19,
+    "failed": 12,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 31,
+    "ran": 31,
+    "passed": 21,
+    "failed": 10,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 31,
+    "ran": 31,
+    "passed": 19,
+    "failed": 12,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "checkwash:ASSERT_SUBSTITUTED",
+    "high",
+    "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: an assertion was replaced by an unrelated one of the same strength (elevenlabs_provider.resolve_voice(\"RACHEL\") -> elevenlabs_provider.resolve_voice(\"MATILDA\")); the original assertion is gone and the strength lattice cannot see it"
+   ],
+   [
+    "checkwash:ASSERT_SUBSTITUTED",
+    "high",
+    "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: an assertion was replaced by an unrelated one of the same strength (elevenlabs_provider.resolve_voice(\"Rachel\") -> elevenlabs_provider.resolve_voice(\"Matilda\")); the original assertion is gone and the strength lattice cannot see it"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderLanguageSupport.test_list_voices_returns_short_names: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderLanguageSupport.test_resolve_voice_with_language: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderName.test_default_voice: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderResolveVoice.test_resolve_cached_voice: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "high",
+    "TestElevenLabsProviderSynthesize.test_synthesize_result_metadata: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:SUBJECT_INPUT_CHANGED",
+    "high",
+    "TestElevenLabsProviderLanguageSupport.test_infer_language_returns_none: the subject's input changed (argument 0: 'rachel' -> 'matilda') while the expected value stayed the same"
+   ],
+   [
+    "greened_by_test_edit",
+    "medium",
+    "2 test(s) failed on the base branch and pass now, but their old version still fails against this code: the test edit made them pass, not the code change"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderLanguageSupport.test_list_voices_returns_short_names: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderLanguageSupport.test_resolve_voice_with_language: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderName.test_default_voice: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderResolveVoice.test_resolve_cached_voice: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderResolveVoice.test_resolve_from_api: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderResolveVoice.test_resolve_short_name_from_api_with_descriptions: expected value rewritten 'rachel - calm, gentle' -> 'matilda - knowledgable, professional' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderResolveVoice.test_resolve_short_name_from_api_with_descriptions: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestElevenLabsProviderSynthesize.test_synthesize_result_metadata: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "low",
+    "TestElevenLabsProviderResolveVoice.test_resolve_from_api: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "low",
+    "TestElevenLabsProviderResolveVoice.test_resolve_short_name_from_api_with_descriptions: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
+   ],
+   [
+    "base_not_green",
+    "info",
+    "12 of 31 base-branch tests already fail on the base branch; the cross-run says nothing about them"
+   ]
+  ],
+  "notes": [
+   "restricted to 2 path(s): tests/conftest.py, tests/test_elevenlabs_provider.py"
+  ]
+ },
+ {
+  "case": "lock-code-manager-5890ae5b",
+  "error": "      ^~~~~~~~~~\n         compilation terminated.\n         error: Command '['aarch64-linux-gnu-gcc', '-fno-strict-overflow', '-Wsign-compare', '-DNDEBUG', '-g', '-O2', '-Wall', '-fPIC', '-I/work/.cache/uv/builds-v0/.tmpk1m0qM/include', '-I/usr/include/python3.13', '-c', 'src/lru/_lru.c', '-o', 'build/temp.linux-aarch64-cpython-313/src/lru/_lru.o']' returned non-zero exit status 1.\n\nhint: `lru-dict` (v1.3.0) was included because `homeassistant` (v2026.2.3) depends on `lru-dict`\n\nhint: This error likely indicates that you need to install a library that provides `Python.h` for `lru-dict@1.3.0`\n\n\n"
+ },
+ {
+  "case": "mastra-slack-agent-bad78dc3",
+  "label": "clean",
+  "repo": "2bo/mastra-slack-agent",
+  "verdict": "note",
+  "counts": {
+   "base": {
+    "collected": 12,
+    "ran": 12,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 4,
+    "ran": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 6,
+    "ran": 6,
+    "passed": 4,
+    "failed": 2,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "crossrun_vanished",
+    "medium",
+    "7 test(s) from the base branch no longer exist when collected against this code"
+   ],
+   [
+    "denominator_removed",
+    "medium",
+    "8 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "callback/private_metadata/input \u3092\u542b\u3080 modal \u3092\u69cb\u7bc9\u3059\u308b: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "null \u3067\u30a8\u30e9\u30fc: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "serializeMetadata \u306f JSON \u6587\u5b57\u5217\u3092\u8fd4\u3059: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "threadTs \u304c\u306a\u3044\u5834\u5408\u3082\u6b63\u3057\u304f\u52d5\u4f5c\u3059\u308b: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "\u30b7\u30ea\u30a2\u30e9\u30a4\u30ba \u2192 \u30c7\u30b7\u30ea\u30a2\u30e9\u30a4\u30ba\u3067\u5143\u306e\u30c7\u30fc\u30bf\u306b\u623b\u308b: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "\u30d5\u30a3\u30fc\u30eb\u30c9\u306e\u578b\u304c\u9055\u3046\u5834\u5408\u30a8\u30e9\u30fc: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "\u4e0d\u6b63\u306a JSON \u3067\u30a8\u30e9\u30fc: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "\u5fc5\u9808\u30d5\u30a3\u30fc\u30eb\u30c9\u304c\u6b20\u3051\u3066\u3044\u308b\u5834\u5408\u30a8\u30e9\u30fc: test unit disappeared"
+   ],
+   [
+    "tests_removed_subject_gone",
+    "low",
+    "1 test(s) the pull request rewrote or removed fail against this code because what they used no longer exists (an import or a name, not an assertion)"
+   ]
+  ],
+  "notes": [
+   "restricted to 2 path(s): src/slack/ui/approval-blocks.test.ts, src/slack/utils/metadata.test.ts"
+  ]
+ },
+ {
+  "case": "my-first-commit-74938204",
+  "label": "clean",
+  "repo": "scottdensmore/my-first-commit",
+  "verdict": "clean",
+  "counts": {
+   "base": {
+    "collected": 106,
+    "ran": 106,
+    "passed": 106,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 7,
+    "ran": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 106,
+    "ran": 106,
+    "passed": 106,
+    "failed": 0,
+    "skipped": 0
+   }
+  },
+  "findings": [],
+  "notes": [
+   "restricted to 1 path(s): app/api/csp-report/route.test.ts"
+  ]
+ },
+ {
   "case": "openacp-baec2022",
   "label": "clean",
   "repo": "dylan-112/OpenACP",
@@ -911,6 +1580,420 @@
   ],
   "notes": [
    "restricted to 1 path(s): src/adapters/discord/media.test.ts"
+  ]
+ },
+ {
+  "case": "optimize-anything-90ef3515",
+  "label": "clean",
+  "repo": "ASRagab/optimize-anything",
+  "verdict": "flag",
+  "counts": {
+   "base": {
+    "collected": 25,
+    "ran": 25,
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 28,
+    "ran": 25,
+    "passed": 25,
+    "failed": 0,
+    "skipped": 3
+   },
+   "crossrun": {
+    "collected": 25,
+    "ran": 25,
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "skip_inflation",
+    "high",
+    "3 test(s) newly skipped without a reason that names an issue or an external cause"
+   ],
+   [
+    "checkwash:CI_WORKFLOW_TOUCHED",
+    "low",
+    "CI configuration changed"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): tests/test_llm_judge.py"
+  ]
+ },
+ {
+  "case": "osabio-ca437985",
+  "label": "clean",
+  "repo": "osabiohq/osabio",
+  "verdict": "clean",
+  "counts": {
+   "base": {
+    "collected": 7,
+    "ran": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 7,
+    "ran": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 7,
+    "ran": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   }
+  },
+  "findings": [],
+  "notes": [
+   "restricted to 1 path(s): tests/unit/use-public-config.test.ts"
+  ]
+ },
+ {
+  "case": "pc-switcher-948bcd6a",
+  "label": "clean",
+  "repo": "flaksit/pc-switcher",
+  "verdict": "note",
+  "counts": {
+   "base": {
+    "collected": 0,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 0,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 0,
+    "ran": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "base_uncollectable",
+    "medium",
+    "the base branch's tests could not be collected, so nothing below is evidence: 0 tests collected"
+   ]
+  ],
+  "notes": [
+   "restricted to 9 path(s): tests/integration/conftest.py, tests/integration/jobs/test_install_on_target_job.py, tests/integration/jobs/test_package_sync.py, tests/integration/test_config_sync.py \u2026",
+   "checkwash produced no readable output: checkwash engine error: EngineError: stand-in provider context could not be parsed"
+  ]
+ },
+ {
+  "case": "pydantic2linkml-ee61f864",
+  "label": "review",
+  "repo": "dandi/pydantic2linkml",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 11,
+    "ran": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 10,
+    "ran": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 11,
+    "ran": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "tests_removed_still_passing",
+    "medium",
+    "5 test(s) the pull request deleted still pass against its code: the behaviour they verified is still there, and nothing verifies it now"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestSlotUsageGenerationError.test_repr: expected call rewritten to a different call ['expected_repr'] -> ['expected'] with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestSlotUsageGenerationError.test_str: expected call rewritten to a different call ['expected_str'] -> ['expected'] with no change in assertion strength"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestSlotUsageGenerationError.test_accepts_generator: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestSlotUsageGenerationError.test_accepts_set: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestSlotUsageGenerationError.test_sorts_both_lists: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestSlotUsageGenerationError.test_sorts_missing_meta_slots: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestSlotUsageGenerationError.test_sorts_varied_constraint_meta_slots: test unit disappeared"
+   ]
+  ],
+  "notes": [
+   "restricted to 1 path(s): tests/test_exceptions.py"
+  ]
+ },
+ {
+  "case": "sound-map-d0b8e268",
+  "label": "clean",
+  "repo": "bertrandvidal/sound-map",
+  "verdict": "flag",
+  "counts": {
+   "base": {
+    "collected": 7,
+    "ran": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 11,
+    "ran": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 1,
+    "ran": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "checkwash:GUARDRAIL_TOUCHED",
+    "high",
+    "guardrail file changed (CLAUDE.md) \u2014 agent constraints are part of the oracle"
+   ],
+   [
+    "crossrun_vanished",
+    "medium",
+    "7 test(s) from the base branch no longer exist when collected against this code"
+   ],
+   [
+    "denominator_removed",
+    "medium",
+    "7 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "falls back to area.name when begin-area is absent: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "returns lat/lng/placeName when both APIs succeed: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "returns null when MusicBrainz finds no artists: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "returns null when MusicBrainz returns an HTTP error: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "returns null when Nominatim finds no results for the area: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "returns null when Nominatim returns an HTTP error: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "returns null when artist has no begin-area or area: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_PATCHES_SUBJECT",
+    "low",
+    "looks up the artist and renders the map when a track is playing: this test installs a replacement for shared/geocode:lookupArtistLocation that its existing oracle consumes"
+   ]
+  ],
+  "notes": [
+   "restricted to 2 path(s): shared/__tests__/geocode.test.js, src/__tests__/geo.test.js"
+  ]
+ },
+ {
+  "case": "uv-script-30c7360b",
+  "label": "review",
+  "repo": "fsimkovic/uv-script",
+  "verdict": "review",
+  "counts": {
+   "base": {
+    "collected": 61,
+    "ran": 61,
+    "passed": 40,
+    "failed": 21,
+    "skipped": 0
+   },
+   "head": {
+    "collected": 53,
+    "ran": 53,
+    "passed": 53,
+    "failed": 0,
+    "skipped": 0
+   },
+   "crossrun": {
+    "collected": 61,
+    "ran": 61,
+    "passed": 40,
+    "failed": 21,
+    "skipped": 0
+   }
+  },
+  "findings": [
+   [
+    "denominator_removed",
+    "medium",
+    "9 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "greened_by_test_edit",
+    "medium",
+    "12 test(s) failed on the base branch and pass now, but their old version still fails against this code: the test edit made them pass, not the code change"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestEditable.test_no_editable_flag_disables: expected value rewritten ['uv', 'run', 'pytest', 'tests/'] -> ['uv', 'run', '--all-extras', '--all-groups', 'pytest', 'tests/'] with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestRunIntegration.test_extra_args_with_separator: expected value rewritten ['uv', 'run', 'pytest', 'tests/', '-k', 'foo'] -> ['uv', 'run', '--all-extras', '--all-groups', 'pytest', 'tests/', '-k', 'foo'] with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestRunIntegration.test_run_script: expected value rewritten ['uv', 'run', 'pytest', 'tests/'] -> ['uv', 'run', '--all-extras', '--all-groups', 'pytest', 'tests/'] with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestRunScript.test_delegates_to_uv_run: expected value rewritten ['uv', 'run', 'pytest', 'tests/'] -> ['uv', 'run', '--all-extras', '--all-groups', 'pytest', 'tests/'] with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestRunScript.test_extra_args_appended_to_last: expected value rewritten ['uv', 'run', 'pytest', 'tests/', '-k', 'foo'] -> ['uv', 'run', '--all-extras', '--all-groups', 'pytest', 'tests/', '-k', 'foo'] with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestRunScript.test_no_editable_no_flags: expected value rewritten ['uv', 'run', 'pytest', 'tests/'] -> ['uv', 'run', '--all-extras', '--all-groups', 'pytest', 'tests/'] with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestRunScript.test_verbose_prints_command_to_stderr: expected value rewritten '$ uv run pytest tests/' -> '$ uv run --all-extras --all-groups pytest tests/' with no change in assertion strength"
+   ],
+   [
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "low",
+    "TestRunScript.test_verbose_with_env_prints_env_prefix: expected value rewritten 'uv run echo' -> 'uv run --all-extras --all-groups echo' with no change in assertion strength"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestFeatures.test_features_from_config: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestFeatures.test_no_features_flag_disables: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestLoadConfig.test_features_non_string_item_raises: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestLoadConfig.test_features_not_a_list_raises: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestLoadConfig.test_features_parsed: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestLoadConfig.test_no_features_defaults_to_empty: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestRunScript.test_features_applied_to_all_composite_steps: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestRunScript.test_features_flags_in_command: test unit disappeared"
+   ],
+   [
+    "checkwash:TEST_DISABLED",
+    "low",
+    "TestRunScript.test_features_with_editable: test unit disappeared"
+   ],
+   [
+    "base_not_green",
+    "info",
+    "21 of 61 base-branch tests already fail on the base branch; the cross-run says nothing about them"
+   ]
+  ],
+  "notes": [
+   "restricted to 3 path(s): tests/test_cli.py, tests/test_config.py, tests/test_runner.py"
   ]
  }
 ]

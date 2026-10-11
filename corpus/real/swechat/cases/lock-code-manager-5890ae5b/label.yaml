@@ -11,7 +11,7 @@ class: expected_changed
 summary: >
   test_helpers rewritten from MagicMock to real fixtures: two warning tests merged into one, four new cases added, alongside a three-line cleanup fix. A rewrite that keeps or extends what is covered.
 python: 3.13
-install_target: -e .
-install_extras: pytest-asyncio
+install_target: -r requirements_test.txt
+install_extras: homeassistant zwave-js-server-python==0.68.0
 witness_args: --timeout 600
 license: MIT repository; diff referenced by commit. Dataset ODC-BY. No individual named.

@@ -10,7 +10,7 @@ head_commit: 948bcd6a5e2fde2c07655027ce8f0409a800980b
 class: assertions_removed
 summary: >
   Test-only refactor: every integration test wrote its VM config inline and asserted the write succeeded; that moves into one conftest helper. No product code changes.
-python: 3.13
+python: 3.14
 install_target: uv-lock
 install_extras: pytest-asyncio
 witness_args: --timeout 600

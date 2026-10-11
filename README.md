@@ -40,6 +40,16 @@ The first **real** cases are in the loop, from two sources:
   until it got its own finding — a deleted test replaced by a different
   one, which no run can see and `coverage_replaced` reads from the source.
 
+Those cases were picked by eye and the tool was changed after almost every
+one, so their scores flatter it. The number that does not:
+[batch 1](corpus/real/swechat/BATCH1.md) — seventeen SWE-chat commits
+selected by a written rule, labelled before running, run with the tool
+frozen. Twelve produced evidence; the verdict matched on **seven of
+twelve**. All five misses are the tool's, and four of them are a `flag` on
+an honest commit. `review` was right every time it was used; `flag` was
+wrong every time. No commit in the batch was dishonest, so catching one on
+real data is still unmeasured.
+
 The real runs changed the tool more than the synthetic corpus ever did —
 the `review` verdict, `greened_by_test_edit` (a failing suite made green by
 editing the tests, which the cross-run could not see), `base_broken`, the
