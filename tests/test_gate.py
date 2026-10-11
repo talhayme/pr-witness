@@ -67,3 +67,8 @@ def test_every_review_signal_holds_the_job_and_matches_the_verdict(signal):
     assert decide(ev, "require-ack").exit_code == 1
     assert decide(ev, "require-ack", approved=True).exit_code == 0
     assert decide(ev, "strict").exit_code == 1
+
+
+def test_a_review_signal_reported_below_medium_does_not_hold_the_job():
+    ev = evidence([Finding("checkwash:EXPECTED_VALUE_CHANGED", Severity.LOW, "advisory")])
+    assert ev.verdict == "clean" and decide(ev, "strict").exit_code == 0

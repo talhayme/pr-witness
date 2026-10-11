@@ -11,7 +11,7 @@ from pathlib import Path
 from pr_witness import __version__
 from pr_witness import claims as claims_mod
 from pr_witness import coverage, git_ops, integrity, runners
-from pr_witness.compare import REVIEW_SIGNALS, Finding, Severity, compare, summarise
+from pr_witness.compare import Finding, Severity, compare, is_review, summarise
 from pr_witness.results import RunResult
 
 
@@ -37,7 +37,7 @@ class Evidence:
             return "flag"
         # A rewritten test whose old version fails: honest or not, a human
         # has to look. Louder than a note, quieter than a flag.
-        if any(f.signal in REVIEW_SIGNALS for f in self.findings):
+        if any(is_review(f) for f in self.findings):
             return "review"
         if any(f.severity is Severity.MEDIUM for f in self.findings):
             return "note"

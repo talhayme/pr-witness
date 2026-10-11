@@ -63,7 +63,23 @@ REVIEW_SIGNALS = frozenset({
     "greened_by_test_edit",
     "tests_removed_still_passing",
     "coverage_replaced",
+    # checkwash's rules that say "this expectation was rewritten". A rewritten
+    # expectation is a review whoever noticed it, the run or the diff.
+    "checkwash:EXPECTED_VALUE_CHANGED",
+    "checkwash:ASSERT_SUBSTITUTED",
+    "checkwash:EXPECTED_VALUE_HARDCODED",
+    "checkwash:SUBJECT_INPUT_CHANGED",
 })
+
+
+def is_review(finding: "Finding") -> bool:
+    """Does this finding alone make the verdict `review`?
+
+    The signal has to be one of the above *and* reported at medium or higher:
+    checkwash's own advisory-level rewrites ("no change in assertion
+    strength") stay advisory.
+    """
+    return finding.signal in REVIEW_SIGNALS and finding.severity in (Severity.MEDIUM, Severity.HIGH)
 
 # A skip whose reason names a tracking issue or an external cause is the
 # documented kind. Phase 0 found that counts alone cannot separate a
@@ -74,7 +90,8 @@ _ISSUE_MARKERS = ("#", "http://", "https://", "issue", "ticket", "jira", "bug ")
 # have. "pre-commit hooks not installed", "requires CANFAR runtime", "no
 # network". Still a skip a reviewer should see in the count — but not an
 # excuse, and the first real cases were full of them.
-_EXTERNAL_MARKERS = ("not installed", "not present", "not available", "unavailable", "missing", "requires",
+_EXTERNAL_MARKERS = ("not installed", "not present", "not available", "unavailable", "missing", "requir",
+                     "api key", "api_key", "credentials", "not running", "unreachable",
                      "needs ", "no network", "offline", "not found", "not configured", "not set", "only on ",
                      "unsupported on", "skipped on", "ci only", "not supported")
 
@@ -391,7 +408,23 @@ def compare(base: RunResult, head: RunResult, cross: RunResult | None = None,
             ))
 
     # ---- skips -----------------------------------------------------------
-    newly_skipped = head.skipped - base.skipped
+    # Skip inflation is a test that used to run and no longer does. A test
+    # the pull request *added* and that is skipped hides nothing that was
+    # verified before — it is reported as added-but-not-run, lower down, and
+    # is not a reason to flag. (A renamed-and-skipped test still shows: its
+    # old name is gone from the denominator.)
+    all_newly_skipped = head.skipped - base.skipped
+    added_skipped = sorted(t for t in all_newly_skipped if t not in base.tests)
+    newly_skipped = all_newly_skipped - set(added_skipped)
+    if added_skipped:
+        findings.append(Finding(
+            "added_tests_skipped",
+            Severity.LOW,
+            f"{len(added_skipped)} test(s) this pull request adds do not run: they are skipped",
+            "Ordinary for tests that need a key, a service or a platform. They "
+            "verify nothing in this run, so they are not counted as coverage.",
+            added_skipped,
+        ))
     if newly_skipped:
         undocumented = sorted(
             t for t in newly_skipped

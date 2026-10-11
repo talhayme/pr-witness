@@ -42,3 +42,7 @@ def test_bun_runner_and_detection(tmp_path):
     assert argv[:2] == ["bun", "test"] and argv[-1] == "tests/unit/a.test.ts" and any(a.startswith("--reporter-outfile=") for a in argv)
     (tmp_path / "package.json").write_text('{"scripts": {"test": "bun test tests/unit/"}, "devDependencies": {"vitest": "^4"}}')
     assert runners.detect(tmp_path) == "bun"
+
+
+def test_pytest_keeps_collecting_past_a_file_that_will_not_import(tmp_path):
+    assert "--continue-on-collection-errors" in runners.RUNNERS["pytest"].build(tmp_path / "r.xml")

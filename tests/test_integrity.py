@@ -155,8 +155,8 @@ def test_a_documented_skip_downgrades_checkwashs_finding_without_hiding_it(repo)
 
 def test_a_static_rewrite_on_a_test_the_run_already_shows_rewritten_stays_at_review():
     run = [Finding("expectation_changed", Severity.MEDIUM, "1 rewritten", tests=["tests/test_a.py::test_x"])]
-    cw = [Finding("checkwash:EXPECTED_VALUE_CHANGED", Severity.HIGH, "rewritten", tests=["tests/test_a.py::test_x"]),
-          Finding("checkwash:EXPECTED_VALUE_CHANGED", Severity.HIGH, "rewritten", tests=["tests/test_a.py::test_other"])]
+    cw = [Finding("checkwash:ASSERT_WEAKENED", Severity.HIGH, "rewritten", tests=["tests/test_a.py::test_x"]),
+          Finding("checkwash:ASSERT_WEAKENED", Severity.HIGH, "rewritten", tests=["tests/test_a.py::test_other"])]
     integrity.reconcile_with_run(cw, run)
     assert cw[0].severity is Severity.MEDIUM and "review" in cw[0].innocent_explanation
     # a rewrite the run did not corroborate keeps checkwash's own rating
@@ -164,7 +164,7 @@ def test_a_static_rewrite_on_a_test_the_run_already_shows_rewritten_stays_at_rev
 
 
 def test_reconcile_is_a_no_op_without_a_run_finding():
-    cw = [Finding("checkwash:EXPECTED_VALUE_CHANGED", Severity.HIGH, "rewritten", tests=["t.py::test_x"])]
+    cw = [Finding("checkwash:ASSERT_WEAKENED", Severity.HIGH, "rewritten", tests=["t.py::test_x"])]
     integrity.reconcile_with_run(cw, [])
     assert cw[0].severity is Severity.HIGH
 
@@ -174,3 +174,39 @@ def test_checkwash_class_dotted_units_match_run_node_ids():
     cw = [Finding("checkwash:ASSERT_WEAKENED", Severity.HIGH, "w", tests=["tests/test_routing.py::TestRoutingEdgeCases.test_invalid_return_value_raises"])]
     integrity.reconcile_with_run(cw, run)
     assert cw[0].severity is Severity.MEDIUM
+
+
+# --- our rating of checkwash's observations ---------------------------------
+
+def cw(rule, severity="high"):
+    return integrity.translate({"rule": rule, "severity": severity, "path": "tests/test_a.py",
+                                "unit": "test_x", "message": "m"}, set())
+
+
+@pytest.mark.parametrize("rule", ["EXPECTED_VALUE_CHANGED", "ASSERT_SUBSTITUTED",
+                                  "EXPECTED_VALUE_HARDCODED", "SUBJECT_INPUT_CHANGED"])
+def test_a_rewritten_expectation_is_a_review_whether_or_not_a_run_corroborates_it(rule):
+    """langlearn-tts: a default value changed, thirty-two expectations
+    followed, and twelve checkwash highs made an honest commit a flag."""
+    from pr_witness.compare import is_review
+    f = cw(rule)
+    assert f.severity is Severity.MEDIUM and is_review(f)
+    assert "trust checkwash here" in f.innocent_explanation
+
+
+def test_an_advisory_rewrite_stays_advisory():
+    from pr_witness.compare import is_review
+    f = cw("EXPECTED_VALUE_CHANGED", "warn")
+    assert f.severity is Severity.LOW and not is_review(f)
+
+
+def test_an_edit_to_an_agent_instruction_file_is_a_note_not_a_flag():
+    """Two of twelve honest commits were flagged for a two-line CLAUDE.md edit."""
+    from pr_witness.compare import is_review
+    f = cw("GUARDRAIL_TOUCHED")
+    assert f.severity is Severity.MEDIUM and not is_review(f)
+
+
+@pytest.mark.parametrize("rule", ["ASSERT_REMOVED", "ASSERT_WEAKENED", "BROAD_EXCEPT_ADDED"])
+def test_weakening_rules_keep_checkwashs_rating(rule):
+    assert cw(rule).severity is Severity.HIGH

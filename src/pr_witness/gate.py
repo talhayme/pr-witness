@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from pr_witness.compare import REVIEW_SIGNALS, Severity
+from pr_witness.compare import Severity, is_review
 
 MODES = ("report", "require-ack", "strict")
 APPROVAL_LABEL = "test-change-approved"
@@ -37,7 +37,7 @@ def decide(evidence, mode: str, approved: bool = False) -> Decision:
 
     false_claims = [c for c in evidence.claims if c.verdict.value == "false"]
     high = [f for f in evidence.findings if f.severity is Severity.HIGH]
-    review = [f for f in evidence.findings if f.signal in REVIEW_SIGNALS]
+    review = [f for f in evidence.findings if is_review(f)]
     flagged = bool(false_claims) or bool(high) or bool(review)
 
     if mode == "report":

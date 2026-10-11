@@ -86,6 +86,64 @@ def checkwash_available() -> bool:
     return checkwash_command() is not None
 
 
+def translate(item: dict, documented: set[str]) -> Finding:
+    """One checkwash finding as one of ours — its observation, our rating."""
+    rule = item.get("rule", "UNKNOWN")
+    path = item.get("path", "")
+    unit = item.get("unit") or ""
+    where = f"{path}::{unit}" if unit else path
+    severity = _SEVERITY.get(item.get("severity", "warn"), Severity.MEDIUM)
+    innocent = _INNOCENT.get(rule, "")
+
+    # Two places where pr-witness takes checkwash's observation and not
+    # its rating. Both came from running a frozen tool on seventeen real
+    # commits: every flag it raised was on an honest one, and these two
+    # rules raised three of the four. Reported, with the disagreement
+    # stated; never dropped.
+    if rule in _REWRITE_RULES and severity is Severity.HIGH:
+        severity = Severity.MEDIUM
+        innocent = (
+            "checkwash rates a rewritten expectation high. pr-witness holds it "
+            "at review: neither a static rule nor a run can tell an intended "
+            "change of behaviour from a test bent to fit a bug, so a human "
+            "reads it. If your policy is that expected values must not change "
+            "alongside the code, trust checkwash here."
+        )
+    if rule == "GUARDRAIL_TOUCHED" and severity is Severity.HIGH:
+        severity = Severity.MEDIUM
+        innocent = (
+            "checkwash rates any change to an agent instruction file high. "
+            "pr-witness reports it without flagging: in a repository developed "
+            "with an agent these files change in ordinary work. If yours must "
+            "not change in a pull request, trust checkwash here."
+        )
+
+    # checkwash blocks on any added skip marker, whatever its reason.
+    # We disagree on exactly one point: a skip whose reason names a
+    # tracking issue is a decision someone made and can be held to, not
+    # a hidden test.
+    #
+    # Downgraded rather than dropped, and the disagreement is stated in
+    # the report. Silently discarding another tool's finding would make
+    # this one harder to trust, not easier.
+    if rule == "TEST_DISABLED" and unit and _matches_documented(unit, documented):
+        severity = Severity.INFO
+        innocent = (
+            "checkwash reports every added skip marker. pr-witness does not "
+            "flag this one: the run shows a skip reason that names an issue. "
+            "If your policy is that no skip is acceptable, trust checkwash "
+            "here, not us."
+        )
+
+    return Finding(
+        signal=f"checkwash:{rule}",
+        severity=severity,
+        summary=item.get("message", rule),
+        innocent_explanation=innocent,
+        tests=[where] if where else [],
+    )
+
+
 def run_checkwash(
     repo: Path, base: str, head: str, timeout: int = 300,
     documented_skips: set[str] | None = None,
@@ -116,41 +174,15 @@ def run_checkwash(
         return [], "checkwash produced no readable output: " + " ".join(tail)
 
     documented = documented_skips or set()
-    findings = []
-    for item in data.get("findings", []):
-        rule = item.get("rule", "UNKNOWN")
-        path = item.get("path", "")
-        unit = item.get("unit") or ""
-        where = f"{path}::{unit}" if unit else path
-        severity = _SEVERITY.get(item.get("severity", "warn"), Severity.MEDIUM)
-        innocent = _INNOCENT.get(rule, "")
-
-        # checkwash blocks on any added skip marker, whatever its reason.
-        # We disagree on exactly one point: a skip whose reason names a
-        # tracking issue is a decision someone made and can be held to, not
-        # a hidden test.
-        #
-        # Downgraded rather than dropped, and the disagreement is stated in
-        # the report. Silently discarding another tool's finding would make
-        # this one harder to trust, not easier.
-        if rule == "TEST_DISABLED" and unit and _matches_documented(unit, documented):
-            severity = Severity.INFO
-            innocent = (
-                "checkwash reports every added skip marker. pr-witness does not "
-                "flag this one: the run shows a skip reason that names an issue. "
-                "If your policy is that no skip is acceptable, trust checkwash "
-                "here, not us."
-            )
-
-        findings.append(Finding(
-            signal=f"checkwash:{rule}",
-            severity=severity,
-            summary=item.get("message", rule),
-            innocent_explanation=innocent,
-            tests=[where] if where else [],
-        ))
+    findings = [translate(item, documented) for item in data.get("findings", [])]
     return findings, ""
 
+
+# checkwash's rules that say "the expectation was rewritten" — as opposed to
+# removed, weakened or disabled, which stay high unless the run corroborates.
+_REWRITE_RULES = frozenset({
+    "EXPECTED_VALUE_CHANGED", "ASSERT_SUBSTITUTED", "EXPECTED_VALUE_HARDCODED", "SUBJECT_INPUT_CHANGED",
+})
 
 # Run findings that tell one test's story; coverage_replaced is about
 # functions, not tests, so it corroborates nothing here.

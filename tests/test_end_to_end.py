@@ -205,3 +205,23 @@ def test_a_test_deleted_with_its_function_is_not_a_review(repo):  # noqa: F811
     ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300)
     assert "tests_removed_still_passing" not in signals(ev)
     assert ev.verdict != "review"
+
+
+
+def test_one_old_test_file_that_no_longer_imports_does_not_hide_the_others(repo):  # noqa: F811
+    """authsome: a refactor removed what two old test files imported; pytest
+    abandoned the session and the rewritten expectations elsewhere went unseen."""
+    src = "def a():\n    return 1\n\n\ndef b():\n    return 1\n"
+    commit(repo, "init", {"conftest.py": CONFTEST, "ex.py": src,
+                          "tests/test_a.py": "from ex import a\n\n\ndef test_a():\n    assert a() == 1\n",
+                          "tests/test_b.py": "from ex import b\n\n\ndef test_b():\n    assert b() == 1\n"})
+    base = git_ops.resolve("HEAD", cwd=repo)
+    commit(repo, "remove b, change a", {
+        "ex.py": "def a():\n    return 2\n",
+        "tests/test_a.py": "from ex import a\n\n\ndef test_a():\n    assert a() == 2\n",
+        "tests/test_b.py": None,
+    })
+    ev = witness(repo=repo, base=base, runner_name="pytest", timeout=300)
+    changed = next(f for f in ev.findings if f.signal == "expectation_changed")
+    assert changed.tests == ["tests/test_a::test_a"]
+    assert ev.verdict == "review"

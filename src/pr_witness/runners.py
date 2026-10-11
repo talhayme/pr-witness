@@ -94,9 +94,13 @@ def _django_prepare(report: Path) -> None:
 
 
 RUNNERS: dict[str, Runner] = {
+    # --continue-on-collection-errors: by default pytest abandons the whole
+    # session when one file fails to import. In a cross-run that is the
+    # common case, not the odd one — the change removed something an old test
+    # file imports — and it took every other file's verdict with it.
     "pytest": Runner(
         "pytest",
-        "pytest -p no:cacheprovider -q --junit-xml={report}",
+        "pytest -p no:cacheprovider -q --continue-on-collection-errors --junit-xml={report}",
         frozenset({0, 1, 5}),
     ),
     "vitest": Runner(

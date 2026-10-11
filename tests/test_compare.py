@@ -226,3 +226,28 @@ def test_a_skip_for_an_external_cause_counts_as_documented():
     from pr_witness.compare import _skip_is_documented
     assert _skip_is_documented("pre-commit hooks not installed (run: uv run pre-commit install)")
     assert not _skip_is_documented("flaky")
+
+
+# --- skipped tests that are new ---------------------------------------------
+
+def test_a_skipped_test_the_pull_request_added_is_not_skip_inflation():
+    """optimize-anything: three new integration tests behind skipif were a flag."""
+    base = run(a=P)
+    head = run(a=P, new_integration=(S, "nope"))
+    f = compare(base, head, run(a=P))
+    assert "skip_inflation" not in signals(f)
+    assert by_signal(f, "added_tests_skipped").severity is Severity.LOW
+
+
+def test_an_existing_test_newly_skipped_is_still_skip_inflation():
+    base = run(a=P, b=P)
+    head = run(a=P, b=(S, "nope"))
+    f = compare(base, head, run(a=P, b=P))
+    assert by_signal(f, "skip_inflation").tests == ["tests/test_x::b"]
+    assert "added_tests_skipped" not in signals(f)
+
+
+def test_a_reason_that_says_something_is_required_is_an_external_cause():
+    from pr_witness.compare import _skip_is_documented
+    assert _skip_is_documented("OPENAI_API_KEY required")
+    assert _skip_is_documented("requires a running testnet")
