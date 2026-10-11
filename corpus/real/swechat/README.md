@@ -128,7 +128,9 @@ named examples do not reproduce).
 
 ## Licences and credit
 
-SWE-chat is ODC-BY: this directory credits SALT-NLP/SWE-chat as the source
+SWE-chat is by Baumann et al., *SWE-chat* (COLM 2026,
+[arXiv:2604.20779](https://arxiv.org/abs/2604.20779)), released under
+ODC-BY: this directory credits SALT-NLP/SWE-chat as the source
 of the commit references and attribution labels. Diffs are **not copied**
 into the repository; each case references `owner/repo` and a commit SHA,
 and `eval/run_real.py` fetches the repository under its own licence at run
