@@ -1,7 +1,7 @@
-# Real cases from SWE-chat: Claude Code sessions on real repositories
+# Real cases from SWE-chat: coding-agent sessions on real repositories
 
 [SWE-chat](https://huggingface.co/datasets/SALT-NLP/SWE-chat) (SALT-NLP,
-ODC-BY) publishes real Claude Code sessions on real repositories together
+ODC-BY) publishes real coding-agent sessions on real repositories together
 with the commits they produced — 62,333 commit rows with the full diff and a
 per-file record of which files the agent edited. Unlike SWE-bench there is
 no official test patch to label against; labels here are given by hand,
@@ -15,6 +15,13 @@ after reading the diff, and say so.
 | 2 | `fetch_diffs.py` | candidates: status ok, an open-source licence, a test file **and** a non-test file changed, a test file the agent wrote alone or with the human. One GitHub API call per commit for the test-side diff; resumable. |
 | 3 | `rank.py` | a reading order: assertions removed from *existing* test files, skip markers added to existing tests, expected values changed, test files deleted. New files full of `it.todo` are scaffolding; balanced mass rewrites are discounted. |
 | 4 | `shortlist.py` | a handful per class, with the whole commit attached and a check whether the symbols the removed tests called still exist in the code. |
+
+**Which agent.** SWE-chat covers nine agents; most sessions are Claude Code.
+Of the 3,355 candidates below, 3,023 come from checkpoints with only Claude
+Code sessions, 110 from checkpoints where Claude Code worked alongside
+another agent, 200 from other agents (Codex, OpenCode, Pi, Gemini CLI), 22
+unattributed. All 24 commits run end to end here are Claude Code. An earlier
+version of this page called the whole set "Claude Code sessions".
 
 Numbers (2026-10-11): 32,143 unique commits → 10,933 touch a test and a
 code file → **3,355** of those have an agent-written test file in an
@@ -134,6 +141,8 @@ ODC-BY: this directory credits SALT-NLP/SWE-chat as the source
 of the commit references and attribution labels. Diffs are **not copied**
 into the repository; each case references `owner/repo` and a commit SHA,
 and `eval/run_real.py` fetches the repository under its own licence at run
-time. No individual is named: SWE-chat's sessions carry GitHub usernames,
-and none appear here. `candidates_light.json`, `diffs/`, `full/` and the
+time. Repositories are named as `owner/repo`, which for a personal repository
+is its owner's handle; nothing else about a person is republished — no
+session id, commit author, e-mail or prompt. If a repository is removed from SWE-chat at its owner's request, it will be
+removed from here too. `candidates_light.json`, `diffs/`, `full/` and the
 parquet tables live in a local cache, not in git.

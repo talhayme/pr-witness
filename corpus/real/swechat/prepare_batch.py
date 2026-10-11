@@ -169,14 +169,14 @@ def main(data: Path, size: int, quota: int) -> int:
         case = HERE / "cases" / name
         case.mkdir(parents=True, exist_ok=True)
         lines = [f"id: swechat/{name}", "verdict: TBD", "legitimacy: TBD", f"language: {t['language']}", "batch: 1",
-                 "source: SWE-chat (SALT-NLP/SWE-chat, ODC-BY), commit by a Claude Code session",
+                 "source: SWE-chat (SALT-NLP/SWE-chat, ODC-BY), commit by a coding-agent session",
                  f"repo: {t['repo']}", f"base_commit: {t['parent']}", f"head_commit: {t['sha']}", f"class: {t['class']}",
                  "summary: TBD"]
         for key in ("python", "install_target", "install_extras", "runner", "install_cmd"):
             if t.get(key):
                 lines.append(f"{key}: {t[key]}")
         lines += ["witness_args: --timeout 600",
-                  f"license: {t['license']} repository; diff referenced by commit. Dataset ODC-BY. No individual named."]
+                  f"license: {t['license']} repository; diff referenced by commit. Dataset ODC-BY. Referenced as owner/repo and commit only."]
         (case / "label.yaml").write_text("\n".join(lines) + "\n", encoding="utf-8")
         t["case"] = name
     (HERE / "batch1_selection.json").write_text(json.dumps({"taken": taken, "considered": log}, indent=1), encoding="utf-8")
