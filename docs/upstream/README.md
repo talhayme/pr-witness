@@ -63,3 +63,9 @@ stop checking without removing it.
 
 The first is a clear parity gap — `BROAD_EXCEPT_ADDED` exists and fires on
 the Python equivalent, but has no JavaScript counterpart.
+
+## SWE-chat
+
+A note to the dataset's authors — what was built on it and two observations about
+`commits.parquet` (row-group size, `is_agent_author`) — filed as
+[SALT-NLP/SWE-chat#2](https://github.com/SALT-NLP/SWE-chat/issues/2) on 2026-10-11.
