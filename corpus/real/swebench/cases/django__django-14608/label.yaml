@@ -17,3 +17,4 @@ materialise: >
 license: >
   agent.diff is a published SWE-bench submission output; official_test.diff is
   from the repository under its own licence (see README).
+python: 3.9

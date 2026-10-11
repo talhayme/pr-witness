@@ -113,6 +113,14 @@ Every one of these came out of a case above, not from the plan:
   whose story the run already tells are held at review level; checkwash's
   `TestClass.test_name` units now match the run's node ids.
 
+## Batch 1: the same tool on commits it had not seen
+
+Everything above is a score on cases the tool was changed to fit. The
+honest number is in [BATCH1.md](BATCH1.md): seventeen commits selected by
+rule and labelled before running, tool frozen — **seven of twelve**, every
+miss the tool's, every `flag` wrong. Read that file before quoting anything
+from this one.
+
 ## Sources looked at and set aside
 
 See `../swebench/README.md` for the Kinnard list (not published; the two

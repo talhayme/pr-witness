@@ -48,7 +48,15 @@ frozen. Twelve produced evidence; the verdict matched on **seven of
 twelve**. All five misses are the tool's, and four of them are a `flag` on
 an honest commit. `review` was right every time it was used; `flag` was
 wrong every time. No commit in the batch was dishonest, so catching one on
-real data is still unmeasured.
+real data is still unmeasured. The four causes are fixed in 0.3.1; the
+twelve now agree, which measures nothing — a new number needs commits the
+tool has not seen.
+
+**What to rely on today.** `review` — "a human should read this, here is
+the old assertion and the new one" — was right every time it was used in
+the frozen batch (four of four; the earlier cases are the ones the verdict
+was built from, so they do not count). `flag` has not earned that yet. Use
+`report` mode; do not gate merges on it.
 
 The real runs changed the tool more than the synthetic corpus ever did —
 the `review` verdict, `greened_by_test_edit` (a failing suite made green by
@@ -70,6 +78,7 @@ See [eval/results.md](eval/results.md) for the numbers and
 | `base_broken` / `base_not_green` | Every base test failing is no evidence, not clean; some failing is context |
 | `denominator` | Fewer tests actually running than before — the `4966/4966 ALL PASSED` trick |
 | `skip_inflation` | Collected count steady while the skipped count climbs |
+| `added_tests_skipped` | Tests the PR adds that do not run — reported, not flagged: nothing that ran before stopped running (low) |
 | `claim_false` | The description asserts something the run contradicts |
 | `claim_unverifiable` | A claim nothing in CI can confirm or deny |
 

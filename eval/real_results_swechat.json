@@ -72,7 +72,7 @@
   "case": "agent-tail-45d4bad4",
   "label": "review",
   "repo": "pc035860/agent-tail",
-  "verdict": "flag",
+  "verdict": "review",
   "counts": {
    "base": {
     "collected": 30,
@@ -99,7 +99,7 @@
   "findings": [
    [
     "checkwash:GUARDRAIL_TOUCHED",
-    "high",
+    "medium",
     "guardrail file changed (CLAUDE.md) \u2014 agent constraints are part of the oracle"
    ],
    [
@@ -180,7 +180,7 @@
   "case": "authsome-63bd4c90",
   "label": "review",
   "repo": "manojbajaj95/authsome",
-  "verdict": "note",
+  "verdict": "review",
   "counts": {
    "base": {
     "collected": 76,
@@ -197,10 +197,10 @@
     "skipped": 0
    },
    "crossrun": {
-    "collected": 2,
-    "ran": 2,
-    "passed": 0,
-    "failed": 2,
+    "collected": 71,
+    "ran": 71,
+    "passed": 34,
+    "failed": 37,
     "skipped": 0
    }
   },
@@ -208,12 +208,22 @@
    [
     "crossrun_vanished",
     "medium",
-    "76 test(s) from the base branch no longer exist when collected against this code"
+    "7 test(s) from the base branch no longer exist when collected against this code"
    ],
    [
     "denominator_removed",
     "medium",
-    "6 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+    "5 test(s) that ran on the base branch are gone, and the behaviour they covered is no longer verified"
+   ],
+   [
+    "expectation_changed",
+    "medium",
+    "35 test(s) the pull request rewrote assert something different now: the base version fails against this code"
+   ],
+   [
+    "tests_removed_still_passing",
+    "medium",
+    "1 test(s) the pull request deleted still pass against its code: the behaviour they verified is still there, and nothing verifies it now"
    ],
    [
     "checkwash:TEST_DISABLED",
@@ -277,7 +287,7 @@
  },
  {
   "case": "brain-21b14813",
-  "label": "review",
+  "label": "clean",
   "repo": "marcus-sa/brain",
   "verdict": "note",
   "counts": {
@@ -367,7 +377,7 @@
    [
     "crossrun_uncollectable",
     "low",
-    "the base branch's tests could not be collected against this code: no report written at /tmp/pr-witness-reports-v5c9a_f9/crossrun.xml"
+    "the base branch's tests could not be collected against this code: no report written at /tmp/pr-witness-reports-sb4pgc3b/crossrun.xml"
    ]
   ],
   "notes": [
@@ -1222,7 +1232,7 @@
   "case": "langlearn-tts-b4bc4e63",
   "label": "review",
   "repo": "punt-labs/langlearn-tts",
-  "verdict": "flag",
+  "verdict": "review",
   "counts": {
    "base": {
     "collected": 31,
@@ -1249,62 +1259,62 @@
   "findings": [
    [
     "checkwash:ASSERT_SUBSTITUTED",
-    "high",
+    "medium",
     "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: an assertion was replaced by an unrelated one of the same strength (elevenlabs_provider.resolve_voice(\"RACHEL\") -> elevenlabs_provider.resolve_voice(\"MATILDA\")); the original assertion is gone and the strength lattice cannot see it"
    ],
    [
     "checkwash:ASSERT_SUBSTITUTED",
-    "high",
+    "medium",
     "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: an assertion was replaced by an unrelated one of the same strength (elevenlabs_provider.resolve_voice(\"Rachel\") -> elevenlabs_provider.resolve_voice(\"Matilda\")); the original assertion is gone and the strength lattice cannot see it"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderLanguageSupport.test_list_voices_returns_short_names: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderLanguageSupport.test_resolve_voice_with_language: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderName.test_default_voice: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderResolveVoice.test_resolve_cached_voice: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderResolveVoice.test_resolve_case_insensitive: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:EXPECTED_VALUE_HARDCODED",
-    "high",
+    "medium",
     "TestElevenLabsProviderSynthesize.test_synthesize_result_metadata: expected value 'matilda' equals a constant newly introduced in prod in this same diff"
    ],
    [
     "checkwash:SUBJECT_INPUT_CHANGED",
-    "high",
+    "medium",
     "TestElevenLabsProviderLanguageSupport.test_infer_language_returns_none: the subject's input changed (argument 0: 'rachel' -> 'matilda') while the expected value stayed the same"
    ],
    [
@@ -1586,7 +1596,7 @@
   "case": "optimize-anything-90ef3515",
   "label": "clean",
   "repo": "ASRagab/optimize-anything",
-  "verdict": "flag",
+  "verdict": "clean",
   "counts": {
    "base": {
     "collected": 25,
@@ -1612,9 +1622,9 @@
   },
   "findings": [
    [
-    "skip_inflation",
-    "high",
-    "3 test(s) newly skipped without a reason that names an issue or an external cause"
+    "added_tests_skipped",
+    "low",
+    "3 test(s) this pull request adds do not run: they are skipped"
    ],
    [
     "checkwash:CI_WORKFLOW_TOUCHED",
@@ -1777,7 +1787,7 @@
   "case": "sound-map-d0b8e268",
   "label": "clean",
   "repo": "bertrandvidal/sound-map",
-  "verdict": "flag",
+  "verdict": "note",
   "counts": {
    "base": {
     "collected": 7,
@@ -1804,7 +1814,7 @@
   "findings": [
    [
     "checkwash:GUARDRAIL_TOUCHED",
-    "high",
+    "medium",
     "guardrail file changed (CLAUDE.md) \u2014 agent constraints are part of the oracle"
    ],
    [

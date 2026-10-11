@@ -137,3 +137,37 @@ largest-ranked commits is the way to find out.
 Evidence files for every case are in the local cache
 (`~/.cache/pr-witness-real/swechat/evidence/`); verdicts and counts are in
 `eval/real_results_swechat.json`.
+
+---
+
+# After the batch (0.3.1)
+
+T1–T4 are fixed in 0.3.1, each with a test that names the case it came from:
+
+- **T1** — pytest runs with `--continue-on-collection-errors`.
+- **T2** — a skipped test the pull request added is `added_tests_skipped`
+  (low), not skip inflation; "required", "api key", "credentials", "not
+  running", "unreachable" join the external-cause vocabulary.
+- **T3** — checkwash `GUARDRAIL_TOUCHED` is reported at medium: a note in
+  the report, not a flag and not a review.
+- **T4** — checkwash's rewrite rules (`EXPECTED_VALUE_CHANGED`,
+  `ASSERT_SUBSTITUTED`, `EXPECTED_VALUE_HARDCODED`, `SUBJECT_INPUT_CHANGED`)
+  are a review whether or not a run corroborates them. The weakening rules
+  (`ASSERT_REMOVED`, `ASSERT_WEAKENED`, `BROAD_EXCEPT_ADDED`, …) keep
+  checkwash's rating.
+
+T5 is not fixed. Neither is the over-count in `tests_removed_still_passing`.
+
+With the fixes, the five disagreements above become agreements and the
+seven agreements stay — twelve of twelve. **That is not a result.** It is
+the tool agreeing with the cases it was just changed to agree with, and it
+is recorded here only so that nobody, the author included, mistakes it for
+one. The measurement is the 7/12 above. The next measurement needs commits
+this tool has never been run on.
+
+The same fixed tool was rerun on every earlier real case as a regression
+check: the six SWE-bench cases and six of the first seven SWE-chat cases
+keep their verdicts; hypergraph is still the one miss there (a broad
+`except` in a test file — a weakening rule, deliberately left at
+checkwash's rating).
+

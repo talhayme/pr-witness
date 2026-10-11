@@ -28,3 +28,4 @@ license: >
   No individual is named.
 install_target: uv-lock
 install_extras: pytest-cov pytest-asyncio pandas datasets   # imported by src or conftest, declared nowhere at this commit
+python: 3.13

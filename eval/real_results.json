@@ -165,7 +165,13 @@
     "skipped": 0
    }
   },
-  "findings": [],
+  "findings": [
+   [
+    "base_not_green",
+    "info",
+    "5 of 152 base-branch tests already fail on the base branch; the cross-run says nothing about them"
+   ]
+  ],
   "notes": [
    "restricted to 1 path(s): sympy/matrices/tests/test_matrices.py",
    "checkwash produced no readable output: checkwash engine error: EngineError: stand-in source exceeds the syntax node limit"
