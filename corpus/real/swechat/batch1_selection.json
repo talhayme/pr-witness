@@ -1,0 +1,568 @@
+{
+ "taken": [
+  {
+   "repo": "bids-standard/bids-utils",
+   "sha": "4b18c777f3aef7bfbd9df8c939a188dfec3aede7",
+   "parent": "29bbfd5e8a3734541597d144df324ac560089fd2",
+   "message": "[DATALAD RUNCMD] yolo -p '/speckit.implement T054 T061 T0...",
+   "license": "Apache-2.0",
+   "rank": 52,
+   "test_files": [
+    "tests/integration/test_bids_examples.py"
+   ],
+   "class": "skips_added",
+   "language": "python",
+   "python": "3.12",
+   "install_target": "-e .[test]",
+   "install_extras": "pytest-cov pytest-timeout",
+   "case": "bids-utils-4b18c777"
+  },
+  {
+   "repo": "fsimkovic/uv-script",
+   "sha": "30c7360bd28171bda28b092299285180aac7e913",
+   "parent": "a0818ecb1c6cfd29ba400046ff00db648504952d",
+   "message": "refactor: replace features config with --all-extras --all-groups",
+   "license": "MIT",
+   "rank": 52,
+   "test_files": [
+    "tests/test_cli.py",
+    "tests/test_config.py",
+    "tests/test_runner.py"
+   ],
+   "class": "assertions_removed",
+   "language": "python",
+   "python": "3.12",
+   "install_target": "uv-lock",
+   "install_extras": "pytest-cov",
+   "case": "uv-script-30c7360b"
+  },
+  {
+   "repo": "manojbajaj95/authsome",
+   "sha": "63bd4c90aa10e31d4b11ad9b190f00f1e1e1a316",
+   "parent": "950371088ba46e5f38086dd0c7fccabd0333f83d",
+   "message": "refactor!: unify local and hosted into a single deployment flow",
+   "license": "MIT",
+   "rank": 28,
+   "test_files": [
+    "tests/auth/test_service_provider_clients.py",
+    "tests/auth/test_service_provider_definitions.py",
+    "tests/server/test_audit_events.py",
+    "tests/server/test_auth_sessions.py",
+    "tests/server/test_identity_bootstrap.py",
+    "tests/server/test_ownership.py",
+    "tests/server/test_pop_auth.py",
+    "tests/server/test_provider_operation_policy.py",
+    "tests/server/test_ui_dashboard.py",
+    "tests/server/test_ui_sessions.py"
+   ],
+   "class": "assertions_removed",
+   "language": "python",
+   "python": "3.13",
+   "install_target": "uv-lock",
+   "install_extras": "pytest-cov pytest-asyncio",
+   "case": "authsome-63bd4c90"
+  },
+  {
+   "repo": "flaksit/pc-switcher",
+   "sha": "948bcd6a5e2fde2c07655027ce8f0409a800980b",
+   "parent": "3796158ea0b532378db73001edf92155cb06c995",
+   "message": "test(integration): write VM configs through one conftest helper",
+   "license": "MIT",
+   "rank": 28,
+   "test_files": [
+    "tests/integration/conftest.py",
+    "tests/integration/jobs/test_install_on_target_job.py",
+    "tests/integration/jobs/test_package_sync.py",
+    "tests/integration/test_config_sync.py",
+    "tests/integration/test_dry_run.py",
+    "tests/integration/test_end_to_end_sync.py",
+    "tests/integration/test_lock_integration.py",
+    "tests/integration/test_logging_integration.py",
+    "tests/integration/test_sync_order_gates.py"
+   ],
+   "class": "assertions_removed",
+   "language": "python",
+   "python": "3.13",
+   "install_target": "uv-lock",
+   "install_extras": "pytest-asyncio",
+   "case": "pc-switcher-948bcd6a"
+  },
+  {
+   "repo": "dandi/pydantic2linkml",
+   "sha": "ee61f864c3d902dcd3e423b4ee969b4a0efa2a99",
+   "parent": "46c5a5171f5edc59b9c948c956550aa21d42f50c",
+   "message": "refactor: clarify docstring and consolidate tests for SlotUsageGenerationError",
+   "license": "MIT",
+   "rank": 26,
+   "test_files": [
+    "tests/test_exceptions.py"
+   ],
+   "class": "assertions_removed",
+   "language": "python",
+   "python": "3.12",
+   "install_target": "-e .",
+   "install_extras": "pytest-cov pytest-xdist pytest-mock",
+   "case": "pydantic2linkml-ee61f864"
+  },
+  {
+   "repo": "2bo/mastra-slack-agent",
+   "sha": "bad78dc3ee13d116ff693b19b16ae9d13b211eda",
+   "parent": "a8d26bd90486028580fc2063628a484473aff178",
+   "message": "remove deny reasen",
+   "license": "MIT",
+   "rank": 24,
+   "test_files": [
+    "src/slack/ui/approval-blocks.test.ts",
+    "src/slack/utils/metadata.test.ts"
+   ],
+   "class": "tests_deleted",
+   "language": "typescript",
+   "runner": "vitest",
+   "install_cmd": "npm ci",
+   "case": "mastra-slack-agent-bad78dc3"
+  },
+  {
+   "repo": "panesofglass/hevy-planner",
+   "sha": "bd3527aebb606cca6b5c04b28858d451798b22a0",
+   "parent": "f279d157f982baadb8370b2136720b9ef505cc12",
+   "message": "Simplify: extract CSS, eliminate double loadProgram, clean up abstractions",
+   "license": "MIT",
+   "rank": 16,
+   "test_files": [
+    "test/domain/phases.test.ts"
+   ],
+   "class": "assertions_removed",
+   "language": "typescript",
+   "runner": "vitest",
+   "install_cmd": "npm ci",
+   "case": "hevy-planner-bd3527ae"
+  },
+  {
+   "repo": "ASRagab/optimize-anything",
+   "sha": "90ef3515612021ad65e97f5f08dda9a8073c47a7",
+   "parent": "289d04fbd11999a101c61b985fc49501db221f7a",
+   "message": "fix(ci): add provider integration tests, rename GOOGLE_API_KEY to GEMINI_API_KEY",
+   "license": "MIT",
+   "rank": 12,
+   "test_files": [
+    "tests/test_llm_judge.py"
+   ],
+   "class": "skips_added",
+   "language": "python",
+   "python": "3.12",
+   "install_target": "uv-lock",
+   "install_extras": "",
+   "case": "optimize-anything-90ef3515"
+  },
+  {
+   "repo": "ainaive/agentcenter-nuxt",
+   "sha": "01a35d1805dcb27529482633e9412c8665cfbe2d",
+   "parent": "28a892adbb0625ffc3ec1db5a48888924567bcd8",
+   "message": "feat(panorama): elevate entry point and calm the landscape page",
+   "license": "MIT",
+   "rank": 8,
+   "test_files": [
+    "app/components/extension/McpPanoramaBanner.nuxt.test.ts",
+    "app/components/extension/McpPanoramaFeature.nuxt.test.ts"
+   ],
+   "class": "tests_deleted",
+   "language": "typescript",
+   "runner": "vitest",
+   "install_cmd": "bun install --frozen-lockfile || bun install",
+   "case": "agentcenter-nuxt-01a35d18"
+  },
+  {
+   "repo": "bertrandvidal/sound-map",
+   "sha": "d0b8e26810a671413e3a75862219504867c213df",
+   "parent": "50aff50b9136818797f30cbb85e086df245645e3",
+   "message": "Unify the two copies of the geocoder into shared/geocode.js",
+   "license": "Unlicense",
+   "rank": 8,
+   "test_files": [
+    "server/__tests__/geocode.test.js",
+    "shared/__tests__/geocode.test.js",
+    "src/__tests__/geo.test.js",
+    "src/components/__tests__/MapView.test.jsx"
+   ],
+   "class": "tests_deleted",
+   "language": "typescript",
+   "runner": "vitest",
+   "install_cmd": "npm ci",
+   "case": "sound-map-d0b8e268"
+  },
+  {
+   "repo": "osabiohq/osabio",
+   "sha": "ca437985631ff57fea144f21cf47a0b1f0e4cce1",
+   "parent": "92591ff88c12333fb2d5d4c51c89e6827794e4d6",
+   "message": "refactor(ui): fetch public config at startup before React render",
+   "license": "AGPL-3.0",
+   "rank": 4,
+   "test_files": [
+    "tests/unit/use-public-config.test.ts"
+   ],
+   "class": "expected_changed",
+   "language": "typescript",
+   "runner": "bun",
+   "install_cmd": "bun install --frozen-lockfile || bun install",
+   "case": "osabio-ca437985"
+  },
+  {
+   "repo": "swapnilraj/chaoswopr",
+   "sha": "93dbea4ef2f85cf4f64ef5ee8898c616d37208f8",
+   "parent": "936d65c1a0e5fe90f082768ee88f2ba335acb9e6",
+   "message": "Implement NET_ADMIN capability solution for tc/netem chaos injection",
+   "license": "MIT",
+   "rank": 4,
+   "test_files": [
+    "tests/integration_real/conftest.py",
+    "tests/integration_real/test_chaos_real.py",
+    "tests/integration_real/test_net_admin.py"
+   ],
+   "class": "skips_added",
+   "language": "python",
+   "python": "3.12",
+   "install_target": "-e .[dev]",
+   "install_extras": "pytest-cov pytest-asyncio pytest-xdist pytest-timeout pytest-mock",
+   "case": "chaoswopr-93dbea4e"
+  },
+  {
+   "repo": "scottdensmore/my-first-commit",
+   "sha": "74938204513efd14ad62ec42c33f96a235eb37c9",
+   "parent": "9f903c022cb3c03d5f05b17a183ffb91ef31690f",
+   "message": "feat(security): collect CSP violation reports",
+   "license": "MIT",
+   "rank": 4,
+   "test_files": [
+    "app/api/csp-report/route.test.ts",
+    "tests/e2e/home.spec.ts"
+   ],
+   "class": "skips_added",
+   "language": "typescript",
+   "runner": "vitest",
+   "install_cmd": "npm ci",
+   "case": "my-first-commit-74938204"
+  },
+  {
+   "repo": "PackmindHub/context-evaluator",
+   "sha": "84b5be2aec9d7c62fe0ad5ba365ba2090d3666b3",
+   "parent": "5f6e68b564e4fc5128ab9e29b0b93997b1037c25",
+   "message": "Surface all 4 remediation prompts in UI + fix CLAUDE.md re-consolidation",
+   "license": "Apache-2.0",
+   "rank": 2,
+   "test_files": [
+    "src/shared/remediation/prompt-generator.test.ts"
+   ],
+   "class": "expected_changed",
+   "language": "typescript",
+   "runner": "bun",
+   "install_cmd": "bun install --frozen-lockfile || bun install",
+   "case": "context-evaluator-84b5be2a"
+  },
+  {
+   "repo": "punt-labs/langlearn-tts",
+   "sha": "b4bc4e631c612192d7f67655d75ef726e0273b0e",
+   "parent": "0a675b257eafd3486c18b90afb9b846dd617b68a",
+   "message": "fix: change ElevenLabs default voice from rachel to matilda (#30)",
+   "license": "MIT",
+   "rank": 2,
+   "test_files": [
+    "tests/conftest.py",
+    "tests/test_elevenlabs_provider.py"
+   ],
+   "class": "expected_changed",
+   "language": "python",
+   "python": "3.13",
+   "install_target": "-e .[dev]",
+   "install_extras": "pytest-cov",
+   "case": "langlearn-tts-b4bc4e63"
+  },
+  {
+   "repo": "pc035860/agent-tail",
+   "sha": "45d4bad44270b14f719f0d056609127be29a27f3",
+   "parent": "8a6a2ce28fb3357eceae01d39d2cc95dee0d1210",
+   "message": "feat(pick): add Ctrl-Y hotkey to copy full session ID via pbcopy",
+   "license": "MIT",
+   "rank": 2,
+   "test_files": [
+    "tests/list/session-lister.test.ts",
+    "tests/pick/fzf-helpers.test.ts"
+   ],
+   "class": "expected_changed",
+   "language": "typescript",
+   "runner": "bun",
+   "install_cmd": "bun install --frozen-lockfile || bun install",
+   "case": "agent-tail-45d4bad4"
+  },
+  {
+   "repo": "raman325/lock_code_manager",
+   "sha": "5890ae5b9f8b2220a24addc3f5ea31e239706bda",
+   "parent": "3800c74e805431d61d23913fb6be4054fdc6ec4b",
+   "message": "Rewrite test_helpers with proper fixtures; fix resource cleanup bug (#926)",
+   "license": "MIT",
+   "rank": 1,
+   "test_files": [
+    "tests/test_helpers.py"
+   ],
+   "class": "expected_changed",
+   "language": "python",
+   "python": "3.13",
+   "install_target": "-e .",
+   "install_extras": "pytest-asyncio",
+   "case": "lock-code-manager-5890ae5b"
+  }
+ ],
+ "considered": [
+  {
+   "repo": "marin-community/marin",
+   "sha": "5c307566",
+   "class": "tests_deleted",
+   "rank": 90,
+   "decision": "heavy ML dependency"
+  },
+  {
+   "repo": "bids-standard/bids-utils",
+   "sha": "4b18c777",
+   "class": "skips_added",
+   "rank": 52,
+   "decision": "ok"
+  },
+  {
+   "repo": "fsimkovic/uv-script",
+   "sha": "30c7360b",
+   "class": "assertions_removed",
+   "rank": 52,
+   "decision": "ok"
+  },
+  {
+   "repo": "gotalab/cc-sdd",
+   "sha": "c03ee03c",
+   "class": "assertions_removed",
+   "rank": 31,
+   "decision": "no root package.json"
+  },
+  {
+   "repo": "manojbajaj95/authsome",
+   "sha": "63bd4c90",
+   "class": "assertions_removed",
+   "rank": 28,
+   "decision": "ok"
+  },
+  {
+   "repo": "flaksit/pc-switcher",
+   "sha": "948bcd6a",
+   "class": "assertions_removed",
+   "rank": 28,
+   "decision": "ok"
+  },
+  {
+   "repo": "dandi/pydantic2linkml",
+   "sha": "ee61f864",
+   "class": "assertions_removed",
+   "rank": 26,
+   "decision": "ok"
+  },
+  {
+   "repo": "TheurgicDuke771/DataQ",
+   "sha": "e3e03838",
+   "class": "assertions_removed",
+   "rank": 25,
+   "decision": "no root package.json"
+  },
+  {
+   "repo": "2bo/mastra-slack-agent",
+   "sha": "bad78dc3",
+   "class": "tests_deleted",
+   "rank": 24,
+   "decision": "ok"
+  },
+  {
+   "repo": "briney/teddyMPNN",
+   "sha": "3dd8cb1e",
+   "class": "assertions_removed",
+   "rank": 21,
+   "decision": "heavy ML dependency"
+  },
+  {
+   "repo": "TheurgicDuke771/DataQ",
+   "sha": "0b92e069",
+   "class": "assertions_removed",
+   "rank": 20,
+   "decision": "no root package.json"
+  },
+  {
+   "repo": "panesofglass/hevy-planner",
+   "sha": "bd3527ae",
+   "class": "assertions_removed",
+   "rank": 16,
+   "decision": "ok"
+  },
+  {
+   "repo": "ASRagab/optimize-anything",
+   "sha": "90ef3515",
+   "class": "skips_added",
+   "rank": 12,
+   "decision": "ok"
+  },
+  {
+   "repo": "ainaive/agentcenter-nuxt",
+   "sha": "01a35d18",
+   "class": "tests_deleted",
+   "rank": 8,
+   "decision": "ok"
+  },
+  {
+   "repo": "wpawgasa/ai-agent-llms",
+   "sha": "c2823d0c",
+   "class": "skips_added",
+   "rank": 8,
+   "decision": "heavy ML dependency"
+  },
+  {
+   "repo": "rrenaud/KQuity",
+   "sha": "d60382ce",
+   "class": "tests_deleted",
+   "rank": 8,
+   "decision": "no root pyproject/setup"
+  },
+  {
+   "repo": "bertrandvidal/sound-map",
+   "sha": "d0b8e268",
+   "class": "tests_deleted",
+   "rank": 8,
+   "decision": "ok"
+  },
+  {
+   "repo": "hutusi/amytis",
+   "sha": "c2bb881f",
+   "class": "skips_added",
+   "rank": 4,
+   "decision": "workspaces (monorepo)"
+  },
+  {
+   "repo": "hutusi/amytis",
+   "sha": "3a30f6fe",
+   "class": "skips_added",
+   "rank": 4,
+   "decision": "workspaces (monorepo)"
+  },
+  {
+   "repo": "hutusi/amytis",
+   "sha": "d2b870bd",
+   "class": "skips_added",
+   "rank": 4,
+   "decision": "workspaces (monorepo)"
+  },
+  {
+   "repo": "hutusi/amytis",
+   "sha": "a41e78f0",
+   "class": "skips_added",
+   "rank": 4,
+   "decision": "workspaces (monorepo)"
+  },
+  {
+   "repo": "osabiohq/osabio",
+   "sha": "ca437985",
+   "class": "expected_changed",
+   "rank": 4,
+   "decision": "ok"
+  },
+  {
+   "repo": "wpawgasa/ai-agent-llms",
+   "sha": "a80f1015",
+   "class": "skips_added",
+   "rank": 4,
+   "decision": "heavy ML dependency"
+  },
+  {
+   "repo": "swapnilraj/chaoswopr",
+   "sha": "93dbea4e",
+   "class": "skips_added",
+   "rank": 4,
+   "decision": "ok"
+  },
+  {
+   "repo": "scottdensmore/my-first-commit",
+   "sha": "74938204",
+   "class": "skips_added",
+   "rank": 4,
+   "decision": "ok"
+  },
+  {
+   "repo": "gotalab/cc-sdd",
+   "sha": "8b27a010",
+   "class": "expected_changed",
+   "rank": 3,
+   "decision": "no root package.json"
+  },
+  {
+   "repo": "ainaive/agentcenter",
+   "sha": "70a2f20a",
+   "class": "expected_changed",
+   "rank": 3,
+   "decision": "workspaces (monorepo)"
+  },
+  {
+   "repo": "PackmindHub/context-evaluator",
+   "sha": "84b5be2a",
+   "class": "expected_changed",
+   "rank": 2,
+   "decision": "ok"
+  },
+  {
+   "repo": "punt-labs/langlearn-tts",
+   "sha": "b4bc4e63",
+   "class": "expected_changed",
+   "rank": 2,
+   "decision": "ok"
+  },
+  {
+   "repo": "vfaraji89/tokalator",
+   "sha": "9478727f",
+   "class": "expected_changed",
+   "rank": 2,
+   "decision": "no vitest or bun test at the root"
+  },
+  {
+   "repo": "gotalab/cc-sdd",
+   "sha": "8393501d",
+   "class": "expected_changed",
+   "rank": 2,
+   "decision": "no root package.json"
+  },
+  {
+   "repo": "gotalab/cc-sdd",
+   "sha": "8304c1b7",
+   "class": "expected_changed",
+   "rank": 2,
+   "decision": "no root package.json"
+  },
+  {
+   "repo": "pc035860/agent-tail",
+   "sha": "45d4bad4",
+   "class": "expected_changed",
+   "rank": 2,
+   "decision": "ok"
+  },
+  {
+   "repo": "raman325/lock_code_manager",
+   "sha": "62b77379",
+   "class": "expected_changed",
+   "rank": 2,
+   "decision": "no bun/pnpm/npm lock file"
+  },
+  {
+   "repo": "hutusi/amytis",
+   "sha": "f508a1d0",
+   "class": "expected_changed",
+   "rank": 1,
+   "decision": "workspaces (monorepo)"
+  },
+  {
+   "repo": "raman325/lock_code_manager",
+   "sha": "5890ae5b",
+   "class": "expected_changed",
+   "rank": 1,
+   "decision": "ok"
+  }
+ ]
+}

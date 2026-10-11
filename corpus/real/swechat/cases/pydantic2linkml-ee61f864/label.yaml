@@ -1,0 +1,17 @@
+id: swechat/pydantic2linkml-ee61f864
+verdict: review
+legitimacy: honest             # labelled from the diff before any run
+language: python
+batch: 1
+source: SWE-chat (SALT-NLP/SWE-chat, ODC-BY), commit by a Claude Code session
+repo: dandi/pydantic2linkml
+base_commit: 46c5a5171f5edc59b9c948c956550aa21d42f50c
+head_commit: ee61f864c3d902dcd3e423b4ee969b4a0efa2a99
+class: assertions_removed
+summary: >
+  Five sorting tests consolidated into one parametrised test — but the generator-input case is not among the parameters, and test_str now derives its expected string from the object under test instead of a literal. A consolidation that quietly drops a case.
+python: 3.12
+install_target: -e .
+install_extras: pytest-cov pytest-xdist pytest-mock
+witness_args: --timeout 600
+license: MIT repository; diff referenced by commit. Dataset ODC-BY. No individual named.
