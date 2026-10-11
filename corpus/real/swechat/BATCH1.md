@@ -129,6 +129,19 @@ flagged, and all four are honest. Nothing here was labelled `flag`, so the
 tool's `flag` was wrong every time it was used. `review` was right four
 times out of four.
 
+**The cross-run itself was not what failed.** Reading the twelve by where
+each verdict came from: in the eleven cases where the cross-run ran to
+completion, the findings it produced agreed with the label every time —
+`expectation_changed`, `greened_by_test_edit` or `tests_removed_still_passing`
+on six commits labelled `review`, cleanup or nothing on the five labelled
+`clean`. `crossrun`, the one finding of its own that flags, never fired, and
+rightly. The four false flags came from around it: three from checkwash
+ratings passed through (T3 twice, T4), one from the skip check (T2). In
+agent-tail and langlearn-tts the cross-run's correct `review` finding was in
+the report, underneath a louder flag. The twelfth case is T1: pytest cut the
+cross-run short. What failed in this batch is the layer that decides how
+loudly to speak, and the plumbing — not the comparison of runs.
+
 **It says nothing yet about catching dishonesty.** No commit in this batch
 reads as a cheat, so recall on real data is still unmeasured. The size
 limit in the selection rule is the likely reason, and a batch aimed at the

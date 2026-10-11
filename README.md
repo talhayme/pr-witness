@@ -52,11 +52,21 @@ real data is still unmeasured. The four causes are fixed in 0.3.1; the
 twelve now agree, which measures nothing — a new number needs commits the
 tool has not seen.
 
-**What to rely on today.** `review` — "a human should read this, here is
-the old assertion and the new one" — was right every time it was used in
-the frozen batch (four of four; the earlier cases are the ones the verdict
-was built from, so they do not count). `flag` has not earned that yet. Use
-`report` mode; do not gate merges on it.
+**What that number is made of.** The part that is this tool's own — running
+the base branch's tests against the new code and showing what changed — was
+not wrong once in the batch. In the eleven cases where the cross-run ran to
+completion, what it reported agreed with the label every time, including
+six commits where it correctly showed a rewritten or deleted test for
+review; in the twelfth, pytest cut the run short. None of the four false
+flags came from it: three were checkwash ratings passed through unchanged,
+one was a skip check that did not ask whether the skipped test was new. In
+two of those four the cross-run's correct `review` was already in the
+report, underneath the flag.
+
+So: the comparison of runs has held up on real commits it had never seen;
+the layer that decides how loudly to say it had not, and was changed. Until
+that layer passes a frozen batch of its own, run in `report` mode and read
+what is marked for review before gating merges on `flag`.
 
 The real runs changed the tool more than the synthetic corpus ever did —
 the `review` verdict, `greened_by_test_edit` (a failing suite made green by
