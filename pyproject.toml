@@ -17,7 +17,7 @@ classifiers = [
 license = { text = "Apache-2.0" }
 # checkwash does the diff-level half of this job, and does it well. It is a
 # dependency rather than a reimplementation.
-dependencies = ["checkwash>=0.6"]
+dependencies = ["checkwash>=0.6,<0.8"]   # checkwash advises an upper bound below the next minor (docs/stability.md)
 
 [project.urls]
 Homepage = "https://github.com/talhayme/pr-witness"

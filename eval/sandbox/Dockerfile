@@ -14,7 +14,7 @@ RUN curl -fsSL https://bun.sh/install | bash && mv /root/.bun/bin/bun /usr/local
 # (network-less) run stage. pr-witness itself runs on the image's 3.11.
 ENV UV_PYTHON_INSTALL_DIR=/work/.cache/uv-python UV_CACHE_DIR=/work/.cache/uv
 COPY . /opt/pr-witness
-RUN pip install --no-cache-dir /opt/pr-witness checkwash==0.6.0
+RUN pip install --no-cache-dir /opt/pr-witness checkwash==0.7.0
 RUN useradd -m -u 1000 runner
 USER runner
 ENV PR_WITNESS_REAL_CACHE=/work/.cache HOME=/home/runner

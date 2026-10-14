@@ -18,7 +18,7 @@ discrepancy written down. This is that list.
 | Plan said | Checked |
 |---|---|
 | checkwash is "v0.5, weak JS/TS"; ten JS/TS detectors to write | 0.6.0 on PyPI. Seven of the ten already work (measured, see `docs/upstream/README.md`). Three real gaps remain; one is filed as [checkwash#363](https://github.com/taipei49314/checkwash/issues/363). |
-| "Подключить checkwash как зависимость" | Done, with one deliberate disagreement: checkwash blocks on any added skip marker; pr-witness downgrades a skip whose reason names an issue, and the report says so rather than hiding the finding. |
+| "Подключить checkwash как зависимость" | Done, with one deliberate disagreement. checkwash reports every added skip marker, raises it to `high` only when nothing in the diff explains it, and deliberately does not read skip reasons (an agent can learn to write them). pr-witness downgrades a skip whose reason names an issue, and the report says so rather than hiding the finding. (Corrected 2026-10-14: this row first said checkwash blocks on any added skip marker; it does not — checkwash SPEC §5, checkwash#364.) |
 
 ## Phase 1 — counters
 

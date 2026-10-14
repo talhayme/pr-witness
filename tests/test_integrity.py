@@ -210,3 +210,12 @@ def test_an_edit_to_an_agent_instruction_file_is_a_note_not_a_flag():
 @pytest.mark.parametrize("rule", ["ASSERT_REMOVED", "ASSERT_WEAKENED", "BROAD_EXCEPT_ADDED"])
 def test_weakening_rules_keep_checkwashs_rating(rule):
     assert cw(rule).severity is Severity.HIGH
+
+
+def test_our_try_catch_finding_steps_aside_where_checkwash_already_reported_it():
+    ours = [Finding("broad_catch", Severity.HIGH, "x", tests=["cart.test.ts"]),
+            Finding("broad_catch", Severity.HIGH, "y", tests=["other.test.ts"]),
+            Finding("ts_nocheck", Severity.MEDIUM, "z", tests=["cart.test.ts"])]
+    cw = [Finding("checkwash:BROAD_EXCEPT_ADDED", Severity.HIGH, "w", tests=["cart.test.ts"])]
+    kept = integrity.drop_covered_by_checkwash(ours, cw)
+    assert [(f.signal, f.tests) for f in kept] == [("broad_catch", ["other.test.ts"]), ("ts_nocheck", ["cart.test.ts"])]

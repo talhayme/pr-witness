@@ -214,7 +214,7 @@ def witness(
         findings += cw_findings
         if note:
             notes.append(note)
-        findings += integrity.detect_js_gaps(repo, base_sha, head_sha)
+        findings += integrity.drop_covered_by_checkwash(integrity.detect_js_gaps(repo, base_sha, head_sha), cw_findings)
         findings += coverage.detect_coverage_replaced(repo, base_sha, head_sha, changed)
 
     # Highest severity first, then by signal, so the report opens with the

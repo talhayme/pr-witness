@@ -118,10 +118,16 @@ def translate(item: dict, documented: set[str]) -> Finding:
             "not change in a pull request, trust checkwash here."
         )
 
-    # checkwash blocks on any added skip marker, whatever its reason.
-    # We disagree on exactly one point: a skip whose reason names a
-    # tracking issue is a decision someone made and can be held to, not
-    # a hidden test.
+    # checkwash reports every added skip marker as TEST_DISABLED. It starts
+    # at `warn` and is raised to `high` only when nothing in the diff
+    # explains it (SPEC §5: a compatibility gate or a plausible production
+    # change holds it at `warn`). It deliberately does not read the skip's
+    # reason — a phrase that earns credit is a phrase an agent will learn to
+    # write (checkwash#364). We disagree on exactly one point: a skip whose
+    # reason names a tracking issue is treated here as a decision someone
+    # made and can be held to. Against an agent that writes plausible
+    # reasons, checkwash's position is the stronger one; this is ours to
+    # revisit.
     #
     # Downgraded rather than dropped, and the disagreement is stated in
     # the report. Silently discarding another tool's finding would make
@@ -129,10 +135,11 @@ def translate(item: dict, documented: set[str]) -> Finding:
     if rule == "TEST_DISABLED" and unit and _matches_documented(unit, documented):
         severity = Severity.INFO
         innocent = (
-            "checkwash reports every added skip marker. pr-witness does not "
-            "flag this one: the run shows a skip reason that names an issue. "
-            "If your policy is that no skip is acceptable, trust checkwash "
-            "here, not us."
+            "checkwash reports this added skip and does not read skip reasons, "
+            "because an agent can learn to write them. pr-witness does not flag "
+            "it: the run shows a reason that names an issue or an external "
+            "cause. If an agent writing plausible reasons is in your threat "
+            "model, trust checkwash here, not us."
         )
 
     return Finding(
@@ -302,8 +309,25 @@ def _catch_swallows_assertion(body: str) -> bool:
     return True
 
 
+def drop_covered_by_checkwash(js_findings: list[Finding], cw_findings: list[Finding]) -> list[Finding]:
+    """Remove our try/catch finding where checkwash already reported the same file.
+
+    checkwash 0.7.0 reports an assertion swallowed by a `try`/`catch` as
+    BROAD_EXCEPT_ADDED (checkwash#363). The JS/TS check here predates that;
+    it stays for older checkwash and for files checkwash did not report, and
+    steps aside where it would only repeat checkwash, whose rating stands.
+    """
+    covered = {t.split("::", 1)[0] for f in cw_findings if f.signal == "checkwash:BROAD_EXCEPT_ADDED" for t in f.tests}
+    return [f for f in js_findings if not (f.signal == "broad_catch" and f.tests and set(f.tests) <= covered)]
+
+
 def detect_js_gaps(repo: Path, base: str, head: str) -> list[Finding]:
-    """The three patterns checkwash 0.6.0 does not yet report for JS/TS."""
+    """JS/TS patterns checkwash did not report as of 0.6.0.
+
+    `@ts-nocheck`, `@ts-ignore` and `eslint-disable` are still unreported in
+    checkwash 0.7.0 (checkwash#366, #367). The try/catch case is reported
+    there since 0.7.0; `drop_covered_by_checkwash` avoids saying it twice.
+    """
     try:
         diff = subprocess.run(
             ["git", "diff", "--unified=3", f"{base}..{head}", "--", "*.ts", "*.tsx", "*.js", "*.jsx"],

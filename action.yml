@@ -70,7 +70,7 @@ runs:
 
     - name: Install pr-witness
       shell: bash
-      run: python -m pip install --quiet "$GITHUB_ACTION_PATH"
+      run: python -m pip install --quiet "$GITHUB_ACTION_PATH" "checkwash==0.7.0"
 
     - name: Resolve base and head
       id: refs

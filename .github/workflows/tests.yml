@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install -e ".[dev]"
+      - run: python -m pip install -e ".[dev]" "checkwash==0.7.0"
       - run: pytest -q
 
   plugin:
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with: { python-version: "3.12" }
-      - run: python -m pip install -e ".[dev]"
+      - run: python -m pip install -e ".[dev]" "checkwash==0.7.0"
       - uses: actions/setup-node@v7
         with: { node-version: "22" }
       - run: npm install --prefix .tsrunner --no-audit --no-fund
