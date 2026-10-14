@@ -8,17 +8,18 @@ This directory holds those proposals and their status.
 
 | # | Topic | Status |
 |---|---|---|
-| [01](01-broad-catch-js.md) | `try`/`catch` swallowing an assertion | **filed: [checkwash#363](https://github.com/taipei49314/checkwash/issues/363)** (10 Oct 2026) |
-| [02](02-ts-ignore.md) | `@ts-nocheck` on a test file | **filed: [checkwash#366](https://github.com/taipei49314/checkwash/issues/366)** (10 Oct 2026) |
-| [03](03-eslint-disable.md) | `eslint-disable` of a test-quality rule | **filed: [checkwash#367](https://github.com/taipei49314/checkwash/issues/367)** (10 Oct 2026) |
-| — | Proposal: shared corpus + findings contract | **filed: [checkwash#364](https://github.com/taipei49314/checkwash/issues/364)** (10 Oct 2026) |
+| [01](01-broad-catch-js.md) | `try`/`catch` swallowing an assertion | **fixed in checkwash v0.7.0** (12 Oct 2026) as `BROAD_EXCEPT_ADDED`; [checkwash#363](https://github.com/taipei49314/checkwash/issues/363) closed 14 Oct, credited in their fixtures and `benchmarks/FAILURES.md`. pr-witness's own check now steps aside where checkwash reports it. |
+| [02](02-ts-ignore.md) | `@ts-nocheck` on a test file | [checkwash#366](https://github.com/taipei49314/checkwash/issues/366): confirmed, deferred from v0.7.0 (14 Oct) |
+| [03](03-eslint-disable.md) | `eslint-disable` of a test-quality rule | [checkwash#367](https://github.com/taipei49314/checkwash/issues/367): confirmed, deferred from v0.7.0; open whether it is lint configuration rather than diff integrity (14 Oct) |
+| — | Proposal: shared corpus + findings contract | [checkwash#364](https://github.com/taipei49314/checkwash/issues/364): answered 14 Oct — cases welcome one per issue via their templates; the contract is `docs/stability.md` (pin exactly in CI); and a correction we have taken: checkwash does not block every added skip, and does not read skip reasons by design. |
 
 All four were filed on 10 October 2026, on the repository owner's
 instruction. The original plan was to send 01 first and hold 02 and 03
 until it was answered; in hindsight that plan was the better one — four
 issues in one day is a lot to put in front of a single maintainer, however
-well each is argued — and no further reports go to checkwash until at
-least one of these has a reply.
+well each is argued — and no further reports went to checkwash until one
+had a reply. All four were answered on 14 October; new cases now go one per
+issue, as the maintainer asked.
 
 Nothing is filed without the repository owner's approval. The reports were
 researched and drafted with Claude Code and checked by the owner before
