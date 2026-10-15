@@ -1,0 +1,100 @@
+{
+  "checkwash_findings_version": 2,
+  "config_errors": [],
+  "findings": [
+    {
+      "after": {
+        "span": [
+          1618,
+          1642
+        ],
+        "text": "assert entry is not None"
+      },
+      "allowlisted": false,
+      "before": {
+        "span": [
+          2993,
+          3018
+        ],
+        "text": "assert mock_lock in locks"
+      },
+      "deescalators": [],
+      "escalators": [
+        "NO_PROD_CHANGE_IN_DIFF"
+      ],
+      "fingerprint": "ASSERT_WEAKENED/tests/test_helpers.py/test_get_locks_from_targets_with_device_id/97d291733d54",
+      "message": "test_get_locks_from_targets_with_device_id: assertion replaced — subject and polarity both changed (assert mock_lock in locks -> assert entry is not None); checkwash cannot verify the replacement is equivalent",
+      "path": "tests/test_helpers.py",
+      "rule": "ASSERT_WEAKENED",
+      "severity": "high",
+      "shape": null,
+      "strength_after": 30,
+      "strength_drop": 30,
+      "subject_changed": true,
+      "unit": "test_get_locks_from_targets_with_device_id"
+    },
+    {
+      "after": null,
+      "allowlisted": false,
+      "before": {
+        "span": [
+          807,
+          1412
+        ],
+        "text": "assert len(locks) == 0\nassert \"invalid lock entities\" in caplog.text\nassert \"switch.not_a_lock\" in caplog.text"
+      },
+      "deescalators": [
+        "RESTRUCTURED"
+      ],
+      "escalators": [],
+      "fingerprint": "TEST_DISABLED/tests/test_helpers.py/test_get_locks_from_targets_warns_for_non_lock_entity/2ec0758d20e2",
+      "message": "test_get_locks_from_targets_warns_for_non_lock_entity: test unit disappeared",
+      "path": "tests/test_helpers.py",
+      "rule": "TEST_DISABLED",
+      "severity": "warn",
+      "shape": "unit_removed",
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "test_get_locks_from_targets_warns_for_non_lock_entity"
+    },
+    {
+      "after": null,
+      "allowlisted": false,
+      "before": {
+        "span": [
+          1415,
+          2030
+        ],
+        "text": "assert len(locks) == 0\nassert \"not managed by Lock Code Manager\" in caplog.text\nassert \"lock.unmanaged_lock\" in caplog.text"
+      },
+      "deescalators": [
+        "RESTRUCTURED"
+      ],
+      "escalators": [],
+      "fingerprint": "TEST_DISABLED/tests/test_helpers.py/test_get_locks_from_targets_warns_when_lock_not_in_lcm/36882999c91e",
+      "message": "test_get_locks_from_targets_warns_when_lock_not_in_lcm: test unit disappeared",
+      "path": "tests/test_helpers.py",
+      "rule": "TEST_DISABLED",
+      "severity": "warn",
+      "shape": "unit_removed",
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "test_get_locks_from_targets_warns_when_lock_not_in_lcm"
+    }
+  ],
+  "run": {
+    "base": "2fe87ab",
+    "checkwash_version": "0.7.0",
+    "head": "07cffb3"
+  },
+  "skipped_files": [],
+  "summary": {
+    "critical": 0,
+    "high": 1,
+    "info": 0,
+    "warn": 2
+  },
+  "verdict": "block"
+}
