@@ -40,6 +40,10 @@ _SEVERITY = {
     "info": Severity.INFO,
 }
 
+# The findings contract our reading of rule/severity/path/unit/fingerprint is
+# written against (checkwash docs/stability.md; 2 since checkwash 0.3.0).
+CHECKWASH_FINDINGS_VERSION = 2
+
 # Why each checkwash rule might be innocent. Its own messages explain what
 # was found; these explain when that is fine, which is the thing a flagged
 # author most needs to read.
@@ -174,11 +178,24 @@ def run_checkwash(
     except (OSError, subprocess.TimeoutExpired) as exc:
         return [], f"checkwash did not complete: {exc}"
 
+    # Exit 2 is an analysis or input error, not "no findings", even when some
+    # JSON came out with it (checkwash docs/stability.md, checkwash#364).
+    if proc.returncode == 2:
+        tail = (proc.stderr or proc.stdout or "").strip().splitlines()[-3:]
+        return [], "checkwash could not analyse the diff: " + " ".join(tail)
+
     try:
         data = json.loads(proc.stdout)
     except json.JSONDecodeError:
         tail = (proc.stderr or proc.stdout or "").strip().splitlines()[-3:]
         return [], "checkwash produced no readable output: " + " ".join(tail)
+
+    # A bump means a field we read may have been renamed or changed meaning:
+    # say so instead of guessing.
+    version = data.get("checkwash_findings_version")
+    if version != CHECKWASH_FINDINGS_VERSION:
+        return [], (f"checkwash findings version {version}, pr-witness reads "
+                    f"{CHECKWASH_FINDINGS_VERSION}; diff-level integrity not checked")
 
     documented = documented_skips or set()
     findings = [translate(item, documented) for item in data.get("findings", [])]

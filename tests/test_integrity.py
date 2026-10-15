@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 from pathlib import Path
 
@@ -123,6 +124,30 @@ def test_suppressions_outside_test_files_are_ignored(repo):  # noqa: F811
 def test_checkwash_is_found_even_when_not_on_path():
     """A virtualenv on sys.path but not PATH must not silently skip the checks."""
     assert integrity.checkwash_command() is not None
+
+
+def _fake_checkwash(monkeypatch, returncode, stdout, stderr=""):
+    done = subprocess.CompletedProcess([], returncode, stdout=stdout, stderr=stderr)
+    monkeypatch.setattr(integrity, "checkwash_command", lambda: ["checkwash"])
+    monkeypatch.setattr(integrity.subprocess, "run", lambda *a, **k: done)
+
+
+def test_checkwash_exit_2_is_an_error_not_a_clean_diff(monkeypatch, tmp_path):
+    """checkwash's exit 2 means it could not analyse, even if JSON came with it."""
+    _fake_checkwash(monkeypatch, 2, '{"checkwash_findings_version": 2, "findings": []}',
+                    "checkwash engine error: git rev-parse --verify failed")
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    assert findings == []
+    assert "could not analyse" in note and "rev-parse" in note
+
+
+def test_an_unknown_findings_version_is_not_read(monkeypatch, tmp_path):
+    """A contract bump may rename or redefine a field we read; do not guess."""
+    item = {"rule": "TEST_DISABLED", "severity": "high", "path": "t.py", "unit": "t", "message": "m"}
+    _fake_checkwash(monkeypatch, 1, json.dumps({"checkwash_findings_version": 3, "findings": [item]}))
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    assert findings == []
+    assert "version 3" in note
 
 
 def test_checkwash_warnings_do_not_become_our_flags(repo):  # noqa: F811
