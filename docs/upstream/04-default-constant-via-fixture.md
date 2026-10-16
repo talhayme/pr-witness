@@ -1,6 +1,6 @@
 # 04 — default constant changed in prod; tests reach it through a fixture
 
-Template: "checkwash blocked honest work". Status: **draft, not filed.**
+Template: "checkwash blocked honest work". Status: **filed as [checkwash#471](https://github.com/taipei49314/checkwash/issues/471), 16 Oct 2026.**
 
 **Title:** [false block] A default changed in production blocks as EXPECTED_VALUE_HARDCODED when the tests reach it through a conftest fixture; the same tests constructing the class directly pass
 
@@ -106,7 +106,7 @@ def elevenlabs_provider():
 
 Verdict: `block`.
 
-<details><summary><code>checkwash check HEAD~1..HEAD --format json</code> (checkwash 0.7.0)</summary>
+<details><summary><code>checkwash check HEAD~1..HEAD --format json</code> (checkwash 0.8.0)</summary>
 
 ```json
 {
@@ -283,9 +283,9 @@ Verdict: `block`.
     }
   ],
   "run": {
-    "base": "7d9ccf2",
-    "checkwash_version": "0.7.0",
-    "head": "60de485"
+    "base": "e8e4e22",
+    "checkwash_version": "0.8.0",
+    "head": "d1ba4e6"
   },
   "skipped_files": [],
   "summary": {
@@ -306,4 +306,4 @@ The production change is the reason for the test edit, and checkwash sees it whe
 
 I understand E3 makes a hardcoded expectation high by design, and that changing a constant and the tests to match is also the cheat this rule exists for; if that is the intended outcome here, the case may still be useful as a control for how the fixture path is treated. On the full commit checkwash reports 12 high findings, all with `NO_PROD_CHANGE_IN_DIFF`: nine `EXPECTED_VALUE_HARDCODED`, two `ASSERT_SUBSTITUTED` and one `SUBJECT_INPUT_CHANGED`, every one of them following the same rachel → matilda change.
 
-Reproduced on checkwash 0.7.0, both with the `.gwcase` through the golden-runner pipeline and with the CLI on a two-commit repository built from it.
+Reproduced on checkwash 0.7.0 and 0.8.0, both with the `.gwcase` through the golden-runner pipeline and with the CLI on a two-commit repository built from it; the output above is from 0.8.0.
