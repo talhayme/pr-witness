@@ -40,8 +40,11 @@ _SEVERITY = {
     "info": Severity.INFO,
 }
 
-# The findings contract our reading of rule/severity/path/unit/fingerprint is
-# written against (checkwash docs/stability.md; 2 since checkwash 0.3.0).
+# The findings contract our reading of rule/severity/path/unit is written
+# against. Published as checkwash docs/findings.schema.json (JSON Schema
+# 2020-12) for checkwash_findings_version 2; unchanged from 0.3.0 through
+# 0.8.0 (checkwash#364). A bump means a field we read may have moved, so
+# run_checkwash refuses output that does not carry this exact number.
 CHECKWASH_FINDINGS_VERSION = 2
 
 # Why each checkwash rule might be innocent. Its own messages explain what
