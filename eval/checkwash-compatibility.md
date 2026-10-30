@@ -6,7 +6,7 @@ not held-out evidence of precision or recall on real changes.
 
 | checkwash | Unit tests | Existing end-to-end corpus |
 |---|---|---|
-| 0.8.0 | Full suite: 185 passed; final adapter/gate tests after four additional diagnostic cases: 64 passed | 17/17 expected verdicts |
+| 0.8.0 | Final full suite: 189 passed; adapter/gate tests: 64 passed | 17/17 expected verdicts |
 | 0.10.0 | Final full suite: 189 passed | 16/17 expected verdicts |
 
 On 0.10.0, `clean-parametrised-same-coverage` gets two high `TEST_DISABLED`

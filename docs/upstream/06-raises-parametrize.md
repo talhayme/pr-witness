@@ -1,6 +1,6 @@
 # Investigation: pytest.raises consolidation on checkwash 0.10.0
 
-Status: local reproduction and follow-up draft; nothing submitted upstream.
+Status: reproduction published in [checkwash #130](https://github.com/taipei49314/checkwash/issues/130#issuecomment-6531871133); no detector patch or new issue.
 Measured 2026-10-30 on macOS, Python 3.11.13, pytest 9.2.0. Executables are
 PyPI checkwash 0.8.0 and 0.10.0, not a checkout of upstream main.
 
@@ -80,7 +80,7 @@ runs each checkwash executable, then runs both test forms against correct
 and deliberately broken implementations. It changes neither installed
 checkwash package and accesses no network.
 
-## Proposed follow-up for an existing discussion (draft)
+## Prepared follow-up (published with links in #130)
 
 I reduced a pass-to-block change between checkwash 0.8.0 and 0.10.0 from
 pr-witness's existing synthetic regression corpus. Two `pytest.raises`

@@ -96,5 +96,4 @@ older checkwash versions. See checkwash's
 [Case 06](06-raises-parametrize.md) reduces the 0.8.0 → 0.10.0 pass-to-block
 change to three preserved pytest cases. Both forms catch the same removed-range-check
 mutant. D-179 and THREATMODEL row 92 explain the conservative boundary; #130
-and #567 already track the related families. The follow-up is a local draft,
-not a new upstream issue or a proposed blanket downgrade.
+and #567 already track the related families. The follow-up is [posted in #130](https://github.com/taipei49314/checkwash/issues/130#issuecomment-6531871133); no new upstream issue or blanket downgrade is proposed.
