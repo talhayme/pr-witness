@@ -90,6 +90,10 @@ def to_markdown(ev: Evidence) -> str:
             out.append(f'{icon} "{c.shown}"{because}')
         out.append("")
 
+    for note in ev.notes:
+        out.append(f"**Analysis note:** {note}")
+        out.append("")
+
     if not ev.findings:
         out.append("No findings. Every test that passed on the base branch still "
                    "passes against this code, and nothing stopped running.")

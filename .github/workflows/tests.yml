@@ -10,12 +10,13 @@ jobs:
     strategy:
       matrix:
         python: ["3.11", "3.12", "3.13"]
+        checkwash: ["0.8.0", "0.10.0"]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install -e ".[dev]" "checkwash==0.8.0"
+      - run: python -m pip install -e ".[dev]" "checkwash==${{ matrix.checkwash }}"
       - run: pytest -q
 
   plugin:
