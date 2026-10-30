@@ -40,6 +40,13 @@ _SEVERITY = {
     "info": Severity.INFO,
 }
 
+# The findings contract our reading of rule/severity/path/unit is written
+# against. Published as checkwash docs/findings.schema.json (JSON Schema
+# 2020-12) for checkwash_findings_version 2; unchanged from 0.3.0 through
+# 0.8.0 (checkwash#364). A bump means a field we read may have moved, so
+# run_checkwash refuses output that does not carry this exact number.
+CHECKWASH_FINDINGS_VERSION = 2
+
 # Why each checkwash rule might be innocent. Its own messages explain what
 # was found; these explain when that is fine, which is the thing a flagged
 # author most needs to read.
@@ -142,6 +149,12 @@ def translate(item: dict, documented: set[str]) -> Finding:
             "model, trust checkwash here, not us."
         )
 
+    # Base-side reviewed exemptions stay visible without blocking our gate.
+    # Apply this after our policy overrides so a rewrite cannot become review.
+    if item.get("allowlisted") is True:
+        severity = Severity.INFO
+        innocent = "checkwash: covered by a reviewed base-side exemption."
+
     return Finding(
         signal=f"checkwash:{rule}",
         severity=severity,
@@ -169,10 +182,16 @@ def run_checkwash(
     try:
         proc = subprocess.run(
             [*command, "check", f"{base}..{head}", "--format", "json"],
-            cwd=repo, capture_output=True, text=True, timeout=timeout,
+            cwd=repo, capture_output=True, text=True, encoding="utf-8", timeout=timeout,
         )
-    except (OSError, subprocess.TimeoutExpired) as exc:
+    except (OSError, UnicodeError, subprocess.TimeoutExpired) as exc:
         return [], f"checkwash did not complete: {exc}"
+
+    # Exit 2 is an analysis or input error, not "no findings", even when some
+    # JSON came out with it (checkwash docs/stability.md, checkwash#364).
+    if proc.returncode not in (0, 1):
+        tail = (proc.stderr or proc.stdout or "").strip().splitlines()[-3:]
+        return [], "checkwash could not analyse the diff: " + " ".join(tail)
 
     try:
         data = json.loads(proc.stdout)
@@ -180,9 +199,56 @@ def run_checkwash(
         tail = (proc.stderr or proc.stdout or "").strip().splitlines()[-3:]
         return [], "checkwash produced no readable output: " + " ".join(tail)
 
+    # A bump means a field we read may have been renamed or changed meaning:
+    # say so instead of guessing.
+    if not isinstance(data, dict):
+        return [], "checkwash produced no findings document; diff-level integrity not checked"
+    version = data.get("checkwash_findings_version")
+    if type(version) is not int or version != CHECKWASH_FINDINGS_VERSION:
+        return [], (f"checkwash findings version {version}, pr-witness reads "
+                    f"{CHECKWASH_FINDINGS_VERSION}; diff-level integrity not checked")
+
+    items = data.get("findings")
+    if not isinstance(items, list) or any(not isinstance(item, dict) for item in items):
+        return [], "checkwash produced invalid findings; diff-level integrity not checked"
+
+    # Validate the optional diagnostics we consume. Unknown fields remain
+    # forward-compatible; a malformed known field is not a clean analysis.
+    unread = data.get("unread", [])
+    skipped = data.get("skipped_files", [])
+    config_errors = data.get("config_errors", [])
+    if (
+        not isinstance(unread, list)
+        or any(
+            not isinstance(side, dict)
+            or not isinstance(side.get("path"), str)
+            or side.get("side") not in ("base", "head", "worktree")
+            or type(side.get("size")) is not int
+            or type(side.get("limit")) is not int
+            for side in unread
+        )
+        or not isinstance(skipped, list)
+        or any(not isinstance(path, str) for path in skipped)
+        or not isinstance(config_errors, list)
+        or any(not isinstance(error, str) for error in config_errors)
+    ):
+        return [], "checkwash produced invalid diagnostics; diff-level integrity not checked"
+
     documented = documented_skips or set()
-    findings = [translate(item, documented) for item in data.get("findings", [])]
-    return findings, ""
+    findings = [translate(item, documented) for item in items]
+    notes = []
+    for side in unread:
+        notes.append(
+            f"checkwash did not analyse {side['path']} ({side['side']}: "
+            f"{side['size']} bytes exceeds {side['limit']}); "
+            "diff-level integrity is incomplete"
+        )
+    if skipped:
+        notes.append("checkwash could not parse: " + ", ".join(skipped))
+    notes.extend("checkwash configuration error: " + error for error in config_errors)
+    if proc.stderr.strip():
+        notes.append("checkwash diagnostics: " + proc.stderr.strip())
+    return findings, "\n".join(notes)
 
 
 # checkwash's rules that say "the expectation was rewritten" — as opposed to

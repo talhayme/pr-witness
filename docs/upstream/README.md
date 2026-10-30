@@ -11,6 +11,8 @@ This directory holds those proposals and their status.
 | [01](01-broad-catch-js.md) | `try`/`catch` swallowing an assertion | **fixed in checkwash v0.7.0** (12 Oct 2026) as `BROAD_EXCEPT_ADDED`; [checkwash#363](https://github.com/taipei49314/checkwash/issues/363) closed 14 Oct, credited in their fixtures and `benchmarks/FAILURES.md`. pr-witness's own check now steps aside where checkwash reports it. |
 | [02](02-ts-ignore.md) | `@ts-nocheck` on a test file | [checkwash#366](https://github.com/taipei49314/checkwash/issues/366): confirmed, deferred from v0.7.0 (14 Oct) |
 | [03](03-eslint-disable.md) | `eslint-disable` of a test-quality rule | [checkwash#367](https://github.com/taipei49314/checkwash/issues/367): confirmed, deferred from v0.7.0; open whether it is lint configuration rather than diff integrity (14 Oct) |
+| [04](04-default-constant-via-fixture.md) | Case, honest look-alike: a default changed in prod, tests reach it through a fixture → `EXPECTED_VALUE_HARDCODED` high (langlearn-tts) | [checkwash#471](https://github.com/taipei49314/checkwash/issues/471), filed 16 Oct (reproduced on 0.7.0 and 0.8.0) |
+| [05](05-precondition-before-rewritten-oracle.md) | Case, honest: a precondition paired with the old assertion → `ASSERT_WEAKENED` high; real-world instance of checkwash#434 A1 (lock_code_manager) | [checkwash#457](https://github.com/taipei49314/checkwash/issues/457): answered 16 Oct. The A1 shape is fixed in the release after 0.8.0 (ruling on #434); this commit's rewrite stays blocked by design and becomes a known-limit fixture; a reviewed `checkwash allow` exemption is the advised route |
 | — | Proposal: shared corpus + findings contract | [checkwash#364](https://github.com/taipei49314/checkwash/issues/364): answered 14 Oct — cases welcome one per issue via their templates; the contract is `docs/stability.md` (pin exactly in CI); and a correction we have taken: checkwash does not block every added skip, and does not read skip reasons by design. |
 
 All four were filed on 10 October 2026, on the repository owner's
@@ -70,3 +72,28 @@ the Python equivalent, but has no JavaScript counterpart.
 A note to the dataset's authors — what was built on it and two observations about
 `commits.parquet` (row-group size, `is_agent_author`) — filed as
 [SALT-NLP/SWE-chat#2](https://github.com/SALT-NLP/SWE-chat/issues/2) on 2026-10-11.
+
+## Adapter contract
+
+The adapter reads findings document version 2 and accepts only process exits
+0 and 1 as analysis results. It decodes UTF-8 explicitly. Unsupported versions,
+unreadable output and process errors become analysis notes; they do not erase
+independent cross-run evidence or change the existing gate policy.
+
+Base-side `allowlisted` findings stay in the report at informational severity,
+so a reviewed exemption cannot become a flag or a rewrite requiring approval.
+The original checkwash rule and message remain visible.
+
+`unread`, `skipped_files`, `config_errors` and standard error are carried into
+analysis notes in JSON, text and Markdown reports, including when there are no
+findings. A pass with unread files is incomplete evidence about the diff.
+Absence of `unread` does not prove that all files were analysed, especially on
+older checkwash versions. See checkwash's
+[embedding contract](https://github.com/taipei49314/checkwash/blob/main/docs/embedding.md).
+
+## Raises consolidation investigation
+
+[Case 06](06-raises-parametrize.md) reduces the 0.8.0 → 0.10.0 pass-to-block
+change to three preserved pytest cases. Both forms catch the same removed-range-check
+mutant. D-179 and THREATMODEL row 92 explain the conservative boundary; #130
+and #567 already track the related families. The follow-up is [posted in #130](https://github.com/taipei49314/checkwash/issues/130#issuecomment-6531871133); no new upstream issue or blanket downgrade is proposed.

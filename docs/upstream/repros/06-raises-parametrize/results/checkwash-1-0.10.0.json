@@ -1,0 +1,94 @@
+{
+  "checkwash_findings_version": 2,
+  "config_errors": [],
+  "findings": [
+    {
+      "after": null,
+      "allowlisted": false,
+      "before": {
+        "span": [
+          119,
+          193
+        ],
+        "text": "pytest.raises(ValueError)"
+      },
+      "deescalators": [],
+      "escalators": [
+        "NO_PROD_CHANGE_IN_DIFF"
+      ],
+      "fingerprint": "TEST_DISABLED/test_app.py/test_large/v2:fa68de796ee4cab8ddce5c994f80e2303c4ed01a622ea9024abb1923a7c27279",
+      "message": "test_large: test unit disappeared",
+      "path": "test_app.py",
+      "rule": "TEST_DISABLED",
+      "severity": "high",
+      "shape": "unit_removed",
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "test_large"
+    },
+    {
+      "after": null,
+      "allowlisted": false,
+      "before": {
+        "span": [
+          40,
+          116
+        ],
+        "text": "pytest.raises(ValueError)"
+      },
+      "deescalators": [],
+      "escalators": [
+        "NO_PROD_CHANGE_IN_DIFF"
+      ],
+      "fingerprint": "TEST_DISABLED/test_app.py/test_negative/v2:23d36fd512e8de919b79c3f24a83755878d51311eac43c29f1021f6148d20586",
+      "message": "test_negative: test unit disappeared",
+      "path": "test_app.py",
+      "rule": "TEST_DISABLED",
+      "severity": "high",
+      "shape": "unit_removed",
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "test_negative"
+    },
+    {
+      "after": null,
+      "allowlisted": false,
+      "before": {
+        "span": [
+          196,
+          239
+        ],
+        "text": "assert checked(50) == 50"
+      },
+      "deescalators": [
+        "RESTRUCTURED"
+      ],
+      "escalators": [],
+      "fingerprint": "TEST_DISABLED/test_app.py/test_ok/v2:b9384164f05f64d2ce7288a0560b0d9432b6627f23e7d7444134a8189e9df401",
+      "message": "test_ok: test unit disappeared",
+      "path": "test_app.py",
+      "rule": "TEST_DISABLED",
+      "severity": "warn",
+      "shape": "unit_removed",
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "test_ok"
+    }
+  ],
+  "run": {
+    "base": "9c45382",
+    "checkwash_version": "0.10.0",
+    "head": "0e9c565"
+  },
+  "skipped_files": [],
+  "summary": {
+    "critical": 0,
+    "high": 2,
+    "info": 0,
+    "warn": 1
+  },
+  "verdict": "block"
+}

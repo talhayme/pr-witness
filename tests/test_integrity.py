@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 from pathlib import Path
 
@@ -125,6 +126,30 @@ def test_checkwash_is_found_even_when_not_on_path():
     assert integrity.checkwash_command() is not None
 
 
+def _fake_checkwash(monkeypatch, returncode, stdout, stderr=""):
+    done = subprocess.CompletedProcess([], returncode, stdout=stdout, stderr=stderr)
+    monkeypatch.setattr(integrity, "checkwash_command", lambda: ["checkwash"])
+    monkeypatch.setattr(integrity.subprocess, "run", lambda *a, **k: done)
+
+
+def test_checkwash_exit_2_is_an_error_not_a_clean_diff(monkeypatch, tmp_path):
+    """checkwash's exit 2 means it could not analyse, even if JSON came with it."""
+    _fake_checkwash(monkeypatch, 2, '{"checkwash_findings_version": 2, "findings": []}',
+                    "checkwash engine error: git rev-parse --verify failed")
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    assert findings == []
+    assert "could not analyse" in note and "rev-parse" in note
+
+
+def test_an_unknown_findings_version_is_not_read(monkeypatch, tmp_path):
+    """A contract bump may rename or redefine a field we read; do not guess."""
+    item = {"rule": "TEST_DISABLED", "severity": "high", "path": "t.py", "unit": "t", "message": "m"}
+    _fake_checkwash(monkeypatch, 1, json.dumps({"checkwash_findings_version": 3, "findings": [item]}))
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    assert findings == []
+    assert "version 3" in note
+
+
 def test_checkwash_warnings_do_not_become_our_flags(repo):  # noqa: F811
     """checkwash blocks only on high; mapping its warns to MEDIUM cost 15 points of precision."""
     assert integrity._SEVERITY["warn"] is Severity.LOW
@@ -219,3 +244,72 @@ def test_our_try_catch_finding_steps_aside_where_checkwash_already_reported_it()
     cw = [Finding("checkwash:BROAD_EXCEPT_ADDED", Severity.HIGH, "w", tests=["cart.test.ts"])]
     kept = integrity.drop_covered_by_checkwash(ours, cw)
     assert [(f.signal, f.tests) for f in kept] == [("broad_catch", ["other.test.ts"]), ("ts_nocheck", ["cart.test.ts"])]
+
+
+@pytest.mark.parametrize("rule", ["ASSERT_REMOVED", "EXPECTED_VALUE_CHANGED"])
+def test_reviewed_exemptions_remain_visible_without_blocking(monkeypatch, tmp_path, rule):
+    from pr_witness.gate import decide
+    from pr_witness.witness import Evidence
+
+    items = [{"rule": rule, "severity": "high", "path": "tests/test_dates.py",
+              "unit": "test_saturday", "message": "reviewed change", "allowlisted": True}]
+    _fake_checkwash(monkeypatch, 0, json.dumps({"checkwash_findings_version": 2, "findings": items}))
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    ev = Evidence("a", "b", "pytest", findings=findings)
+    assert len(findings) == 1 and findings[0].severity is Severity.INFO
+    assert "exemption" in findings[0].innocent_explanation
+    assert ev.verdict == "clean" and decide(ev, "strict").exit_code == 0
+    assert not note
+
+
+def test_partial_analysis_and_diagnostics_survive_markdown_report(monkeypatch, tmp_path):
+    from pr_witness.render import to_markdown
+    from pr_witness.witness import Evidence
+
+    data = {"checkwash_findings_version": 2, "findings": [],
+            "unread": [{"path": "tests/большой.py", "side": "head", "size": 1000001, "limit": 1000000}],
+            "skipped_files": ["tests/broken.py"], "config_errors": ["invalid fail_on"]}
+    _fake_checkwash(monkeypatch, 0, json.dumps(data), "ignored exemption: old fingerprint")
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    assert not findings
+    for fact in ["tests/большой.py", "head", "1000001", "1000000", "incomplete",
+                 "tests/broken.py", "invalid fail_on", "old fingerprint"]:
+        assert fact in note
+    report = to_markdown(Evidence("a", "b", "pytest", notes=[note]))
+    assert note in report
+
+
+@pytest.mark.parametrize("stdout", ["null", "[]", '"text"',
+                                    '{"checkwash_findings_version": 2}',
+                                    '{"checkwash_findings_version": 2, "findings": [null]}'])
+def test_invalid_findings_document_is_an_analysis_note(monkeypatch, tmp_path, stdout):
+    _fake_checkwash(monkeypatch, 0, stdout)
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    assert findings == [] and "not checked" in note
+
+
+@pytest.mark.parametrize("code", [-9, 3, 127])
+def test_unexpected_exit_cannot_be_read_as_success(monkeypatch, tmp_path, code):
+    _fake_checkwash(monkeypatch, code, '{"checkwash_findings_version": 2, "findings": []}', "process failed")
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    assert not findings and "could not analyse" in note and "process failed" in note
+
+
+def test_checkwash_subprocess_uses_utf8(monkeypatch, tmp_path):
+    monkeypatch.setattr(integrity, "checkwash_command", lambda: ["checkwash"])
+    def run(*args, **kwargs):
+        assert kwargs["encoding"] == "utf-8"
+        return subprocess.CompletedProcess([], 0, stdout='{"checkwash_findings_version": 2, "findings": []}', stderr="")
+    monkeypatch.setattr(integrity.subprocess, "run", run)
+    assert integrity.run_checkwash(tmp_path, "a", "b") == ([], "")
+
+
+@pytest.mark.parametrize("diagnostics", [
+    {"unread": None}, {"unread": [{}]}, {"skipped_files": "tests/broken.py"},
+    {"config_errors": [None]},
+])
+def test_malformed_diagnostics_do_not_crash_the_report(monkeypatch, tmp_path, diagnostics):
+    data = {"checkwash_findings_version": 2, "findings": [], **diagnostics}
+    _fake_checkwash(monkeypatch, 0, json.dumps(data))
+    findings, note = integrity.run_checkwash(tmp_path, "a", "b")
+    assert findings == [] and "invalid diagnostics" in note

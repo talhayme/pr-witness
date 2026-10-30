@@ -1,0 +1,187 @@
+{
+  "checkwash_findings_version": 2,
+  "config_errors": [],
+  "findings": [
+    {
+      "after": {
+        "span": [
+          346,
+          409
+        ],
+        "text": "assert elevenlabs_provider.get_default_voice(\"de\") == \"matilda\""
+      },
+      "allowlisted": false,
+      "before": null,
+      "deescalators": [],
+      "escalators": [
+        "NO_PROD_CHANGE_IN_DIFF"
+      ],
+      "fingerprint": "EXPECTED_VALUE_HARDCODED/tests/test_elevenlabs_provider.py/TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language/038da268768d",
+      "message": "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value 'matilda' equals a constant newly introduced in prod in this same diff",
+      "path": "tests/test_elevenlabs_provider.py",
+      "rule": "EXPECTED_VALUE_HARDCODED",
+      "severity": "high",
+      "shape": null,
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language"
+    },
+    {
+      "after": {
+        "span": [
+          418,
+          481
+        ],
+        "text": "assert elevenlabs_provider.get_default_voice(\"ja\") == \"matilda\""
+      },
+      "allowlisted": false,
+      "before": null,
+      "deescalators": [],
+      "escalators": [
+        "NO_PROD_CHANGE_IN_DIFF"
+      ],
+      "fingerprint": "EXPECTED_VALUE_HARDCODED/tests/test_elevenlabs_provider.py/TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language/3dc8ce030f08",
+      "message": "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value 'matilda' equals a constant newly introduced in prod in this same diff",
+      "path": "tests/test_elevenlabs_provider.py",
+      "rule": "EXPECTED_VALUE_HARDCODED",
+      "severity": "high",
+      "shape": null,
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language"
+    },
+    {
+      "after": {
+        "span": [
+          165,
+          218
+        ],
+        "text": "assert elevenlabs_provider.default_voice == \"matilda\""
+      },
+      "allowlisted": false,
+      "before": null,
+      "deescalators": [],
+      "escalators": [
+        "NO_PROD_CHANGE_IN_DIFF"
+      ],
+      "fingerprint": "EXPECTED_VALUE_HARDCODED/tests/test_elevenlabs_provider.py/TestElevenLabsProviderName.test_default_voice/3b4da87ff656",
+      "message": "TestElevenLabsProviderName.test_default_voice: expected value 'matilda' equals a constant newly introduced in prod in this same diff",
+      "path": "tests/test_elevenlabs_provider.py",
+      "rule": "EXPECTED_VALUE_HARDCODED",
+      "severity": "high",
+      "shape": null,
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "TestElevenLabsProviderName.test_default_voice"
+    },
+    {
+      "after": {
+        "span": [
+          346,
+          409
+        ],
+        "text": "assert elevenlabs_provider.get_default_voice(\"de\") == \"matilda\""
+      },
+      "allowlisted": false,
+      "before": {
+        "span": [
+          345,
+          407
+        ],
+        "text": "assert elevenlabs_provider.get_default_voice(\"de\") == \"rachel\""
+      },
+      "deescalators": [
+        "PACKAGE_REPAIR"
+      ],
+      "escalators": [],
+      "fingerprint": "EXPECTED_VALUE_CHANGED/tests/test_elevenlabs_provider.py/TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language/2f61d44e7eb3",
+      "message": "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength",
+      "path": "tests/test_elevenlabs_provider.py",
+      "rule": "EXPECTED_VALUE_CHANGED",
+      "severity": "warn",
+      "shape": null,
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language"
+    },
+    {
+      "after": {
+        "span": [
+          418,
+          481
+        ],
+        "text": "assert elevenlabs_provider.get_default_voice(\"ja\") == \"matilda\""
+      },
+      "allowlisted": false,
+      "before": {
+        "span": [
+          416,
+          478
+        ],
+        "text": "assert elevenlabs_provider.get_default_voice(\"ja\") == \"rachel\""
+      },
+      "deescalators": [
+        "PACKAGE_REPAIR"
+      ],
+      "escalators": [],
+      "fingerprint": "EXPECTED_VALUE_CHANGED/tests/test_elevenlabs_provider.py/TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language/c4522cb05239",
+      "message": "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength",
+      "path": "tests/test_elevenlabs_provider.py",
+      "rule": "EXPECTED_VALUE_CHANGED",
+      "severity": "warn",
+      "shape": null,
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "TestElevenLabsProviderLanguageSupport.test_get_default_voice_any_language"
+    },
+    {
+      "after": {
+        "span": [
+          165,
+          218
+        ],
+        "text": "assert elevenlabs_provider.default_voice == \"matilda\""
+      },
+      "allowlisted": false,
+      "before": {
+        "span": [
+          165,
+          217
+        ],
+        "text": "assert elevenlabs_provider.default_voice == \"rachel\""
+      },
+      "deescalators": [
+        "PACKAGE_REPAIR"
+      ],
+      "escalators": [],
+      "fingerprint": "EXPECTED_VALUE_CHANGED/tests/test_elevenlabs_provider.py/TestElevenLabsProviderName.test_default_voice/717c25b12578",
+      "message": "TestElevenLabsProviderName.test_default_voice: expected value rewritten 'rachel' -> 'matilda' with no change in assertion strength",
+      "path": "tests/test_elevenlabs_provider.py",
+      "rule": "EXPECTED_VALUE_CHANGED",
+      "severity": "warn",
+      "shape": null,
+      "strength_after": null,
+      "strength_drop": null,
+      "subject_changed": null,
+      "unit": "TestElevenLabsProviderName.test_default_voice"
+    }
+  ],
+  "run": {
+    "base": "7d9ccf2",
+    "checkwash_version": "0.7.0",
+    "head": "60de485"
+  },
+  "skipped_files": [],
+  "summary": {
+    "critical": 0,
+    "high": 3,
+    "info": 0,
+    "warn": 3
+  },
+  "verdict": "block"
+}

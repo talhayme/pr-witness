@@ -1,0 +1,45 @@
+{
+  "python": "3.11.13 (main, Jun  3 2025, 18:38:25) [Clang 16.0.0 (clang-1600.0.26.6)]",
+  "pytest": [
+    {
+      "side": "before",
+      "implementation": "good",
+      "exit_code": 0,
+      "output": "pytest-before-good.txt"
+    },
+    {
+      "side": "before",
+      "implementation": "no_range_check",
+      "exit_code": 1,
+      "output": "pytest-before-no_range_check.txt"
+    },
+    {
+      "side": "after",
+      "implementation": "good",
+      "exit_code": 0,
+      "output": "pytest-after-good.txt"
+    },
+    {
+      "side": "after",
+      "implementation": "no_range_check",
+      "exit_code": 1,
+      "output": "pytest-after-no_range_check.txt"
+    }
+  ],
+  "checkwash": [
+    {
+      "version": "0.8.0",
+      "exit_code": 0,
+      "verdict": "pass",
+      "output": "checkwash-0-0.8.0.json",
+      "stderr": ""
+    },
+    {
+      "version": "0.10.0",
+      "exit_code": 1,
+      "verdict": "block",
+      "output": "checkwash-1-0.10.0.json",
+      "stderr": ""
+    }
+  ]
+}

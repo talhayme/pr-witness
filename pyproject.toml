@@ -17,7 +17,15 @@ classifiers = [
 license = { text = "Apache-2.0" }
 # checkwash does the diff-level half of this job, and does it well. It is a
 # dependency rather than a reimplementation.
-dependencies = ["checkwash>=0.6,<0.8"]   # checkwash advises an upper bound below the next minor (docs/stability.md)
+#
+# No upper bound: pr-witness reads checkwash's JSON document each run and
+# stores nothing from it (no fingerprints), so the fingerprint-stability
+# reason for pinning below the next minor does not apply here. The one thing
+# it depends on is the findings schema, which it checks at run time —
+# run_checkwash refuses any output whose checkwash_findings_version is not the
+# one it reads (CHECKWASH_FINDINGS_VERSION). checkwash#364: 0.8.0 reads
+# identically to 0.7.0, so <0.8 only shut it out for no reason.
+dependencies = ["checkwash>=0.8"]   # pin stays in CI; a schema bump is caught at run time (docs/upstream/README.md, checkwash#364)
 
 [project.urls]
 Homepage = "https://github.com/talhayme/pr-witness"

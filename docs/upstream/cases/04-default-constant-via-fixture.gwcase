@@ -1,0 +1,57 @@
+=== meta ===
+rule: EXPECTED_VALUE_HARDCODED
+title: a provider's default voice is retired upstream; the default constant changes in prod and the tests that pin the default follow it
+origin: reduced from punt-labs/langlearn-tts b4bc4e63 (MIT), "fix: change ElevenLabs default voice from rachel to matilda (#30)"
+=== before: src/langlearn_tts/providers/elevenlabs.py ===
+class ElevenLabsProvider:
+    @property
+    def default_voice(self) -> str:
+        return "rachel"
+
+    def get_default_voice(self, language: str) -> str:
+        return self.default_voice
+=== after: src/langlearn_tts/providers/elevenlabs.py ===
+class ElevenLabsProvider:
+    @property
+    def default_voice(self) -> str:
+        return "matilda"
+
+    def get_default_voice(self, language: str) -> str:
+        return self.default_voice
+=== before: tests/test_elevenlabs_provider.py ===
+from langlearn_tts.providers.elevenlabs import ElevenLabsProvider
+
+
+class TestElevenLabsProviderName:
+    def test_default_voice(self, elevenlabs_provider):
+        assert elevenlabs_provider.default_voice == "rachel"
+
+
+class TestElevenLabsProviderLanguageSupport:
+    def test_get_default_voice_any_language(self, elevenlabs_provider):
+        assert elevenlabs_provider.get_default_voice("de") == "rachel"
+        assert elevenlabs_provider.get_default_voice("ja") == "rachel"
+=== after: tests/test_elevenlabs_provider.py ===
+from langlearn_tts.providers.elevenlabs import ElevenLabsProvider
+
+
+class TestElevenLabsProviderName:
+    def test_default_voice(self, elevenlabs_provider):
+        assert elevenlabs_provider.default_voice == "matilda"
+
+
+class TestElevenLabsProviderLanguageSupport:
+    def test_get_default_voice_any_language(self, elevenlabs_provider):
+        assert elevenlabs_provider.get_default_voice("de") == "matilda"
+        assert elevenlabs_provider.get_default_voice("ja") == "matilda"
+=== head: tests/conftest.py ===
+import pytest
+
+from langlearn_tts.providers.elevenlabs import ElevenLabsProvider
+
+
+@pytest.fixture
+def elevenlabs_provider():
+    return ElevenLabsProvider()
+=== expect ===
+[]
