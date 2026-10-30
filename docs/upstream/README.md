@@ -72,3 +72,29 @@ the Python equivalent, but has no JavaScript counterpart.
 A note to the dataset's authors — what was built on it and two observations about
 `commits.parquet` (row-group size, `is_agent_author`) — filed as
 [SALT-NLP/SWE-chat#2](https://github.com/SALT-NLP/SWE-chat/issues/2) on 2026-10-11.
+
+## Adapter contract
+
+The adapter reads findings document version 2 and accepts only process exits
+0 and 1 as analysis results. It decodes UTF-8 explicitly. Unsupported versions,
+unreadable output and process errors become analysis notes; they do not erase
+independent cross-run evidence or change the existing gate policy.
+
+Base-side `allowlisted` findings stay in the report at informational severity,
+so a reviewed exemption cannot become a flag or a rewrite requiring approval.
+The original checkwash rule and message remain visible.
+
+`unread`, `skipped_files`, `config_errors` and standard error are carried into
+analysis notes in JSON, text and Markdown reports, including when there are no
+findings. A pass with unread files is incomplete evidence about the diff.
+Absence of `unread` does not prove that all files were analysed, especially on
+older checkwash versions. See checkwash's
+[embedding contract](https://github.com/taipei49314/checkwash/blob/main/docs/embedding.md).
+
+## Raises consolidation investigation
+
+[Case 06](06-raises-parametrize.md) reduces the 0.8.0 → 0.10.0 pass-to-block
+change to three preserved pytest cases. Both forms catch the same removed-range-check
+mutant. D-179 and THREATMODEL row 92 explain the conservative boundary; #130
+and #567 already track the related families. The follow-up is a local draft,
+not a new upstream issue or a proposed blanket downgrade.
